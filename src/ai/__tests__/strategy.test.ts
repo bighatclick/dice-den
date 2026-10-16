@@ -6,7 +6,7 @@ import { createSeededRng } from '../../engine/rng';
 import { CLASSIC, SCANDINAVIAN, type RulePreset } from '../../engine/rules/presets';
 import type { Scorecard } from '../../engine/scoring';
 import { nextAiStep } from '../index';
-import { boxValue, decide, holdMask, outcomes, type AiView } from '../strategy';
+import { boxValue, decide, greedyKeep, holdMask, outcomes, type AiView } from '../strategy';
 
 const view = (dice: Face[], over: Partial<AiView> = {}): AiView => ({
   preset: CLASSIC,
@@ -82,6 +82,51 @@ describe('decide', () => {
   });
 });
 
+describe('greedyKeep (Normal)', () => {
+  it('stands on made hands', () => {
+    expect(greedyKeep(view([2, 2, 2, 2, 2]))).toBeNull();
+    expect(greedyKeep(view([1, 2, 3, 4, 5]))).toBeNull();
+    expect(greedyKeep(view([3, 3, 5, 5, 5]))).toBeNull();
+    expect(greedyKeep(view([1, 2, 3, 4, 6], { card: { largeStraight: 40 } }))).toBeNull();
+  });
+
+  it('keeps a small straight open for the large one in Classic', () => {
+    expect(greedyKeep(view([1, 2, 3, 4, 6]))).toEqual([1, 2, 3, 4]);
+  });
+
+  it('stands on a Scandinavian straight and needs four in a row to chase one', () => {
+    expect(greedyKeep(view([1, 2, 3, 4, 5], { preset: SCANDINAVIAN }))).toBeNull();
+    expect(greedyKeep(view([2, 3, 4, 6, 6], { preset: SCANDINAVIAN }))).toEqual([6, 6]);
+  });
+
+  it('keeps two pairs for a full house, else the most common face', () => {
+    expect(greedyKeep(view([4, 4, 1, 1, 6]))).toEqual([4, 4, 1, 1]);
+    expect(greedyKeep(view([4, 4, 1, 1, 6], { card: { fullHouse: 25 } }))).toEqual([4, 4]);
+    expect(greedyKeep(view([5, 5, 5, 1, 2]))).toEqual([5, 5, 5]);
+  });
+
+  it('prefers a face whose upper box is still open on a tie', () => {
+    expect(greedyKeep(view([6, 6, 5, 5, 1], { card: { sixes: 18, fullHouse: 25 } }))).toEqual([5, 5]);
+  });
+
+  it('rerolls everything when nothing pairs up', () => {
+    expect(greedyKeep(view([1, 2, 4, 5, 6], { card: { smallStraight: 30, largeStraight: 40 } }))).toEqual([]);
+  });
+});
+
+describe('Normal scores greedily', () => {
+  it('takes the most points now and dumps a zero where it costs least', () => {
+    // 23 in 3 of a kind or Chance: on a tie it saves Chance.
+    expect(decide(view([6, 6, 6, 2, 3], { rollsUsed: 3 }), 'normal')).toEqual({ type: 'score', box: 'threeKind' });
+    expect(decide(view([1, 3, 4, 6, 6], { rollsUsed: 3, card: { sixes: 18, chance: 20 } }), 'normal')).toEqual({
+      type: 'score',
+      box: 'fours',
+    });
+    const full: Scorecard = { ones: 3, twos: 6, threes: 9, fours: 12, fives: 15, sixes: 18, chance: 20, smallStraight: 30 };
+    expect(decide(view([2, 2, 3, 5, 6], { rollsUsed: 3, card: full }), 'normal')).toEqual({ type: 'score', box: 'fourKind' });
+  });
+});
+
 describe('holdMask', () => {
   it('holds the leftmost dice that make up the kept set', () => {
     expect(holdMask([6, 2, 6, 6, 1], [6, 6])).toEqual([true, false, true, false, false]);
@@ -117,18 +162,18 @@ describe('full computer games', () => {
     expect(playGame(['expert'], 'scandi', SCANDINAVIAN).status).toBe('finished');
   });
 
-  it('score in sensible ranges and Expert beats Easy on average', () => {
+  it('rank Expert above Normal above Easy', () => {
     const avg = (level: AiLevel) => {
       let sum = 0;
-      for (let i = 0; i < 12; i++) sum += playerTotal(playGame([level], `avg-${i}`), 0);
-      return sum / 12;
+      for (let i = 0; i < 40; i++) sum += playerTotal(playGame([level], `avg-${i}`), 0);
+      return sum / 40;
     };
-    const easy = avg('easy');
-    const expert = avg('expert');
-    // Benchmarked over 150 games: Easy ~146, Normal ~235, Expert ~237 (Classic).
-    expect(expert).toBeGreaterThan(200);
-    expect(expert).toBeGreaterThan(easy + 40);
-  });
+    const [easy, normal, expert] = (['easy', 'normal', 'expert'] as const).map(avg);
+    // `npm run bench:ai`, 300 Classic games: Easy ~145, Normal ~209, Expert ~235;
+    // head to head Expert beats Normal ~70% (Scandinavian ~80%).
+    expect(expert).toBeGreaterThan(normal + 10);
+    expect(normal).toBeGreaterThan(easy + 20);
+  }, 30_000);
 
   it('returns no step when it is not a computer turn', () => {
     const g = createGame({ id: 'h', preset: 'classic', players: [{ id: 'p', name: 'You', kind: 'human', color: '#000' }] });

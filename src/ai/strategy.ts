@@ -1,6 +1,6 @@
 import { DICE_COUNT, FACES, MAX_ROLLS, type Face } from '../engine/dice';
 import type { AiLevel } from '../engine/game';
-import { isUpperBox, upperFace, type BoxId, type RulePreset } from '../engine/rules/presets';
+import { isUpperBox, UPPER_BOXES, upperFace, type BoxId, type RulePreset } from '../engine/rules/presets';
 import { allowedBoxes, extraYatzyBonusFor, scoreFor, totals, type Scorecard } from '../engine/scoring';
 
 /**
@@ -93,6 +93,25 @@ export function boxValue(view: AiView, box: BoxId, dice: Dice): number {
   return value;
 }
 
+/**
+ * Normal's greedy box choice: the most points now (counting the upper bonus it
+ * would complete), and a zero goes where it costs least.
+ */
+function greedyBoxes(view: AiView, dice: Dice): { box: BoxId; value: number }[] {
+  const { preset, card } = view;
+  const upper = totals(preset, card, 0).upper;
+  return allowedBoxes(preset, card, dice, view.forcedOrder)
+    .map((box) => {
+      let points = scoreFor(preset, card, dice, box) + extraYatzyBonusFor(preset, card, dice);
+      if (isUpperBox(box) && upper < preset.upperBonusThreshold && upper + points >= preset.upperBonusThreshold) {
+        points += preset.upperBonus;
+      }
+      const tieBreak = -(OPPORTUNITY[preset.id][box] ?? 0) / 100;
+      return { box, value: points > 0 ? points + tieBreak : tieBreak * 100 - 1000 };
+    })
+    .sort((a, b) => b.value - a.value);
+}
+
 function rankedBoxes(view: AiView, dice: Dice): { box: BoxId; value: number }[] {
   return allowedBoxes(view.preset, view.card, dice, view.forcedOrder)
     .map((box) => ({ box, value: boxValue(view, box, dice) }))
@@ -168,12 +187,56 @@ export function holdMask(dice: Dice, kept: readonly Face[]): boolean[] {
   });
 }
 
-/** How far ahead each level plans (in rolls). */
-const LOOKAHEAD: Record<AiLevel, number> = { easy: 1, normal: 1, expert: MAX_ROLLS };
+/** How far ahead the search-based levels plan (in rolls). Normal uses rules instead. */
+const LOOKAHEAD: Record<Exclude<AiLevel, 'normal'>, number> = { easy: 1, expert: MAX_ROLLS };
+
+/** Longest run of consecutive faces present, as one die per face. */
+function longestRun(dice: Dice): Face[] {
+  let best: Face[] = [];
+  let run: Face[] = [];
+  for (const f of FACES) {
+    run = dice.includes(f) ? [...run, f] : [];
+    if (run.length > best.length) best = run;
+  }
+  return best;
+}
+
+/**
+ * Normal's "simple hold heuristics" (specs.md F4): stand on a made hand, chase a
+ * straight, otherwise keep the most common face. Returns null to score now.
+ */
+export function greedyKeep(view: AiView): Face[] | null {
+  const { preset, card, dice } = view;
+  const open = (box: BoxId) => preset.boxes.includes(box) && card[box] === undefined;
+  const made = (box: BoxId) => open(box) && scoreFor(preset, card, dice, box) > 0;
+  const counts = FACES.map((f) => dice.filter((d) => d === f).length);
+  const most = Math.max(...counts);
+
+  const classic = preset.id === 'classic';
+  if (made('yatzy') || made('largeStraight')) return null;
+  if (classic && made('fullHouse')) return null;
+  // Scandinavian straights are fixed sets (1-5, 2-6), so a made one can't improve.
+  if (made('smallStraight') && (!classic || !open('largeStraight'))) return null;
+
+  const run = longestRun(dice);
+  // Classic straights pay 30/40, worth chasing from three in a row; Scandinavian ones only 15/20.
+  if ((open('smallStraight') || open('largeStraight')) && run.length >= (classic ? 3 : 4) && most <= 2) return run;
+
+  if (most === 2 && counts.filter((c) => c === 2).length === 2 && (open('fullHouse') || open('twoPairs'))) {
+    return dice.filter((d) => counts[d - 1] === 2);
+  }
+  // Most common face; ties (and near-ties) go to higher faces and faces whose upper box is still open.
+  const worth = (f: number) => counts[f - 1] + (open(UPPER_BOXES[f - 1]) ? 0.4 : 0) + f * 0.08;
+  let target = 6;
+  for (let f = 5; f >= 1; f--) if (worth(f) > worth(target)) target = f;
+  if (counts[target - 1] <= 1) return [];
+  return dice.filter((d) => d === target);
+}
 
 /**
  * What the computer does after a roll: keep some dice and roll again, or score.
- * Easy picks at random among its top 3 options; Normal and Expert take the best.
+ * Easy picks at random among its top 3 one-roll options; Normal follows simple
+ * hold rules; Expert searches every hold over all rolls left.
  */
 export function decide(view: AiView, level: AiLevel, choose: Chooser = (n) => Math.floor(Math.random() * n)): AiDecision {
   if (view.rollsUsed === 0) throw new Error('The AI decides only after rolling');
@@ -185,9 +248,12 @@ export function decide(view: AiView, level: AiLevel, choose: Chooser = (n) => Ma
   };
 
   const boxes = rankedBoxes(view, view.dice);
-  if (rollsLeft > 0) {
+  if (rollsLeft > 0 && level === 'normal') {
+    const kept = greedyKeep(view);
+    if (kept && kept.length < DICE_COUNT) return { type: 'keep', held: holdMask(view.dice, kept) };
+  } else if (rollsLeft > 0) {
     const evaluator = new Evaluator(view);
-    const depth = Math.min(rollsLeft, LOOKAHEAD[level]);
+    const depth = Math.min(rollsLeft, LOOKAHEAD[level as 'easy' | 'expert']);
     const options: { kept: Face[] | null; value: number }[] = [{ kept: null, value: evaluator.stopValue(view.dice) }];
     for (const kept of distinctKeeps(view.dice)) {
       if (kept.length < DICE_COUNT) options.push({ kept, value: evaluator.keepValue(kept, depth) });
@@ -196,5 +262,5 @@ export function decide(view: AiView, level: AiLevel, choose: Chooser = (n) => Ma
     const choice = pick(options);
     if (choice.kept) return { type: 'keep', held: holdMask(view.dice, choice.kept) };
   }
-  return { type: 'score', box: pick(boxes).box };
+  return { type: 'score', box: pick(level === 'normal' ? greedyBoxes(view, view.dice) : boxes).box };
 }
