@@ -1,0 +1,10 @@
+{
+  "settings": {
+    "themeMode": "dark",
+    "hints": false,
+    "preset": "scandinavian",
+    "largeDice": "yes",
+    "unknownSetting": 42
+  },
+  "highScore": 287
+}
