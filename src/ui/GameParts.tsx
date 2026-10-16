@@ -144,6 +144,28 @@ export function RollButton({
   );
 }
 
+/** Shown instead of Roll while a computer plays: tap to finish its turn at once. */
+export function SkipButton({ name, onPress }: { name: string; onPress: () => void }) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={t('game.skip', { name })}
+      onPress={onPress}
+      style={({ pressed }) => [styles.roll, styles.skip, pressed && styles.pressed]}
+    >
+      <Ionicons name="hardware-chip-outline" size={18} color={colors.onFelt} />
+      <View>
+        <Text style={[styles.skipTitle, { color: colors.onFelt }]} numberOfLines={1}>
+          {t('game.computerPlaying', { name })}
+        </Text>
+        <Text style={[styles.skipSub, { color: colors.onFelt2 }]}>{t('game.tapToSkip')}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
 /** Segmented control for whose card the sheet shows. */
 export function CardTabs({
   players,
@@ -222,6 +244,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderTopWidth: 1,
   },
+  skip: {
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1,
+    borderBottomWidth: 1,
+    paddingHorizontal: space.lg,
+  },
+  skipTitle: { fontFamily: fonts.bold, fontSize: 15, maxWidth: 240 },
+  skipSub: { fontFamily: fonts.medium, fontSize: 12 },
   rollLabel: { fontFamily: fonts.bold, fontSize: 17 },
   kbd: { backgroundColor: 'rgba(0,0,0,0.14)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
   kbdText: { fontFamily: fonts.semibold, fontSize: 12, fontVariant: ['tabular-nums'] },

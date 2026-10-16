@@ -5,6 +5,7 @@ import DailyScreen from '../../app/daily';
 import FinalScreen from '../../app/final';
 import GameScreen from '../../app/game';
 import HomeScreen from '../../app/index';
+import NewGameScreen from '../../app/new-game';
 import OnboardingScreen from '../../app/onboarding';
 import SettingsScreen from '../../app/settings';
 import ShopScreen from '../../app/shop';
@@ -22,6 +23,7 @@ const routes = {
   index: HomeScreen,
   game: GameScreen,
   final: FinalScreen,
+  'new-game': NewGameScreen,
   daily: DailyScreen,
   stats: StatsScreen,
   shop: ShopScreen,
@@ -40,7 +42,8 @@ describe('Home', () => {
   });
 
   it.each([
-    ['Play', '/game'],
+    ['Play', '/new-game'],
+    ['Pass and play, 2–6 at one table', '/new-game'],
     ["Today's dice, Same roll for everyone", '/daily'],
     ['Stats', '/stats'],
     ['Shop', '/shop'],

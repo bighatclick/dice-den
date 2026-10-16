@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { nextAiStep } from '../ai';
 import { canRoll, createGame, gameReducer, rollAction, type GameAction, type GameState, type PlayerConfig } from '../engine/game';
 import type { BoxId, PresetId } from '../engine/rules/presets';
 import { getAppData, updateAppData } from './appData';
@@ -21,8 +22,17 @@ interface GameStore {
   toggleHold(index: number): void;
   score(box: BoxId): void;
   undo(): void;
+  /** Plays the next step of a computer turn; false when it is not a computer's turn. */
+  aiStep(): boolean;
+  /** Plays the rest of the current computer turn at once ("tap to skip"). */
+  skipAiTurn(): void;
   /** Leaves the final scorecard: the finished game is no longer "in progress". */
   dismissFinished(): void;
+}
+
+/** Only a person can take back their own last score; a computer's placement stands. */
+export function canUndo(game: GameState): boolean {
+  return game.undo !== null && game.undo.players[game.undo.current].kind === 'human';
 }
 
 function newGameId(): string {
@@ -84,8 +94,25 @@ export const useGameStore = create<GameStore>()((set, get) => {
     undo() {
       const game = get().game;
       // Undoing the final placement would reopen a game that is already in the log.
-      if (!game || game.status === 'finished') return;
+      if (!game || game.status === 'finished' || !canUndo(game)) return;
       apply({ type: 'undo' });
+    },
+    aiStep() {
+      const game = get().game;
+      const step = game && nextAiStep(game);
+      if (!step) return false;
+      if (step.type === 'roll') get().roll();
+      else apply(step);
+      return true;
+    },
+    skipAiTurn() {
+      const start = get().game;
+      if (!start) return;
+      // Bounded: a turn is at most 3 rolls, 5 holds per roll and a score.
+      for (let i = 0; i < 30; i++) {
+        const game = get().game;
+        if (!game || game.current !== start.current || game.round !== start.round || !get().aiStep()) return;
+      }
     },
     dismissFinished() {
       if (get().game?.status !== 'finished') return;

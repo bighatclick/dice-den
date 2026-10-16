@@ -46,6 +46,7 @@ function ThemedStack() {
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
         <Stack.Screen name="game" options={{ gestureEnabled: false }} />
         <Stack.Screen name="final" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="new-game" options={{ presentation: 'modal' }} />
       </Stack>
     </>
   );

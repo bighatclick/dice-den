@@ -9,11 +9,13 @@ export function Button({
   onPress,
   variant = 'secondary',
   subtitle,
+  disabled = false,
 }: {
   label: string;
   onPress: () => void;
   variant?: Variant;
   subtitle?: string;
+  disabled?: boolean;
 }) {
   const { colors } = useTheme();
   const primary = variant === 'primary';
@@ -21,6 +23,8 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={subtitle ? `${label}, ${subtitle}` : label}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
         styles.base,
@@ -28,6 +32,7 @@ export function Button({
           ? { backgroundColor: colors.primary, borderBottomWidth: 4, borderBottomColor: colors.primaryLo }
           : { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line },
         pressed && styles.pressed,
+        disabled && styles.disabled,
       ]}
     >
       <View>
@@ -46,6 +51,7 @@ const styles = StyleSheet.create({
     paddingVertical: space.md,
     justifyContent: 'center',
   },
+  disabled: { opacity: 0.45 },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   label: { fontFamily: fonts.bold, fontSize: 17 },
   subtitle: { fontFamily: fonts.medium, fontSize: 13, marginTop: 2, opacity: 0.85 },

@@ -76,7 +76,10 @@
     "total": "Total",
     "playerTotal": "{{name}}, {{points}} points",
     "playerTurn": "{{name}}, {{points}} points, playing now",
-    "viewCard": "Show {{name}}'s card"
+    "viewCard": "Show {{name}}'s card",
+    "computerPlaying": "{{name}} is playing",
+    "tapToSkip": "Tap to skip",
+    "skip": "Skip {{name}}'s turn"
   },
   "pad": {
     "upper": "Upper",
@@ -109,5 +112,44 @@
     "home": "Home",
     "playAgain": "Play again",
     "winner": "Winner"
+  },
+  "handoff": {
+    "hidden": "{{name}}'s dice hidden · Turn {{turn}} of {{turns}}",
+    "passTo": "Pass the phone to",
+    "body": "{{name}}'s turn is saved. Take a breath, then start when you're ready.",
+    "start": "Start {{name}}'s turn",
+    "undo": "Undo {{name}}'s last score",
+    "standings": "Scores so far"
+  },
+  "newGame": {
+    "title": "New game",
+    "opponents": "Opponents",
+    "solo": "Solo",
+    "vsComputer": "vs Computer",
+    "passAndPlay": "Pass and play",
+    "level": "Computer level",
+    "easy": "Easy",
+    "normal": "Normal",
+    "expert": "Expert",
+    "players": "Players",
+    "playerName": "Player {{n}} name",
+    "defaultName": "Player {{n}}",
+    "human": "Person",
+    "computer": "Computer",
+    "addPlayer": "Add player",
+    "remove": "Remove {{name}}",
+    "rules": "Rules",
+    "classic": "Classic",
+    "classicSubtitle": "13 boxes · bonus +35",
+    "scandinavian": "Scandinavian",
+    "scandinavianSubtitle": "15 boxes · bonus +50",
+    "forcedOrder": "Forced order",
+    "forcedOrderSubtitle": "Fill boxes top to bottom",
+    "start": "Start game",
+    "close": "Close",
+    "replaceTitle": "Start a new game?",
+    "replaceBody": "The game you have in progress will end.",
+    "replaceConfirm": "Start new game",
+    "cancel": "Cancel"
   }
 }

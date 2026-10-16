@@ -26,13 +26,13 @@ export default function HomeScreen() {
           subtitle={
             resuming ? t('home.resumeSubtitle', { turn: game.round, turns: PRESETS[game.preset].boxes.length }) : undefined
           }
-          onPress={() => router.push(game?.status === 'finished' ? '/final' : '/game')}
+          onPress={() => router.push(game?.status === 'finished' ? '/final' : resuming ? '/game' : '/new-game')}
         />
         <Button label={t('home.daily')} subtitle={t('home.dailySubtitle')} onPress={() => router.push('/daily')} />
         <Button
           label={t('home.passAndPlay')}
           subtitle={t('home.passAndPlaySubtitle')}
-          onPress={() => router.push('/game')}
+          onPress={() => router.push({ pathname: '/new-game', params: { opponents: 'pass' } })}
         />
         <Button label={t('home.stats')} onPress={() => router.push('/stats')} />
         <Button label={t('home.shop')} onPress={() => router.push('/shop')} />

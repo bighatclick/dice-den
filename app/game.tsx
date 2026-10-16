@@ -3,20 +3,24 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessibilityInfo, Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { nextAiStep } from '../src/ai';
 import { MAX_ROLLS } from '../src/engine/dice';
 import { playerTotal, scoreOptions } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
 import { getAppData } from '../src/state/appData';
-import { useGameStore } from '../src/state/gameStore';
+import { canUndo, useGameStore } from '../src/state/gameStore';
 import { Die } from '../src/ui/Die';
 import { holdFeedback, rollFeedback, scoreFeedback } from '../src/ui/feedback';
 import { Felt } from '../src/ui/Felt';
-import { CardTabs, GlassButton, PlayerBar, RollButton, RollPips } from '../src/ui/GameParts';
+import { CardTabs, GlassButton, PlayerBar, RollButton, RollPips, SkipButton } from '../src/ui/GameParts';
+import { Handoff } from '../src/ui/Handoff';
+import { SEAT_COLORS } from '../src/state/players';
 import { ScorePad } from '../src/ui/ScorePad';
 import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 
-const SOLO_PLAYER_COLOR = '#C77D4E';
+/** Pause before each visible computer step, in ms. */
+const AI_DELAY = { roll: 700, firstRollAfterUndoable: 1500, toggleHold: 260, score: 900 };
 
 /** S3 Game table. No ads can appear here, ever (CLAUDE.md rule 1). */
 export default function GameScreen() {
@@ -25,14 +29,14 @@ export default function GameScreen() {
   const { width, height } = useWindowDimensions();
   const game = useGameStore((s) => s.game);
   const rollSeq = useGameStore((s) => s.rollSeq);
-  const { start, roll, toggleHold, score, undo } = useGameStore.getState();
+  const { start, roll, toggleHold, score, undo, skipAiTurn } = useGameStore.getState();
   // Whose card the sheet shows; snaps back to the current player when the turn passes.
   const [picked, setPicked] = useState<{ turnOf: number; index: number } | null>(null);
   const settings = getAppData().settings;
 
-  // "Play" with nothing in progress starts a solo game (the new-game sheet arrives with AI and pass-and-play).
+  // Opening the table with nothing in progress (e.g. a deep link) starts a solo game.
   useEffect(() => {
-    if (!game) start({ players: [{ id: 'p1', name: t('players.you'), kind: 'human', color: SOLO_PLAYER_COLOR }] });
+    if (!game) start({ players: [{ id: 'p1', name: t('players.you'), kind: 'human', color: SEAT_COLORS[0] }] });
   }, [game, start, t]);
 
   useEffect(() => {
@@ -49,6 +53,22 @@ export default function GameScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rollSeq]);
 
+  // Computer turns play themselves, one visible step at a time.
+  const aiTurn = game?.status === 'playing' && game.players[game.current].kind === 'ai';
+  useEffect(() => {
+    if (!game || !aiTurn) return;
+    const step = nextAiStep(game);
+    if (!step) return;
+    let delay: number = AI_DELAY[step.type];
+    // Give the person who just scored a moment to undo before the computer's first roll.
+    if (step.type === 'roll' && game.rollsUsed === 0 && canUndo(game)) delay = AI_DELAY.firstRollAfterUndoable;
+    const timer = setTimeout(() => useGameStore.getState().aiStep(), delay);
+    return () => clearTimeout(timer);
+  }, [game, aiTurn]);
+
+  // Pass-and-play: cover the table until the next person is holding the phone.
+  const [readyKey, setReadyKey] = useState<string | null>(null);
+
   if (!game || game.status === 'finished') return <View style={[styles.root, { backgroundColor: colors.feltLo }]} />;
 
   const preset = PRESETS[game.preset];
@@ -56,7 +76,16 @@ export default function GameScreen() {
   const viewedPlayer = game.players[Math.min(viewed, game.players.length - 1)];
   const viewingCurrent = viewedPlayer === game.players[game.current];
   const rolled = game.rollsUsed > 0;
-  const canHold = rolled && game.rollsUsed < MAX_ROLLS;
+  const humanTurn = !aiTurn;
+  const canHold = humanTurn && rolled && game.rollsUsed < MAX_ROLLS;
+  const turnKey = `${game.id}|${game.round}|${game.current}`;
+  const previousHuman = findPreviousHuman(game.players, game.current);
+  const handoffDue =
+    humanTurn &&
+    game.rollsUsed === 0 &&
+    previousHuman !== null &&
+    (game.round > 1 || previousHuman < game.current) &&
+    readyKey !== turnKey;
   const rollsLeft = MAX_ROLLS - game.rollsUsed;
   const wide = width > height && width >= 640;
 
@@ -102,14 +131,18 @@ export default function GameScreen() {
         </Text>
       </View>
       <View style={[styles.actions, settings.leftHanded && styles.actionsLeft]}>
-        <RollButton
-          rollsLeft={rollsLeft}
-          onPress={() => {
-            rollFeedback();
-            roll();
-          }}
-        />
-        {game.undo ? <GlassButton icon="arrow-undo" label={t('game.undo')} onPress={undo} size={58} /> : null}
+        {aiTurn ? (
+          <SkipButton name={game.players[game.current].name} onPress={skipAiTurn} />
+        ) : (
+          <RollButton
+            rollsLeft={rollsLeft}
+            onPress={() => {
+              rollFeedback();
+              roll();
+            }}
+          />
+        )}
+        {canUndo(game) ? <GlassButton icon="arrow-undo" label={t('game.undo')} onPress={undo} size={58} /> : null}
       </View>
     </View>
   );
@@ -133,10 +166,10 @@ export default function GameScreen() {
           preset={preset}
           card={viewedPlayer.card}
           extraYatzyCount={viewedPlayer.extraYatzyCount}
-          options={viewingCurrent ? scoreOptions(game) : {}}
+          options={viewingCurrent && humanTurn ? scoreOptions(game) : {}}
           hints={settings.hints}
           onScore={
-            viewingCurrent
+            viewingCurrent && humanTurn
               ? (box) => {
                   scoreFeedback();
                   score(box);
@@ -163,6 +196,18 @@ export default function GameScreen() {
           {sheet}
         </View>
       </SafeAreaView>
+      {handoffDue ? (
+        <Handoff
+          next={game.players[game.current]}
+          previous={game.players[previousHuman]}
+          players={game.players}
+          totals={totals}
+          turn={game.round}
+          turns={preset.boxes.length}
+          onStart={() => setReadyKey(turnKey)}
+          onUndo={canUndo(game) ? undo : undefined}
+        />
+      ) : null}
     </View>
   );
 }
@@ -204,3 +249,12 @@ const styles = StyleSheet.create({
   totalValue: { fontFamily: fonts.display, fontSize: 24, fontVariant: ['tabular-nums'] },
   padScroll: { paddingBottom: 34 },
 });
+
+/** The last person (not computer) to play before `current`, or null if nobody else is a person. */
+function findPreviousHuman(players: readonly { kind: 'human' | 'ai' }[], current: number): number | null {
+  for (let step = 1; step < players.length; step++) {
+    const i = (current - step + players.length) % players.length;
+    if (players[i].kind === 'human') return i;
+  }
+  return null;
+}
