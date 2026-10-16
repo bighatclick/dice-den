@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dice Den Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+:root{
+  --page:#EADFCC; --bg:#F7F0E4; --surface:#FFFDF9; --surface-2:#F3EBDD; --ink:#2B1D14; --ink-2:#6E5A4B; --ink-3:#A39080;
+  --line:#EADFCF; --primary:#8A4520; --primary-hi:#B4642F; --primary-lo:#5C2D14; --on-primary:#FFF8EE;
+  --accent:#2E6B4F; --accent-soft:#E2F0E8; --mint:#7FE0B0; --gold:#C9952B; --gold-hi:#F4CF73; --gold-soft:#F8EDD3;
+  --felt-hi:#3C8762; --felt:#2A6248; --felt-lo:#173D2C; --rim:#5A2E15;
+  --sheet:#FFFDF9; --shadow:0 1px 2px rgba(60,35,15,.06),0 12px 32px -8px rgba(60,35,15,.18);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --page:#0C0907; --bg:#16100C; --surface:#221912; --surface-2:#2B2018; --ink:#F5ECDF; --ink-2:#C4B19D; --ink-3:#8C7967;
+  --line:#35281E; --primary:#C97A45; --primary-hi:#E39A62; --primary-lo:#8A4E26; --on-primary:#1A0F08;
+  --accent:#6BC096; --accent-soft:#1B3127; --gold:#E7BE5E; --gold-soft:#3A2D14;
+  --felt-hi:#2B6A4C; --felt:#1C4836; --felt-lo:#0E2519; --rim:#3A1D0C; --sheet:#1D1510;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 34px -8px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --page:#0C0907; --bg:#16100C; --surface:#221912; --surface-2:#2B2018; --ink:#F5ECDF; --ink-2:#C4B19D; --ink-3:#8C7967;
+  --line:#35281E; --primary:#C97A45; --primary-hi:#E39A62; --primary-lo:#8A4E26; --on-primary:#1A0F08;
+  --accent:#6BC096; --accent-soft:#1B3127; --gold:#E7BE5E; --gold-soft:#3A2D14;
+  --felt-hi:#2B6A4C; --felt:#1C4836; --felt-lo:#0E2519; --rim:#3A1D0C; --sheet:#1D1510;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 34px -8px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);font-family:Inter,system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;padding:32px 16px 72px}
+.num{font-variant-numeric:tabular-nums}
+.top{max-width:1580px;margin:0 auto 30px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.top h1{font:700 30px Fraunces,serif;letter-spacing:-.02em}
+.top p{color:var(--ink-2);font-size:14px;margin-top:4px}
+.ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button,.replay{border:0;background:transparent;color:var(--ink-2);font:600 13px Inter;padding:8px 14px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.replay{background:var(--surface);border:1px solid var(--line);display:flex;gap:6px;align-items:center}
+.grid{max-width:1580px;margin:0 auto;display:flex;flex-wrap:wrap;gap:40px 30px;justify-content:center}
+.cap{font:700 13px Inter;color:var(--ink);margin:0 0 12px 8px}
+.cap span{color:var(--ink-3);font-weight:500}
+
+/* device */
+.phone{width:364px;height:780px;border-radius:54px;padding:11px;max-width:100%;
+  background:linear-gradient(145deg,#3a332e,#121010 40%,#24201d);box-shadow:0 0 0 1.5px #4a423c inset,0 40px 80px -20px rgba(40,20,5,.45),0 20px 30px -15px rgba(0,0,0,.4)}
+.screen{width:100%;height:100%;border-radius:44px;background:var(--bg);overflow:hidden;position:relative;display:flex;flex-direction:column;isolation:isolate}
+.grain:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .25 0 0 0 0 .1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.status{height:48px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:4px 28px 0 32px;font:600 15px Inter;position:relative;z-index:3}
+.status .island{width:100px;height:30px;background:#000;border-radius:20px}
+.status i{font-size:14px;margin-left:3px}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:128px;height:5px;border-radius:3px;background:currentColor;opacity:.4;z-index:5}
+
+/* dice */
+.die{--s:52px;width:var(--s);height:var(--s);border-radius:calc(var(--s)*.24);position:relative;flex:none;
+  background:linear-gradient(150deg,#FFFFFD 0%,#F6EEE1 55%,#E8DCC8 100%);
+  box-shadow:inset 0 2px 1px #fff,inset 0 -3px 5px rgba(140,105,70,.28),0 calc(var(--s)*.09) 0 -1px #CDBBA0,0 calc(var(--s)*.22) calc(var(--s)*.3) -4px rgba(0,0,0,.45);
+  transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.die svg{width:100%;height:100%;display:block}
+.die.held{transform:translateY(-12px) scale(1.04)!important;
+  box-shadow:inset 0 2px 1px #fff,inset 0 -3px 5px rgba(140,105,70,.28),0 calc(var(--s)*.09) 0 -1px #CDBBA0,0 0 0 3px var(--mint),0 0 28px 4px rgba(127,224,176,.55),0 26px 22px -10px rgba(0,0,0,.5)}
+.die .tag{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);font:800 9px Inter;letter-spacing:.12em;color:var(--mint);display:flex;align-items:center;gap:3px;white-space:nowrap}
+
+/* 3d cube */
+.scene3d{perspective:600px;width:76px;height:76px}
+.cube{width:76px;height:76px;position:relative;transform-style:preserve-3d;animation:spin 9s linear infinite}
+.cube .f{position:absolute;inset:0;border-radius:18px;background:linear-gradient(150deg,#FFFFFD,#EFE4D2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),inset 0 -6px 10px rgba(140,105,70,.25);backface-visibility:hidden}
+.cube .f svg{width:100%;height:100%}
+.f1{transform:translateZ(38px)}.f6{transform:rotateY(180deg) translateZ(38px)}.f3{transform:rotateY(90deg) translateZ(38px)}
+.f4{transform:rotateY(-90deg) translateZ(38px)}.f2{transform:rotateX(90deg) translateZ(38px)}.f5{transform:rotateX(-90deg) translateZ(38px)}
+@keyframes spin{from{transform:rotateX(-22deg) rotateY(0) rotateZ(8deg)}to{transform:rotateX(-22deg) rotateY(360deg) rotateZ(8deg)}}
+
+/* buttons */
+.candy{position:relative;overflow:hidden;height:58px;border-radius:20px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 17px Inter;color:var(--on-primary);
+  background:linear-gradient(180deg,var(--primary-hi),var(--primary) 55%,var(--primary-lo));
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),inset 0 -4px 0 rgba(0,0,0,.22),0 12px 24px -8px rgba(138,69,32,.65)}
+.candy:after{content:"";position:absolute;top:0;bottom:0;width:60%;left:-70%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);animation:sheen 3.2s ease-in-out infinite}
+@keyframes sheen{0%,55%{left:-70%}100%{left:130%}}
+.candy.cream{color:#4A230F;background:linear-gradient(180deg,#FFFFFF,#FFF4E2 60%,#F2E1C6);box-shadow:inset 0 1.5px 0 #fff,inset 0 -4px 0 rgba(122,62,29,.15),0 12px 24px -8px rgba(0,0,0,.45)}
+.candy.cream:after{background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent)}
+.candy .kbd{font:600 12px Inter;padding:4px 8px;border-radius:8px;background:rgba(0,0,0,.14)}
+.glass{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.iconbtn{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;font-size:20px;flex:none}
+.iconbtn.light{background:var(--surface);border:1px solid var(--line);color:var(--ink);box-shadow:var(--shadow)}
+
+/* HOME */
+.home{background:radial-gradient(120% 50% at 80% 0%,rgba(201,149,43,.18),transparent 60%),var(--bg)}
+.home .body{flex:1;padding:4px 18px 24px;display:flex;flex-direction:column;gap:14px}
+.hbar{display:flex;align-items:center;gap:10px}
+.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(150deg,#9A5128,#5C2D14);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 8px 16px -6px rgba(92,45,20,.6)}
+.logo .die{--s:24px;transform:rotate(-12deg)}
+.hbar .t{flex:1}
+.hbar small{font:500 12px Inter;color:var(--ink-2)}
+.hbar h2{font:700 22px Fraunces;letter-spacing:-.02em;line-height:1.1}
+.table{position:relative;border-radius:30px;padding:18px;color:#F4FBF6;overflow:hidden;min-height:268px;
+  background:radial-gradient(90% 70% at 70% 25%,var(--felt-hi),var(--felt) 55%,var(--felt-lo));
+  box-shadow:inset 0 0 0 5px var(--rim),inset 0 0 0 6.5px #2C1408,inset 0 18px 40px rgba(0,0,0,.35),0 22px 40px -14px rgba(23,61,44,.7)}
+.table:before{content:"";position:absolute;inset:0;opacity:.35;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.table > *{position:relative}
+.table .scene3d{position:absolute;right:24px;top:62px}
+.table .shadowdisc{position:absolute;right:26px;top:150px;width:72px;height:16px;border-radius:50%;background:rgba(0,0,0,.35);filter:blur(6px)}
+.table .die.side{position:absolute;right:92px;top:136px;transform:rotate(-18deg);--s:40px}
+.eyebrow{font:700 10.5px Inter;letter-spacing:.14em;text-transform:uppercase;opacity:.75;display:flex;align-items:center;gap:6px}
+.eyebrow .live{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(127,224,176,.25);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(127,224,176,0)}}
+.table h3{font:700 30px Fraunces;letter-spacing:-.02em;margin:8px 0 4px;line-height:1}
+.table .vs{font-size:13px;opacity:.85;max-width:150px;line-height:1.4}
+.scoreline{display:flex;gap:8px;margin:40px 0 14px;max-width:54%}
+.sc{flex:1;border-radius:16px;padding:9px 12px}
+.sc span{font:600 11px Inter;opacity:.8;display:block}
+.sc b{font:800 20px Inter;font-variant-numeric:tabular-nums}
+.sc.me{background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1.5px rgba(127,224,176,.6)}
+.sc.cpu{background:rgba(0,0,0,.18)}
+.turnbar{display:flex;gap:3px;margin-bottom:14px}
+.turnbar i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.18)}
+.turnbar i.d{background:var(--gold-hi)}
+.beam{position:relative;border-radius:24px;padding:1.5px;background:conic-gradient(from var(--a),transparent 0 70%,var(--gold-hi) 82%,#fff 86%,var(--gold) 90%,transparent 100%),var(--line);animation:beam 4.5s linear infinite;box-shadow:var(--shadow)}
+@keyframes beam{to{--a:360deg}}
+.daily{background:var(--surface);border-radius:22.5px;padding:14px}
+.daily .row{display:flex;align-items:center;gap:12px}
+.cal{width:48px;height:52px;border-radius:14px;overflow:hidden;background:var(--surface-2);text-align:center;flex:none;box-shadow:inset 0 0 0 1px var(--line)}
+.cal span{display:block;background:#B23A2E;color:#fff;font:800 9px Inter;letter-spacing:.1em;padding:3px 0}
+.cal b{font:700 22px Fraunces;line-height:31px}
+.daily h4{font:700 16px Inter}
+.daily .sub{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.flame{margin-left:auto;display:flex;align-items:center;gap:4px;font:800 16px Inter;color:#fff;padding:7px 11px;border-radius:14px;
+  background:linear-gradient(160deg,#F6B544,#E0662B);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -6px rgba(224,102,43,.7)}
+.week{display:flex;justify-content:space-between;margin-top:12px;gap:6px}
+.week div{flex:1;height:30px;border-radius:10px;display:grid;place-items:center;font:700 11px Inter;color:var(--ink-3);background:var(--surface-2)}
+.week .d{background:linear-gradient(180deg,#3C8762,#2A6248);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.week .now{background:var(--gold-soft);color:var(--gold);box-shadow:inset 0 0 0 1.5px var(--gold)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;min-height:112px}
+.tile .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+.tile b{font:700 14.5px Inter;display:block}
+.tile span{font-size:12px;color:var(--ink-2)}
+.avs{display:flex;margin-left:auto}
+.avs em{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);margin-left:-7px;font:800 10px Inter;color:#fff;display:grid;place-items:center;font-style:normal}
+.spark{margin-left:auto}
+
+/* GAME */
+.game{background:radial-gradient(130% 55% at 50% 0%,var(--felt-hi),var(--felt) 45%,var(--felt-lo) 75%);color:#F4FBF6}
+.game:after{content:"";position:absolute;inset:0;z-index:-1;opacity:.3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.gbar{display:flex;align-items:center;gap:8px;padding:2px 14px 0}
+.gbar .iconbtn{color:#fff;width:40px;height:40px;border-radius:13px;font-size:18px}
+.pls{flex:1;display:flex;gap:6px}
+.pl{flex:1;display:flex;align-items:center;gap:7px;padding:5px 9px 5px 5px;border-radius:14px}
+.pl .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:800 11px Inter;color:#fff;flex:none}
+.pl .nm{font:600 10.5px Inter;opacity:.8;line-height:1.1}
+.pl .pt{font:800 15px Inter;font-variant-numeric:tabular-nums;line-height:1.1}
+.pl.on{background:rgba(255,255,255,.18);box-shadow:inset 0 0 0 1.5px var(--gold-hi)}
+.pl.off{background:rgba(0,0,0,.15)}
+.feltzone{padding:14px 14px 0;text-align:center}
+.rollinfo{display:flex;align-items:center;justify-content:center;gap:10px;font:700 11px Inter;letter-spacing:.12em;text-transform:uppercase;color:#CDEBDB}
+.pips3{display:flex;gap:5px}
+.pips3 i{width:9px;height:9px;border-radius:50%;background:var(--gold-hi);box-shadow:0 0 10px rgba(244,207,115,.8)}
+.pips3 i.x{background:rgba(255,255,255,.2);box-shadow:none}
+.dicerow{display:flex;justify-content:center;gap:10px;margin:30px 0 34px}
+.dicerow .die{--s:54px}
+.hold-hint{font-size:12px;color:#BFE3CF;margin-top:-10px;margin-bottom:12px;opacity:.85}
+.actrow{display:flex;gap:10px;padding:0 14px}
+.actrow .candy{flex:1}
+.undo{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;font-size:22px;color:#fff}
+.sheet{margin-top:14px;flex:1;background:var(--sheet);color:var(--ink);border-radius:30px 30px 0 0;padding:8px 14px 22px;box-shadow:0 -14px 30px -10px rgba(0,0,0,.45);position:relative}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tabs{display:flex;background:var(--surface-2);border-radius:12px;padding:3px}
+.tabs span{font:700 12px Inter;padding:6px 12px;border-radius:9px;color:var(--ink-2)}
+.tabs span.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tot{text-align:right;line-height:1}
+.tot small{font:700 9.5px Inter;letter-spacing:.12em;color:var(--ink-3);display:block}
+.tot b{font:800 24px Fraunces;font-variant-numeric:tabular-nums}
+.padg{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.ch{font:800 9.5px Inter;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;padding:4px 6px 4px}
+.r{height:31px;display:flex;align-items:center;justify-content:space-between;font-size:12.5px;padding:0 8px;border-bottom:1px dashed var(--line)}
+.r .lab{display:flex;align-items:center;gap:7px;color:var(--ink);font-weight:500}
+.r .lab svg{width:15px;height:15px;color:var(--ink-2)}
+.r .v{font:800 14px Inter;font-variant-numeric:tabular-nums}
+.r .h{color:var(--ink-3);font-weight:600;font-size:13px}
+.r .h0{color:var(--ink-3);opacity:.5;font-weight:600;font-size:13px}
+.r.best{border:0;border-radius:10px;background:linear-gradient(90deg,var(--accent-soft),transparent 130%);box-shadow:inset 0 0 0 1.5px var(--accent);animation:glow 2s ease-in-out infinite}
+.r.best .h{color:var(--accent);font-weight:800}
+.r.best .lab{font-weight:700}
+@keyframes glow{50%{box-shadow:inset 0 0 0 1.5px var(--accent),0 0 16px -2px rgba(46,107,79,.45)}}
+.bon{margin:6px 0 0;padding:7px 8px;border-radius:11px;background:var(--gold-soft)}
+.bon .t{display:flex;justify-content:space-between;font:700 11px Inter;color:var(--gold)}
+.bon .bar{height:6px;border-radius:3px;background:rgba(201,149,43,.22);margin-top:5px;overflow:hidden}
+.bon .bar b{display:block;height:100%;width:67%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold-hi))}
+.yz .lab{font:800 12.5px Fraunces!important;letter-spacing:.01em}
+
+/* HANDOFF */
+.hand{background:#0E1B26;color:#EEF5FA}
+.aur{position:absolute;inset:-20%;z-index:-1;filter:blur(50px);opacity:.9}
+.aur i{position:absolute;border-radius:50%}
+.aur .a1{width:340px;height:340px;background:#3F7FB0;left:10%;top:8%;animation:drift 12s ease-in-out infinite}
+.aur .a2{width:280px;height:280px;background:#7E62C9;right:0;top:35%;animation:drift 14s ease-in-out infinite reverse}
+.aur .a3{width:260px;height:260px;background:#2E8F8A;left:5%;bottom:5%;animation:drift 16s ease-in-out infinite}
+@keyframes drift{50%{transform:translate(40px,-30px) scale(1.12)}}
+.hand .body{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 22px 30px;text-align:center;gap:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px Inter;padding:7px 12px;border-radius:999px}
+.orb{position:relative;width:150px;height:150px;margin-top:22px;display:grid;place-items:center}
+.orb:before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from var(--a),#7FB3D5,#B9A4F0,#7FE0D0,#7FB3D5);animation:beam 6s linear infinite;
+  -webkit-mask:radial-gradient(circle,transparent 64px,#000 65px);mask:radial-gradient(circle,transparent 64px,#000 65px)}
+.orb:after{content:"";position:absolute;inset:-18px;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.orb div{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;font:700 54px Fraunces;color:#0E2433;
+  background:radial-gradient(circle at 35% 30%,#D3E7F5,#8FC0E0 60%,#5E9BC6);box-shadow:inset 0 -6px 14px rgba(0,0,0,.2),0 20px 40px -10px rgba(63,127,176,.8)}
+.hand .lbl{font:700 12px Inter;letter-spacing:.16em;text-transform:uppercase;opacity:.7;margin-top:6px}
+.hand h2{font:700 52px Fraunces;letter-spacing:-.03em;line-height:1;margin-top:-6px}
+.hand p{font-size:14px;opacity:.75;line-height:1.5;max-width:250px}
+.stand{width:100%;border-radius:22px;padding:8px 14px}
+.st{display:flex;align-items:center;gap:10px;height:42px;font-size:14px}
+.st + .st{border-top:1px solid rgba(255,255,255,.08)}
+.st i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 10px Inter;color:#fff;font-style:normal}
+.st .bar{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.st .bar b{display:block;height:100%;border-radius:3px}
+.st em{font:800 15px Inter;font-style:normal;font-variant-numeric:tabular-nums;width:34px;text-align:right}
+.holdbtn{margin-top:auto;width:100%;height:62px;border-radius:22px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;font:700 16px Inter;color:#0E2433;
+  background:linear-gradient(180deg,#fff,#E3EEF6);box-shadow:inset 0 -4px 0 rgba(14,36,51,.12),0 16px 30px -10px rgba(0,0,0,.6)}
+.holdbtn .fill{position:absolute;inset:0;width:38%;background:linear-gradient(90deg,rgba(127,179,213,.35),rgba(185,164,240,.45));animation:fillx 2.6s ease-in-out infinite}
+@keyframes fillx{0%{width:0}70%,100%{width:100%}}
+.holdbtn span{position:relative;display:flex;gap:8px;align-items:center}
+
+/* FINAL */
+.final{background:radial-gradient(90% 45% at 50% 18%,rgba(244,207,115,.45),transparent 70%),var(--bg)}
+.final .body{flex:1;display:flex;flex-direction:column;padding:0 18px 24px;gap:12px;position:relative}
+.rays{position:absolute;left:50%;top:-30px;width:520px;height:520px;margin-left:-260px;z-index:-1;opacity:.5;animation:rot 40s linear infinite;
+  background:repeating-conic-gradient(from 0deg,rgba(244,207,115,.5) 0 8deg,transparent 8deg 22deg);
+  -webkit-mask:radial-gradient(circle,#000 0,transparent 62%);mask:radial-gradient(circle,#000 0,transparent 62%)}
+@keyframes rot{to{transform:rotate(360deg)}}
+.conf{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+.conf i{position:absolute;top:-12px;width:7px;height:12px;border-radius:2px;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(560px) rotate(720deg)}}
+.hero2{text-align:center;padding-top:8px}
+.medal{width:74px;height:74px;margin:0 auto;border-radius:24px;display:grid;place-items:center;font-size:38px;color:#7A4E0E;transform:rotate(-6deg);
+  background:linear-gradient(150deg,#FFE7A6,#E9B955 55%,#C48A26);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -5px 0 rgba(122,78,14,.3),0 18px 30px -10px rgba(201,149,43,.8)}
+.hero2 small{display:block;margin-top:14px;font:800 11px Inter;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.big{font:800 84px Fraunces;letter-spacing:-.04em;line-height:.95;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,var(--ink) 30%,#7A4E0E);-webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="dark"] .big{background:linear-gradient(180deg,#FFF3D6 20%,#E7BE5E);-webkit-background-clip:text;background-clip:text}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .big{background:linear-gradient(180deg,#FFF3D6 20%,#E7BE5E);-webkit-background-clip:text;background-clip:text}}
+.pb{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;margin-top:8px;font:700 12.5px Inter;padding:7px 14px;border-radius:999px;color:#4A2E06;
+  background:linear-gradient(180deg,#FFE29A,#EDBA4C);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 8px 16px -6px rgba(201,149,43,.7)}
+.pb:after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.8),transparent);animation:sheen 2.6s ease-in-out infinite}
+.rank{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:4px 14px}
+.rk{display:flex;align-items:center;gap:12px;height:56px}
+.rk + .rk{border-top:1px solid var(--line)}
+.rk .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 13px Inter;color:#fff;position:relative;flex:none}
+.rk .crown{position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:15px;color:var(--gold)}
+.rk .nm{flex:1}
+.rk .nm b{display:block;font:700 14px Inter}
+.rk .nm span{font-size:11.5px;color:var(--ink-2)}
+.rk .s{font:800 19px Inter;font-variant-numeric:tabular-nums}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chips div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:9px 4px;text-align:center}
+.chips span{display:block;font:800 9px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.chips b{font:800 17px Inter;font-variant-numeric:tabular-nums}
+.chips .g{background:var(--gold-soft);border-color:transparent}.chips .g b{color:var(--gold)}
+.ra{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:18px;background:var(--surface-2)}
+.ra .ic{width:36px;height:36px;border-radius:11px;background:var(--surface);display:grid;place-items:center;font-size:18px;color:var(--primary);flex:none}
+.ra b{font:700 13px Inter;display:block}.ra span{font-size:11.5px;color:var(--ink-2)}
+.ra .go{margin-left:auto;font-size:18px;color:var(--ink-3)}
+.acts{display:grid;grid-template-columns:58px 1fr 1.3fr;gap:10px;margin-top:auto}
+.acts .sq{height:58px;border-radius:20px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;box-shadow:var(--shadow);font-weight:700}
+.acts .home2{display:flex;align-items:center;justify-content:center;font:700 16px Inter}
+
+@media (prefers-reduced-motion: reduce){*,*:before,*:after{animation:none!important}}
+@media (max-width:420px){.phone{width:100%;height:auto;aspect-ratio:364/780}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="pip" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#5A3E2B"/><stop offset=".55" stop-color="#2A1A10"/><stop offset="1" stop-color="#120A05"/></radialGradient>
+</defs></svg>
+
+<header class="top">
+  <div>
+    <h1>Dice Den · key screens v2</h1>
+    <p>Den design system, now with depth: felt table, 3D dice, glossy buttons, animated highlights</p>
+  </div>
+  <div class="ctrls">
+    <button class="replay" id="replay"><i class="ph ph-arrow-clockwise"></i>Replay</button>
+    <div class="seg" role="group" aria-label="Theme"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="system" class="on">System</button></div>
+  </div>
+</header>
+
+<div class="grid">
+
+<!-- HOME -->
+<section><p class="cap">S1 · Home <span>· resume, daily, modes</span></p>
+<div class="phone"><div class="screen home grain">
+  <div class="status"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body">
+    <div class="hbar">
+      <div class="logo"><span class="die" data-v="5"></span></div>
+      <div class="t"><small>Good evening</small><h2>Dice Den</h2></div>
+      <div class="iconbtn light" aria-label="Shop"><i class="ph ph-storefront"></i></div>
+      <div class="iconbtn light" aria-label="Settings"><i class="ph ph-gear-six"></i></div>
+    </div>
+
+    <div class="table">
+      <div class="shadowdisc"></div>
+      <div class="scene3d"><div class="cube">
+        <div class="f f1" data-v="1"></div><div class="f f2" data-v="2"></div><div class="f f3" data-v="3"></div>
+        <div class="f f4" data-v="4"></div><div class="f f5" data-v="5"></div><div class="f f6" data-v="6"></div>
+      </div></div>
+      <span class="die side" data-v="6"></span>
+      <div class="eyebrow"><span class="live"></span>Game in progress</div>
+      <h3>Continue</h3>
+      <div class="vs">vs Computer (Normal) · Classic</div>
+      <div class="scoreline">
+        <div class="sc me"><span>You</span><b>146</b></div>
+        <div class="sc cpu"><span>Computer</span><b>151</b></div>
+      </div>
+      <div class="turnbar"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="candy cream"><i class="ph-fill ph-play"></i>Play<span class="kbd num">Turn 7 of 13</span></div>
+    </div>
+
+    <div class="beam"><div class="daily">
+      <div class="row">
+        <div class="cal"><span>OCT</span><b class="num">16</b></div>
+        <div><h4>Today's dice</h4><div class="sub">Same roll for everyone</div></div>
+        <div class="flame num"><i class="ph-fill ph-fire"></i>12</div>
+      </div>
+      <div class="week"><div class="d"><i class="ph-bold ph-check"></i></div><div class="d"><i class="ph-bold ph-check"></i></div><div class="d"><i class="ph-bold ph-check"></i></div><div class="d"><i class="ph-bold ph-check"></i></div><div class="d"><i class="ph-bold ph-check"></i></div><div class="now">F</div><div>S</div></div>
+    </div></div>
+
+    <div class="tiles">
+      <div class="tile">
+        <div style="display:flex;align-items:center"><div class="ic" style="background:var(--accent-soft);color:var(--accent)"><i class="ph-duotone ph-users-three"></i></div>
+          <div class="avs"><em style="background:#5E9BC6">M</em><em style="background:#C77D4E">D</em><em style="background:#8E7CC3">S</em></div></div>
+        <div><b>Pass and play</b><span>2–6 at one table</span></div>
+      </div>
+      <div class="tile">
+        <div style="display:flex;align-items:center"><div class="ic" style="background:var(--gold-soft);color:var(--gold)"><i class="ph-duotone ph-chart-line-up"></i></div>
+          <svg class="spark" width="58" height="26" viewBox="0 0 58 26" aria-hidden="true"><path d="M2 20 L12 16 L20 18 L30 10 L38 13 L48 5 L56 7" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="56" cy="7" r="3" fill="var(--gold)"/></svg></div>
+        <div><b>Stats</b><span>Best <b class="num" style="display:inline;font-size:12px">287</b> · 41 games</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="homebar"></div>
+</div></div></section>
+
+<!-- GAME -->
+<section><p class="cap">S3 · Game table <span>· roll 2 of 3, hints on</span></p>
+<div class="phone"><div class="screen game">
+  <div class="status" style="color:#fff"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="gbar">
+    <div class="iconbtn glass" aria-label="Leave game"><i class="ph-bold ph-caret-left"></i></div>
+    <div class="pls">
+      <div class="pl on"><span class="av" style="background:linear-gradient(150deg,#D08A55,#8A4520)">Y</span><span><div class="nm">You</div><div class="pt">146</div></span></div>
+      <div class="pl off"><span class="av" style="background:linear-gradient(150deg,#6E8794,#3D525E)"><i class="ph-bold ph-cpu"></i></span><span><div class="nm">Computer</div><div class="pt">151</div></span></div>
+    </div>
+    <div class="iconbtn glass" aria-label="Menu"><i class="ph-bold ph-dots-three"></i></div>
+  </div>
+
+  <div class="feltzone">
+    <div class="rollinfo">Turn 7 · Roll 2 of 3 <span class="pips3"><i></i><i></i><i class="x"></i></span></div>
+    <div class="dicerow">
+      <span class="die held" data-v="5"><span class="tag"><i class="ph-fill ph-lock-simple"></i>HELD</span></span>
+      <span class="die held" data-v="5"><span class="tag"><i class="ph-fill ph-lock-simple"></i>HELD</span></span>
+      <span class="die" data-v="2" style="transform:rotate(-9deg) translateY(4px)"></span>
+      <span class="die held" data-v="5"><span class="tag"><i class="ph-fill ph-lock-simple"></i>HELD</span></span>
+      <span class="die" data-v="6" style="transform:rotate(11deg) translateY(2px)"></span>
+    </div>
+    <div class="hold-hint">Tap dice to hold · tap a box to score</div>
+  </div>
+
+  <div class="actrow">
+    <div class="candy"><i class="ph-bold ph-arrows-clockwise"></i>Roll<span class="kbd">1 left</span></div>
+    <div class="undo glass" aria-label="Undo"><i class="ph-bold ph-arrow-u-up-left"></i></div>
+  </div>
+
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="sh">
+      <div class="tabs"><span class="on">You</span><span>Computer</span></div>
+      <div class="tot"><small>TOTAL</small><b>146</b></div>
+    </div>
+    <div class="padg">
+      <div>
+        <div class="ch">Upper</div>
+        <div class="r"><span class="lab"><span class="mini" data-v="1"></span>Ones</span><span class="v">3</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="2"></span>Twos</span><span class="v">6</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="3"></span>Threes</span><span class="v">9</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="4"></span>Fours</span><span class="h0">0</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="5"></span>Fives</span><span class="h">15</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="6"></span>Sixes</span><span class="v">24</span></div>
+        <div class="bon"><div class="t num"><span>Bonus +35</span><span>42/63</span></div><div class="bar"><b></b></div></div>
+      </div>
+      <div>
+        <div class="ch">Lower</div>
+        <div class="r best"><span class="lab">3 of a kind</span><span class="h">23</span></div>
+        <div class="r"><span class="lab">4 of a kind</span><span class="v">22</span></div>
+        <div class="r"><span class="lab">Full house</span><span class="v">25</span></div>
+        <div class="r"><span class="lab">Sm. straight</span><span class="h0">0</span></div>
+        <div class="r"><span class="lab">Lg. straight</span><span class="v">40</span></div>
+        <div class="r yz"><span class="lab">Yatzy</span><span class="h0">0</span></div>
+        <div class="r"><span class="lab">Chance</span><span class="h">23</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="homebar" style="color:var(--ink)"></div>
+</div></div></section>
+
+<!-- HANDOFF -->
+<section><p class="cap">S4 · Pass handoff <span>· hides the last player's dice</span></p>
+<div class="phone"><div class="screen hand">
+  <div class="aur"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+  <div class="status"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body">
+    <span class="pill glass num"><i class="ph-fill ph-eye-slash"></i>Dad's dice hidden · Turn 8 of 13</span>
+    <div class="orb"><div>M</div></div>
+    <div class="lbl">Pass the phone to</div>
+    <h2>Mom</h2>
+    <p>Dad's turn is saved. Take a breath, then start when you're ready.</p>
+    <div class="stand glass">
+      <div class="st"><i style="background:#C77D4E">D</i><span style="width:40px;text-align:left">Dad</span><span class="bar"><b style="width:86%;background:#E0A06F"></b></span><em>171</em></div>
+      <div class="st"><i style="background:#5E9BC6">M</i><span style="width:40px;text-align:left">Mom</span><span class="bar"><b style="width:81%;background:#8FC0E0"></b></span><em>162</em></div>
+      <div class="st"><i style="background:#8E7CC3">S</i><span style="width:40px;text-align:left">Sam</span><span class="bar"><b style="width:70%;background:#B9A4F0"></b></span><em>140</em></div>
+    </div>
+    <div class="holdbtn"><div class="fill"></div><span><i class="ph-bold ph-fingerprint-simple"></i>Hold to start Mom's turn</span></div>
+  </div>
+  <div class="homebar" style="color:#fff"></div>
+</div></div></section>
+
+<!-- FINAL -->
+<section><p class="cap">S5 · Final scorecard <span>· no ad or popup covers it</span></p>
+<div class="phone"><div class="screen final grain">
+  <div class="conf" id="conf"></div>
+  <div class="status"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body">
+    <div class="rays"></div>
+    <div class="hero2">
+      <div class="medal"><i class="ph-fill ph-trophy"></i></div>
+      <small>You win</small>
+      <div class="big" id="tick" data-to="263">263</div>
+      <span class="pb"><i class="ph-fill ph-star"></i>New personal best</span>
+    </div>
+    <div class="rank">
+      <div class="rk"><span class="av" style="background:linear-gradient(150deg,#D08A55,#8A4520)">Y<i class="ph-fill ph-crown-simple crown"></i></span><span class="nm"><b>You</b><span>1 Yatzy · bonus made</span></span><span class="s">263</span></div>
+      <div class="rk"><span class="av" style="background:linear-gradient(150deg,#6E8794,#3D525E)"><i class="ph-bold ph-cpu"></i></span><span class="nm"><b>Computer (Normal)</b><span>No bonus</span></span><span class="s" style="color:var(--ink-2)">230</span></div>
+    </div>
+    <div class="chips">
+      <div><span>Upper</span><b>67</b></div><div class="g"><span>Bonus</span><b>+35</b></div><div><span>Lower</span><b>161</b></div><div><span>Yatzys</span><b>1</b></div>
+    </div>
+    <div class="ra"><div class="ic"><i class="ph-duotone ph-sparkle"></i></div><div><b>Remove Ads</b><span>One-time purchase</span></div><i class="ph ph-caret-right go"></i></div>
+    <div class="acts">
+      <div class="sq" aria-label="Share"><i class="ph-bold ph-share-network"></i></div>
+      <div class="sq home2">Home</div>
+      <div class="candy"><i class="ph-bold ph-arrows-clockwise"></i>Play again</div>
+    </div>
+  </div>
+  <div class="homebar"></div>
+</div></div></section>
+
+</div>
+
+<script>
+const P={1:[[50,50]],2:[[29,29],[71,71]],3:[[27,27],[50,50],[73,73]],4:[[29,29],[71,29],[29,71],[71,71]],5:[[27,27],[73,27],[50,50],[27,73],[73,73]],6:[[29,25],[71,25],[29,50],[71,50],[29,75],[71,75]]};
+const face=v=>`<svg viewBox="0 0 100 100" role="img" aria-label="Die showing ${v}">${P[v].map(([x,y])=>`<circle cx="${x}" cy="${y+1.2}" r="10" fill="rgba(255,255,255,.9)"/><circle cx="${x}" cy="${y}" r="10" fill="url(#pip)"/>`).join('')}</svg>`;
+document.querySelectorAll('.die,.cube .f').forEach(d=>d.insertAdjacentHTML('afterbegin',face(+d.dataset.v)));
+document.querySelectorAll('.mini').forEach(d=>{const v=+d.dataset.v;d.outerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="5" y="5" width="90" height="90" rx="24" fill="none" stroke="currentColor" stroke-width="8" opacity=".55"/>${P[v].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="currentColor"/>`).join('')}</svg>`});
+const conf=document.getElementById('conf'),cols=['#E9B955','#8A4520','#3C8762','#F4CF73','#C77D4E','#7FE0B0','#B23A2E'];
+for(let i=0;i<34;i++){const c=document.createElement('i');c.style.left=Math.random()*100+'%';c.style.background=cols[i%cols.length];c.style.animationDuration=(3.5+Math.random()*3)+'s';c.style.animationDelay=(-Math.random()*6)+'s';c.style.width=(5+Math.random()*5)+'px';if(i%3==0)c.style.borderRadius='50%';conf.appendChild(c)}
+function tick(){const el=document.getElementById('tick'),to=+el.dataset.to,t0=performance.now(),d=1400;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=to;return}
+  (function f(t){const p=Math.min(1,(t-t0)/d),e=1-Math.pow(1-p,4);el.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(f)})(t0)}
+tick();document.getElementById('replay').onclick=()=>{tick();document.querySelectorAll('.die').forEach((d,i)=>{d.animate([{transform:'translateY(-30px) rotate(40deg)',opacity:.2},{transform:getComputedStyle(d).transform==='none'?'none':getComputedStyle(d).transform,opacity:1}],{duration:500,delay:i*40,easing:'cubic-bezier(.3,1.5,.5,1)'})})};
+const btns=document.querySelectorAll('.seg button');
+btns.forEach(b=>b.onclick=()=>{btns.forEach(x=>x.classList.toggle('on',x===b));const t=b.dataset.t;if(t==='system')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('dd-theme',t)}catch(e){}});
+try{const s=localStorage.getItem('dd-theme');if(s){[...btns].find(b=>b.dataset.t===s)?.click()}}catch(e){}
+</script>
+</body>
+</html>

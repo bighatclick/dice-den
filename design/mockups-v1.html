@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dice Den Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+:root{
+  --bg:#F6EFE3; --surface:#FFFFFF; --surface-2:#FBF6EE; --ink:#2B1D14; --ink-2:#6E5A4B; --ink-3:#A08C7C;
+  --line:#E8DCCB; --primary:#7A3E1D; --primary-2:#5C2D14; --on-primary:#FFF8EE;
+  --accent:#2E6B4F; --accent-soft:#E3EFE8; --gold:#C9952B; --gold-soft:#F7ECD2; --danger:#B23A2E;
+  --felt:#2E6B4F; --felt-2:#245A41; --die:#FFFDF7; --pip:#2B1D14;
+  --shadow:0 1px 2px rgba(43,29,20,.06),0 8px 24px rgba(43,29,20,.08);
+  --page:#E9DFCF;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17110D; --surface:#231A14; --surface-2:#1D1611; --ink:#F3E9DA; --ink-2:#C2B09C; --ink-3:#8A7765;
+  --line:#3A2C22; --primary:#D08A55; --primary-2:#B8723F; --on-primary:#1A100A;
+  --accent:#5FA785; --accent-soft:#1F3329; --gold:#E1B85A; --gold-soft:#3A2E16; --danger:#E0705F;
+  --felt:#1F4A37; --felt-2:#173A2B; --die:#F4EDE0; --pip:#1E140E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); --page:#0E0A08;
+}}
+:root[data-theme="dark"]{
+  --bg:#17110D; --surface:#231A14; --surface-2:#1D1611; --ink:#F3E9DA; --ink-2:#C2B09C; --ink-3:#8A7765;
+  --line:#3A2C22; --primary:#D08A55; --primary-2:#B8723F; --on-primary:#1A100A;
+  --accent:#5FA785; --accent-soft:#1F3329; --gold:#E1B85A; --gold-soft:#3A2E16; --danger:#E0705F;
+  --felt:#1F4A37; --felt-2:#173A2B; --die:#F4EDE0; --pip:#1E140E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); --page:#0E0A08;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);font-family:Inter,system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;padding:32px 16px 64px;transition:background .3s}
+.num{font-variant-numeric:tabular-nums}
+.serif{font-family:Fraunces,Georgia,serif}
+header.top{max-width:1560px;margin:0 auto 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header.top h1{font-family:Fraunces,serif;font-weight:600;font-size:28px}
+header.top p{color:var(--ink-2);font-size:14px;margin-top:4px}
+.toggle{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.toggle button{border:0;background:transparent;color:var(--ink-2);font:500 13px Inter;padding:8px 14px;border-radius:999px;cursor:pointer}
+.toggle button.on{background:var(--primary);color:var(--on-primary)}
+.grid{max-width:1560px;margin:0 auto;display:flex;flex-wrap:wrap;gap:36px 28px;justify-content:center}
+.cap{font:600 13px Inter;color:var(--ink-2);margin:0 0 12px 6px;letter-spacing:.02em}
+.cap span{color:var(--ink-3);font-weight:500}
+
+/* phone */
+.phone{width:360px;height:760px;border-radius:48px;background:#0d0907;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.04) inset;max-width:100%}
+.screen{width:100%;height:100%;border-radius:38px;background:var(--bg);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.status{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;font:600 14px Inter;color:var(--ink)}
+.status .island{width:96px;height:28px;background:#000;border-radius:20px}
+.status i{font-size:14px;margin-left:3px}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:var(--ink);opacity:.35}
+.body{flex:1;padding:6px 18px 26px;display:flex;flex-direction:column;gap:12px;min-height:0}
+
+/* dice */
+.die{width:var(--s,48px);height:var(--s,48px);border-radius:calc(var(--s,48px)*.24);background:var(--die);position:relative;flex:none;
+  box-shadow:inset 0 -3px 0 rgba(43,29,20,.12),inset 0 2px 0 rgba(255,255,255,.9),0 4px 10px rgba(0,0,0,.25);transition:transform .2s}
+.die svg{width:100%;height:100%;display:block}
+.die.held{transform:translateY(-8px);box-shadow:inset 0 -3px 0 rgba(43,29,20,.12),0 0 0 3px var(--felt),0 0 0 5px #9FD8BC,0 10px 16px rgba(0,0,0,.3)}
+.die .tag{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font:700 9px Inter;letter-spacing:.08em;color:#CFEBDD}
+
+/* common */
+.iconbtn{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-size:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+.btn{height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:10px;font:600 16px Inter;border:0}
+.btn.primary{background:var(--primary);color:var(--on-primary);box-shadow:inset 0 -3px 0 var(--primary-2),0 8px 18px rgba(122,62,29,.28)}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 12px Inter;padding:5px 10px;border-radius:999px}
+
+/* home */
+.brand{display:flex;align-items:center;justify-content:space-between;padding-top:4px}
+.brand .hi{font-size:13px;color:var(--ink-2)}
+.brand h2{font-family:Fraunces,serif;font-size:30px;font-weight:600;letter-spacing:-.01em}
+.hero{border-radius:28px;padding:20px;color:#FFF8EE;position:relative;overflow:hidden;
+  background:radial-gradient(120% 90% at 100% 0%,#9A5428 0%,transparent 60%),linear-gradient(160deg,#7A3E1D,#4A230F);
+  box-shadow:0 14px 30px rgba(74,35,15,.35)}
+.hero:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.035) 0 2px,transparent 2px 9px);pointer-events:none}
+.hero .dicepair{position:absolute;right:14px;top:14px;display:flex;gap:6px;transform:rotate(-8deg)}
+.hero .dicepair .die:nth-child(2){transform:rotate(16deg) translateY(10px)}
+.hero small{font:600 11px Inter;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.hero h3{font-family:Fraunces,serif;font-size:26px;font-weight:600;margin:6px 0 2px}
+.hero p{font-size:13px;opacity:.85}
+.prog{height:6px;border-radius:3px;background:rgba(255,255,255,.18);margin:16px 0 16px;overflow:hidden}
+.prog b{display:block;height:100%;width:54%;background:#F2C76A;border-radius:3px}
+.hero .play{height:52px;border-radius:16px;background:#FFF8EE;color:#5C2D14;display:flex;align-items:center;justify-content:center;gap:8px;font:700 16px Inter;box-shadow:inset 0 -3px 0 #E6D6BF}
+.daily{padding:16px}
+.daily .row{display:flex;align-items:center;justify-content:space-between}
+.daily h4{font:600 16px Inter}
+.daily .sub{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.flame{background:var(--gold-soft);color:var(--gold);font:700 14px Inter;padding:6px 10px;border-radius:12px;display:flex;align-items:center;gap:4px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
+.week div{text-align:center;font:500 11px Inter;color:var(--ink-3)}
+.week i{display:grid;place-items:center;width:30px;height:30px;margin:4px auto 0;border-radius:10px;background:var(--surface-2);border:1px dashed var(--line);font-size:14px;font-style:normal}
+.week .done i{background:var(--accent);border:0;color:#fff}
+.week .today i{background:var(--surface);border:2px solid var(--gold);color:var(--gold)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{padding:14px;border-radius:20px;display:flex;flex-direction:column;gap:10px;min-height:96px}
+.tile .ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+.tile b{font:600 14px Inter}
+.tile span{font-size:12px;color:var(--ink-2)}
+.avatars{display:flex}
+.avatars em{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);margin-left:-6px;font:700 10px Inter;color:#fff;display:grid;place-items:center;font-style:normal}
+.avatars em:first-child{margin-left:0}
+
+/* game */
+.gtop{display:flex;align-items:center;gap:10px}
+.players{flex:1;display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px}
+.pl{flex:1;border-radius:12px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between}
+.pl.on{background:var(--accent-soft)}
+.pl .n{font:600 12px Inter;color:var(--ink-2)}
+.pl.on .n{color:var(--accent)}
+.pl .s{font:700 16px Inter}
+.tray{border-radius:26px;padding:20px 14px 30px;position:relative;
+  background:radial-gradient(120% 100% at 50% 0%,var(--felt) 0%,var(--felt-2) 100%);
+  box-shadow:inset 0 0 0 6px #5A2E15,inset 0 0 0 8px #3E1F0E,inset 0 10px 24px rgba(0,0,0,.35),0 10px 22px rgba(0,0,0,.18)}
+.tray:before{content:"";position:absolute;inset:8px;border-radius:20px;background:repeating-radial-gradient(circle at 30% 30%,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);pointer-events:none}
+.tray .meta{display:flex;justify-content:space-between;align-items:center;color:#CFEBDD;font:600 11px Inter;letter-spacing:.06em;text-transform:uppercase;margin:0 6px 18px;position:relative}
+.dots{display:flex;gap:5px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#F2C76A}
+.dots i.off{background:rgba(255,255,255,.2)}
+.tray .dice{display:flex;justify-content:space-between;padding:0 4px;position:relative}
+.rollrow{display:flex;gap:10px}
+.rollrow .btn.primary{flex:1}
+.undo{width:56px;height:56px;border-radius:18px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;color:var(--ink-2)}
+.pad{padding:12px 12px 10px;border-radius:22px;display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;background:var(--surface)}
+.r{border-bottom:1px solid var(--line);border-radius:0}
+.r.best{border-radius:8px;border-bottom-color:transparent}
+.col h5{font:700 10.5px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);height:24px;display:flex;align-items:center;justify-content:space-between}
+.r{height:30px;display:flex;align-items:center;justify-content:space-between;font-size:12.5px;padding:0 6px;border-radius:8px}
+.r .lab{display:flex;align-items:center;gap:6px;color:var(--ink)}
+.r .lab svg{width:14px;height:14px}
+.r .v{font:700 14px Inter;font-variant-numeric:tabular-nums}
+.r .hint{color:var(--ink-3);font-weight:500}
+.r.best{background:var(--accent-soft);outline:1.5px solid var(--accent)}
+.r.best .hint{color:var(--accent);font-weight:700}
+.r.zero .hint{color:var(--ink-3);opacity:.6}
+.bonus{margin-top:4px;padding:6px;border-radius:10px;background:var(--gold-soft)}
+.bonus .top{display:flex;justify-content:space-between;font:600 11px Inter;color:var(--gold)}
+.bonus .bar{height:5px;border-radius:3px;background:rgba(201,149,43,.2);margin-top:5px;overflow:hidden}
+.bonus .bar b{display:block;height:100%;width:60%;background:var(--gold)}
+.total{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid var(--ink);padding:8px 6px 0;margin-top:6px;font:600 13px Inter}
+.ra{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.ra .ic{width:40px;height:40px;border-radius:12px;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center;font-size:20px;flex:none}
+.ra b{font:600 13.5px Inter;display:block}.ra span{font-size:12px;color:var(--ink-2)}
+.ra .go{margin-left:auto;font:600 13px Inter;color:var(--primary);white-space:nowrap}
+.total b{font:700 20px Fraunces;font-variant-numeric:tabular-nums}
+
+/* handoff */
+.handoff{background:radial-gradient(90% 60% at 50% 30%,#3E6E8E 0%,#1E3A4F 70%,#142836 100%);color:#F2F7FA}
+.handoff .body{align-items:center;justify-content:center;text-align:center;gap:18px}
+.ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08);box-shadow:0 0 0 10px rgba(255,255,255,.04),0 0 0 22px rgba(255,255,255,.025)}
+.ring div{width:96px;height:96px;border-radius:50%;background:#7FB3D5;color:#10283A;display:grid;place-items:center;font:600 42px Fraunces}
+.handoff .pass{font:600 13px Inter;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.handoff h2{font:600 40px Fraunces;letter-spacing:-.01em;margin-top:-8px}
+.handoff .note{font-size:14px;opacity:.75;max-width:240px;line-height:1.5}
+.stand{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 14px}
+.stand .s{display:flex;align-items:center;justify-content:space-between;height:40px;font-size:14px}
+.stand .s + .s{border-top:1px solid rgba(255,255,255,.08)}
+.stand .who{display:flex;align-items:center;gap:10px}
+.stand .who i{width:10px;height:10px;border-radius:50%}
+.stand b{font:700 16px Inter;font-variant-numeric:tabular-nums}
+.startbtn{width:100%;height:58px;border-radius:18px;background:#F2F7FA;color:#142836;font:700 16px Inter;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 -3px 0 #C9D9E3}
+.turnlbl{font:600 12px Inter;opacity:.6}
+
+/* final */
+.win{border-radius:28px;padding:22px 20px 18px;text-align:center;position:relative;overflow:hidden;color:#2B1D14;
+  background:radial-gradient(100% 80% at 50% 0%,#F8DE9C 0%,#E9B955 70%,#D49E37 100%);box-shadow:0 14px 30px rgba(201,149,43,.35)}
+.win:before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 12% 30%,#fff8 0 2px,transparent 3px),radial-gradient(circle at 85% 22%,#fff9 0 2px,transparent 3px),
+  radial-gradient(circle at 72% 70%,#fff6 0 1.5px,transparent 2.5px),radial-gradient(circle at 25% 78%,#fff7 0 1.5px,transparent 2.5px)}
+.trophy{width:54px;height:54px;border-radius:18px;background:rgba(255,255,255,.45);display:grid;place-items:center;margin:0 auto 8px;font-size:30px;color:#7A4E0E}
+.win small{font:700 11px Inter;letter-spacing:.12em;text-transform:uppercase;color:#7A4E0E}
+.win .big{font:700 64px Fraunces;line-height:1;margin:4px 0 6px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.pb{display:inline-flex;align-items:center;gap:6px;background:#2B1D14;color:#F8DE9C;font:600 12px Inter;padding:6px 12px;border-radius:999px}
+.rank{padding:4px 14px}
+.rank .x{display:flex;align-items:center;gap:12px;height:52px}
+.rank .x + .x{border-top:1px solid var(--line)}
+.rank .pos{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font:700 12px Inter;background:var(--surface-2);color:var(--ink-2)}
+.rank .x.first .pos{background:var(--gold);color:#fff}
+.rank .nm{flex:1}
+.rank .nm b{display:block;font:600 14px Inter}
+.rank .nm span{font-size:11.5px;color:var(--ink-2)}
+.rank .sc{font:700 18px Inter;font-variant-numeric:tabular-nums}
+.breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.breakdown div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 6px;text-align:center}
+.breakdown span{display:block;font:600 10px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.breakdown b{font:700 17px Inter;font-variant-numeric:tabular-nums}
+.breakdown .g b{color:var(--gold)}
+.actions{display:grid;grid-template-columns:56px 1fr 1fr;gap:10px;margin-top:auto}
+.actions .share{height:56px;border-radius:18px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;color:var(--ink)}
+.note2{font-size:11px;color:var(--ink-3);text-align:center}
+@media (max-width:420px){.phone{width:100%;height:auto;aspect-ratio:360/760}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Dice Den, key screens</h1>
+    <p>Den design system · walnut, cream paper, felt green · Fraunces + Inter (tabular numerals)</p>
+  </div>
+  <div class="toggle" role="group" aria-label="Theme">
+    <button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="system" class="on">System</button>
+  </div>
+</header>
+
+<div class="grid">
+
+<!-- HOME -->
+<section>
+<p class="cap">S1 · Home <span>· resume, daily, modes</span></p>
+<div class="phone"><div class="screen">
+  <div class="status"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body">
+    <div class="brand">
+      <div><div class="hi">Good evening</div><h2>Dice Den</h2></div>
+      <div class="iconbtn" aria-label="Settings"><i class="ph ph-gear-six"></i></div>
+    </div>
+
+    <div class="hero">
+      <div class="dicepair"><span class="die" data-v="5" style="--s:46px"></span><span class="die" data-v="6" style="--s:46px"></span></div>
+      <small>Game in progress</small>
+      <h3>Continue</h3>
+      <p>vs Computer (Normal) · Classic</p>
+      <div class="prog"><b></b></div>
+      <div style="display:flex;justify-content:space-between;font:500 12px Inter;opacity:.8;margin:-8px 0 14px" class="num"><span>Turn 7 of 13</span><span>146 – 151</span></div>
+      <div class="play"><i class="ph-fill ph-play"></i>Play</div>
+    </div>
+
+    <div class="card daily">
+      <div class="row">
+        <div><h4>Today's dice</h4><div class="sub">Same roll for everyone · Fri 16 Oct</div></div>
+        <div class="flame num"><i class="ph-fill ph-fire"></i>12</div>
+      </div>
+      <div class="week">
+        <div class="done">S<i><i class="ph-bold ph-check"></i></i></div>
+        <div class="done">M<i><i class="ph-bold ph-check"></i></i></div>
+        <div class="done">T<i><i class="ph-bold ph-check"></i></i></div>
+        <div class="done">W<i><i class="ph-bold ph-check"></i></i></div>
+        <div class="done">T<i><i class="ph-bold ph-check"></i></i></div>
+        <div class="today">F<i><i class="ph-bold ph-dice-five"></i></i></div>
+        <div>S<i></i></div>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <div class="card tile">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="ic" style="background:var(--accent-soft);color:var(--accent)"><i class="ph ph-users-three"></i></div>
+          <div class="avatars"><em style="background:#7FB3D5">M</em><em style="background:#C77D4E">D</em><em style="background:#8E7CC3">S</em></div>
+        </div>
+        <div><b>Pass and play</b><br><span>2–6 at one table</span></div>
+      </div>
+      <div class="card tile">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="ic" style="background:var(--gold-soft);color:var(--gold)"><i class="ph ph-chart-bar"></i></div>
+          <span class="num" style="font:700 15px Inter;color:var(--ink)">287</span>
+        </div>
+        <div><b>Stats</b><br><span>High score · 41 games</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="homebar"></div>
+</div></div>
+</section>
+
+<!-- GAME -->
+<section>
+<p class="cap">S3 · Game table <span>· roll 2 of 3, hints on</span></p>
+<div class="phone"><div class="screen">
+  <div class="status"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body" style="gap:12px">
+    <div class="gtop">
+      <div class="iconbtn" aria-label="Leave game"><i class="ph ph-caret-left"></i></div>
+      <div class="players">
+        <div class="pl on"><span class="n">You</span><span class="s num">146</span></div>
+        <div class="pl"><span class="n">Computer</span><span class="s num">151</span></div>
+      </div>
+    </div>
+
+    <div class="tray">
+      <div class="meta"><span>Turn 7 · Roll 2</span><span class="dots"><i></i><i></i><i class="off"></i></span></div>
+      <div class="dice">
+        <span class="die held" data-v="5" style="--s:52px"><span class="tag">HELD</span></span>
+        <span class="die held" data-v="5" style="--s:52px"><span class="tag">HELD</span></span>
+        <span class="die" data-v="2" style="--s:52px;transform:rotate(-7deg)"></span>
+        <span class="die held" data-v="5" style="--s:52px"><span class="tag">HELD</span></span>
+        <span class="die" data-v="6" style="--s:52px;transform:rotate(9deg)"></span>
+      </div>
+    </div>
+
+    <div class="rollrow">
+      <div class="btn primary"><i class="ph-bold ph-arrows-clockwise"></i>Roll<span style="opacity:.7;font-weight:500">· 1 left</span></div>
+      <div class="undo" aria-label="Undo"><i class="ph ph-arrow-counter-clockwise"></i></div>
+    </div>
+
+    <div class="pad card">
+      <div class="col">
+        <h5><span>Upper</span><span>You</span></h5>
+        <div class="r"><span class="lab"><span class="mini" data-v="1"></span>Ones</span><span class="v">3</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="2"></span>Twos</span><span class="v">6</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="3"></span>Threes</span><span class="v">9</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="4"></span>Fours</span><span class="v hint">0</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="5"></span>Fives</span><span class="v hint">15</span></div>
+        <div class="r"><span class="lab"><span class="mini" data-v="6"></span>Sixes</span><span class="v">24</span></div>
+        <div class="bonus"><div class="top num"><span>Bonus +35</span><span>42 / 63</span></div><div class="bar"><b style="width:67%"></b></div></div>
+      </div>
+      <div class="col">
+        <h5><span>Lower</span><span>You</span></h5>
+        <div class="r best"><span class="lab">3 of a kind</span><span class="v hint">23</span></div>
+        <div class="r"><span class="lab">4 of a kind</span><span class="v">22</span></div>
+        <div class="r"><span class="lab">Full house</span><span class="v">25</span></div>
+        <div class="r zero"><span class="lab">Sm. straight</span><span class="v hint">0</span></div>
+        <div class="r"><span class="lab">Lg. straight</span><span class="v">—</span></div>
+        <div class="r zero"><span class="lab" style="font-weight:600">Yatzy</span><span class="v hint">0</span></div>
+        <div class="r"><span class="lab">Chance</span><span class="v hint">23</span></div>
+      </div>
+      <div class="total"><span>Total</span><b>146</b></div>
+    </div>
+  </div>
+  <div class="homebar"></div>
+</div></div>
+</section>
+
+<!-- HANDOFF -->
+<section>
+<p class="cap">S4 · Pass handoff <span>· hides the last player's dice</span></p>
+<div class="phone"><div class="screen handoff">
+  <div class="status" style="color:#F2F7FA"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body">
+    <div class="turnlbl num">Turn 8 of 13</div>
+    <div class="ring"><div>M</div></div>
+    <div class="pass">Pass the phone to</div>
+    <h2>Mom</h2>
+    <p class="note">Dad's turn is saved. Your dice are ready when you are.</p>
+    <div class="stand">
+      <div class="s"><span class="who"><i style="background:#C77D4E"></i>Dad</span><b>171</b></div>
+      <div class="s"><span class="who"><i style="background:#7FB3D5"></i>Mom</span><b>162</b></div>
+      <div class="s"><span class="who"><i style="background:#8E7CC3"></i>Sam</span><b>140</b></div>
+    </div>
+    <div class="startbtn"><i class="ph-bold ph-hand-tap"></i>I'm Mom, start my turn</div>
+  </div>
+  <div class="homebar" style="background:#fff"></div>
+</div></div>
+</section>
+
+<!-- FINAL -->
+<section>
+<p class="cap">S5 · Final scorecard <span>· no ad or popup covers it</span></p>
+<div class="phone"><div class="screen">
+  <div class="status"><span class="num">9:41</span><div class="island"></div><span><i class="ph-bold ph-cell-signal-full"></i><i class="ph-bold ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span></div>
+  <div class="body">
+    <div class="win">
+      <div class="trophy"><i class="ph-fill ph-trophy"></i></div>
+      <small>You win</small>
+      <div class="big">263</div>
+      <span class="pb"><i class="ph-fill ph-star"></i>New personal best</span>
+    </div>
+
+    <div class="card rank">
+      <div class="x first"><span class="pos">1</span><span class="nm"><b>You</b><span>1 Yatzy · bonus made</span></span><span class="sc">263</span></div>
+      <div class="x"><span class="pos">2</span><span class="nm"><b>Computer (Normal)</b><span>No bonus</span></span><span class="sc">230</span></div>
+    </div>
+
+    <div class="breakdown">
+      <div><span>Upper</span><b>67</b></div>
+      <div class="g"><span>Bonus</span><b>+35</b></div>
+      <div><span>Lower</span><b>161</b></div>
+      <div><span>Yatzys</span><b>1</b></div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;font:600 13px Inter;color:var(--primary)"><i class="ph ph-list-numbers"></i>View full score pad</div>
+
+    <div class="card ra">
+      <div class="ic"><i class="ph ph-sparkle"></i></div>
+      <div><b>Remove Ads</b><span>One-time purchase</span></div>
+      <span class="go">See options</span>
+    </div>
+
+    <div class="actions">
+      <div class="share" aria-label="Share"><i class="ph ph-share-network"></i></div>
+      <div class="btn ghost">Home</div>
+      <div class="btn primary">Play again</div>
+    </div>
+  </div>
+  <div class="homebar"></div>
+</div></div>
+</section>
+
+</div>
+
+<script>
+const P={1:[[50,50]],2:[[28,28],[72,72]],3:[[28,28],[50,50],[72,72]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[28,28],[72,28],[50,50],[28,72],[72,72]],6:[[28,26],[72,26],[28,50],[72,50],[28,74],[72,74]]};
+document.querySelectorAll('.die').forEach(d=>{const v=+d.dataset.v;d.insertAdjacentHTML('afterbegin',`<svg viewBox="0 0 100 100" role="img" aria-label="Die showing ${v}">${P[v].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="9.5" fill="var(--pip)"/>`).join('')}</svg>`)});
+document.querySelectorAll('.mini').forEach(d=>{const v=+d.dataset.v;d.outerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="24" fill="none" stroke="currentColor" stroke-width="9" opacity=".5"/>${P[v].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="currentColor"/>`).join('')}</svg>`});
+const btns=document.querySelectorAll('.toggle button');
+btns.forEach(b=>b.onclick=()=>{btns.forEach(x=>x.classList.toggle('on',x===b));const t=b.dataset.t;if(t==='system')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('dd-theme',t)}catch(e){}});
+try{const s=localStorage.getItem('dd-theme');if(s){[...btns].find(b=>b.dataset.t===s)?.click()}}catch(e){}
+</script>
+</body>
+</html>
