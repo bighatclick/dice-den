@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`seeded and daily RNG pins the 2026-10-16 sequence so RNG changes are deliberate 1`] = `
+[
+  6,
+  6,
+  5,
+  5,
+  2,
+  6,
+  5,
+  2,
+  5,
+  5,
+  1,
+  2,
+  1,
+  1,
+  6,
+]
+`;
