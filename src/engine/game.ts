@@ -34,6 +34,20 @@ export interface GameState {
   status: 'playing' | 'finished';
   /** State before the last score placement; cleared by the next roll (one level). */
   undo: Omit<GameState, 'undo'> | null;
+  /**
+   * Faces rolled so far, index 0..5 = faces 1..6, for the fairness chart.
+   * Optional so games saved before it existed still load (they count from zero).
+   */
+  faceTally?: FaceTally;
+}
+
+export interface FaceTally {
+  human: number[];
+  ai: number[];
+}
+
+export function emptyTally(): FaceTally {
+  return { human: [0, 0, 0, 0, 0, 0], ai: [0, 0, 0, 0, 0, 0] };
 }
 
 export type GameAction =
@@ -65,6 +79,7 @@ export function createGame(config: NewGameConfig): GameState {
     rollsUsed: 0,
     status: 'playing',
     undo: null,
+    faceTally: emptyTally(),
   };
 }
 
@@ -112,7 +127,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (action.faces.length !== freeCount) return state;
       let next = 0;
       const dice = state.dice.map((d, i) => (state.held[i] ? d : action.faces[next++]));
-      return { ...state, dice, rollsUsed: state.rollsUsed + 1, undo: null };
+      const tally = state.faceTally ?? emptyTally();
+      const kind = currentPlayer(state).kind;
+      const counts = [...tally[kind]];
+      for (const f of action.faces) counts[f - 1] += 1;
+      const faceTally = { ...tally, [kind]: counts };
+      return { ...state, dice, rollsUsed: state.rollsUsed + 1, undo: null, faceTally };
     }
     case 'toggleHold': {
       const { index } = action;

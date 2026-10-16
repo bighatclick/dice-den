@@ -2,17 +2,26 @@ import '../i18n/i18n';
 import { fireEvent, screen } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import DailyScreen from '../../app/daily';
+import FinalScreen from '../../app/final';
 import GameScreen from '../../app/game';
 import HomeScreen from '../../app/index';
 import OnboardingScreen from '../../app/onboarding';
 import SettingsScreen from '../../app/settings';
 import ShopScreen from '../../app/shop';
 import StatsScreen from '../../app/stats';
+import { useGameStore } from '../state/gameStore';
+import { setUpAppData } from '../testing/appData';
 import { resolveScheme } from '../ui/theme';
+
+beforeEach(() => {
+  setUpAppData();
+  useGameStore.setState({ game: null, rollSeq: 0 });
+});
 
 const routes = {
   index: HomeScreen,
   game: GameScreen,
+  final: FinalScreen,
   daily: DailyScreen,
   stats: StatsScreen,
   shop: ShopScreen,
@@ -44,7 +53,6 @@ describe('Home', () => {
 });
 
 describe.each([
-  ['/game', 'Game'],
   ['/daily', "Today's dice"],
   ['/stats', 'Stats'],
   ['/shop', 'Shop'],

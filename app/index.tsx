@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text } from 'react-native';
+import { PRESETS } from '../src/engine/rules/presets';
+import { useGameStore } from '../src/state/gameStore';
 import { Button } from '../src/ui/Button';
 import { Screen } from '../src/ui/Screen';
 import { space, type } from '../src/ui/tokens';
@@ -10,13 +12,22 @@ import { useTheme } from '../src/ui/theme';
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const game = useGameStore((s) => s.game);
+  const resuming = game?.status === 'playing';
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
         <Text accessibilityRole="header" style={[type.hero, { color: colors.ink }]}>
           {t('app.name')}
         </Text>
-        <Button variant="primary" label={t('home.play')} onPress={() => router.push('/game')} />
+        <Button
+          variant="primary"
+          label={resuming ? t('home.resume') : t('home.play')}
+          subtitle={
+            resuming ? t('home.resumeSubtitle', { turn: game.round, turns: PRESETS[game.preset].boxes.length }) : undefined
+          }
+          onPress={() => router.push(game?.status === 'finished' ? '/final' : '/game')}
+        />
         <Button label={t('home.daily')} subtitle={t('home.dailySubtitle')} onPress={() => router.push('/daily')} />
         <Button
           label={t('home.passAndPlay')}

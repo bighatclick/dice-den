@@ -1,6 +1,11 @@
 {
-  "app": { "name": "Dice Den" },
-  "common": { "back": "Back", "comingSoon": "This screen is being built." },
+  "app": {
+    "name": "Dice Den"
+  },
+  "common": {
+    "back": "Back",
+    "comingSoon": "This screen is being built."
+  },
   "home": {
     "play": "Play",
     "daily": "Today's dice",
@@ -9,7 +14,9 @@
     "passAndPlaySubtitle": "2–6 at one table",
     "stats": "Stats",
     "shop": "Shop",
-    "settings": "Settings"
+    "settings": "Settings",
+    "resume": "Resume game",
+    "resumeSubtitle": "Turn {{turn}} of {{turns}}"
   },
   "screens": {
     "game": "Game",
@@ -17,7 +24,8 @@
     "stats": "Stats",
     "shop": "Shop",
     "settings": "Settings",
-    "onboarding": "Welcome"
+    "onboarding": "Welcome",
+    "final": "Final scorecard"
   },
   "boxes": {
     "ones": "Ones",
@@ -39,6 +47,67 @@
   "players": {
     "computer_easy": "Computer (Easy)",
     "computer_normal": "Computer (Normal)",
-    "computer_expert": "Computer (Expert)"
+    "computer_expert": "Computer (Expert)",
+    "you": "You"
+  },
+  "game": {
+    "leave": "Leave game",
+    "leaveTitle": "Leave game?",
+    "leaveBody": "It's saved. You can pick up right where you left off.",
+    "stay": "Stay",
+    "leaveConfirm": "Leave",
+    "turnRoll": "Turn {{turn}} · Roll {{roll}} of 3",
+    "turnStart": "Turn {{turn}} · Ready to roll",
+    "a11yRollsLeft": "{{count}} rolls left",
+    "roll": "Roll",
+    "rollsLeft": "{{count}} left",
+    "pickBox": "Pick a box",
+    "a11yRolled": "Rolled {{dice}}",
+    "undo": "Undo last score",
+    "hintFirst": "Roll to start your turn",
+    "hintHold": "Tap dice to hold · tap a box to score",
+    "hintLast": "No rolls left · tap a box to score",
+    "die": "Die {{n}}, showing {{value}}",
+    "dieHeld": "Die {{n}}, showing {{value}}, held",
+    "dieNotRolled": "Die {{n}}, not rolled yet",
+    "holdHint": "Double tap to hold",
+    "releaseHint": "Double tap to release",
+    "held": "HELD",
+    "total": "Total",
+    "playerTotal": "{{name}}, {{points}} points",
+    "playerTurn": "{{name}}, {{points}} points, playing now",
+    "viewCard": "Show {{name}}'s card"
+  },
+  "pad": {
+    "upper": "Upper",
+    "lower": "Lower",
+    "bonus": "Bonus +{{bonus}}",
+    "bonusMade": "Made",
+    "extraYatzys_one": "Extra Yatzy",
+    "extraYatzys_other": "{{count}} extra Yatzys",
+    "a11yScored": "{{box}}, scored {{points}}",
+    "a11yOption": "{{box}}, score {{points}} here",
+    "a11yOpen": "{{box}}, score here",
+    "a11yEmpty": "{{box}}, empty",
+    "a11yBonus": "Upper bonus {{bonus}}: {{upper}} of {{target}}",
+    "a11yBonusMade": "Upper bonus {{bonus}} made"
+  },
+  "final": {
+    "youWin": "You win",
+    "wins": "{{name}} wins",
+    "tie": "It's a tie",
+    "finalScore": "Final score",
+    "personalBest": "New personal best",
+    "bonusMade": "bonus made",
+    "noBonus": "No bonus",
+    "yatzys_one": "1 Yatzy",
+    "yatzys_other": "{{count}} Yatzys",
+    "upper": "Upper",
+    "bonus": "Bonus",
+    "lower": "Lower",
+    "yatzysChip": "Yatzys",
+    "home": "Home",
+    "playAgain": "Play again",
+    "winner": "Winner"
   }
 }

@@ -20,6 +20,20 @@ const cpu: PlayerConfig = { id: 'p2', name: 'Computer (Normal)', kind: 'ai', aiL
 const roll = (...faces: Face[]): GameAction => ({ type: 'roll', faces });
 const apply = (state: GameState, ...actions: GameAction[]) => actions.reduce(gameReducer, state);
 
+describe('face tally (fairness chart)', () => {
+  it('counts only newly rolled faces, split by human and AI', () => {
+    let s = createGame({ id: 'g', preset: 'classic', players: [you, cpu] });
+    s = apply(s, roll(1, 2, 3, 4, 6), { type: 'toggleHold', index: 4 }, roll(6, 6, 6, 6), { type: 'score', box: 'sixes' });
+    s = apply(s, roll(5, 5, 5, 5, 5));
+    expect(s.faceTally).toEqual({ human: [1, 1, 1, 1, 0, 5], ai: [0, 0, 0, 0, 5, 0] });
+  });
+
+  it('starts from zero for games saved before the tally existed', () => {
+    const { faceTally: _t, ...old } = createGame({ id: 'g', preset: 'classic', players: [you] });
+    expect(gameReducer(old, roll(3, 3, 3, 3, 3)).faceTally?.human).toEqual([0, 0, 5, 0, 0, 0]);
+  });
+});
+
 describe('createGame', () => {
   it('starts with empty cards and no rolls', () => {
     const g = createGame({ id: 'g', preset: 'classic', players: [you, cpu] });
