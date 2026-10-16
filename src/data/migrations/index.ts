@@ -1,10 +1,11 @@
 import { migration001Initial } from './001-initial';
+import { migration002CosmeticsAndAds } from './002-cosmetics-and-ads';
 import type { Migration } from './types';
 
 export type { Migration } from './types';
 
 /** Ordered; each migration's `from` must equal the previous one's `to`. */
-export const MIGRATIONS: readonly Migration[] = [migration001Initial];
+export const MIGRATIONS: readonly Migration[] = [migration001Initial, migration002CosmeticsAndAds];
 
 export function runMigrations(
   data: unknown,

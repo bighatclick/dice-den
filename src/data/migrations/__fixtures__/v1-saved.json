@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "settings": {
+    "themeMode": "dark",
+    "preset": "classic",
+    "forcedOrder": false,
+    "hints": true,
+    "sound": false,
+    "haptics": true,
+    "music": false,
+    "largeDice": true,
+    "highContrastPips": false,
+    "leftHanded": false,
+    "dailyReminder": { "enabled": false, "hour": 19, "minute": 0 },
+    "onboardingDone": true
+  },
+  "stats": { "sessions": 7, "gamesCompleted": 4, "firstLaunchAt": "2026-10-10T08:00:00.000Z" },
+  "gameLog": [
+    {
+      "id": "g1",
+      "finishedAt": "2026-10-11T20:00:00.000Z",
+      "mode": "normal",
+      "preset": "classic",
+      "players": [{ "name": "You", "kind": "human", "total": 231 }],
+      "winnerIndexes": [0],
+      "humanFaceCounts": [10, 11, 9, 12, 10, 13],
+      "aiFaceCounts": [0, 0, 0, 0, 0, 0],
+      "extraYatzys": 0,
+      "upperBonusMade": true
+    }
+  ],
+  "inProgress": null,
+  "unlocks": { "dice": ["ivory", "walnut"], "tables": ["felt"] },
+  "daily": { "streak": 3, "bestStreak": 5, "lastCompleted": "2026-10-15", "freezeUsedWeek": null, "results": { "2026-10-15": 244 } },
+  "purchasesCache": { "productIds": ["com.dicedengame.app.removeads"], "updatedAt": "2026-10-12T09:00:00.000Z" }
+}

@@ -28,6 +28,7 @@ export function toLogEntry(game: GameState, finishedAt: string): GameLogEntry {
     humanFaceCounts: tally.human,
     aiFaceCounts: tally.ai,
     extraYatzys: humans.reduce((n, p) => n + p.extraYatzyCount, 0),
+    yatzys: humans.reduce((n, p) => n + (p.card.yatzy === 50 ? 1 : 0) + p.extraYatzyCount, 0),
     upperBonusMade: humans.some((p) => totals(preset, p.card, p.extraYatzyCount).upperBonus > 0),
   };
 }

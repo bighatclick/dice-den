@@ -8,3 +8,10 @@ jest.mock('@expo/vector-icons/Ionicons', () => {
   Icon.glyphMap = {};
   return { __esModule: true, default: Icon };
 });
+
+// Share card capture and the share sheet are native-only.
+jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn(async () => 'file:///tmp/share.png') }));
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: jest.fn(async () => true),
+  shareAsync: jest.fn(async () => undefined),
+}));

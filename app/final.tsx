@@ -1,18 +1,22 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Redirect, router } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useReducedMotion } from 'react-native-reanimated';
 import { playerTotal, type GameState } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
 import { totals } from '../src/engine/scoring';
+import { toDateKey } from '../src/engine/rng';
 import { getAppData } from '../src/state/appData';
+import { dailyDateOf, formatDateKey } from '../src/state/daily';
 import { previousBest, winnerIndexes } from '../src/state/gameLog';
 import { useGameStore } from '../src/state/gameStore';
 import { Button } from '../src/ui/Button';
 import { Avatar } from '../src/ui/GameParts';
 import { Screen } from '../src/ui/Screen';
+import { shareCard } from '../src/ui/share';
+import { ShareCard, shareDataFor, type ShareCardRef } from '../src/ui/ShareCard';
 import { fonts, radius, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 
@@ -48,6 +52,7 @@ export default function FinalScreen() {
   const { dismissFinished, start } = useGameStore.getState();
   // Set while Home / Play again is navigating away, so the redirect below stays quiet.
   const [leaving, setLeaving] = useState(false);
+  const shareRef = useRef<ShareCardRef>(null);
 
   const summary = useMemo(() => {
     if (!game || game.status !== 'finished') return null;
@@ -70,8 +75,10 @@ export default function FinalScreen() {
   const preset = PRESETS[game.preset];
   const { scores, winners, humans, hero, order, personalBest } = summary;
   const solo = game.players.length === 1;
+  const daily = game.mode === 'daily';
   let headline: string;
-  if (solo) headline = t('final.finalScore');
+  if (daily) headline = t('final.dailyTitle');
+  else if (solo) headline = t('final.finalScore');
   else if (winners.length > 1) headline = t('final.tie');
   else if (humans.length === 1 && winners[0] === humans[0]) headline = t('final.youWin');
   else headline = t('final.wins', { name: game.players[winners[0]].name });
@@ -178,14 +185,28 @@ export default function FinalScreen() {
         </View>
 
         <View style={styles.actions}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('final.share')}
+            onPress={() => void shareCard(shareRef)}
+            style={[styles.share, { backgroundColor: colors.surface, borderColor: colors.line }]}
+          >
+            <Ionicons name="share-social" size={22} color={colors.ink} />
+          </Pressable>
           <View style={styles.flex}>
-            <Button label={t('final.home')} onPress={() => leave(false)} />
+            <Button variant={daily ? 'primary' : 'secondary'} label={t('final.home')} onPress={() => leave(false)} />
           </View>
-          <View style={styles.flex2}>
-            <Button variant="primary" label={t('final.playAgain')} onPress={() => leave(true)} />
-          </View>
+          {/* The daily dice are one try a day; there is no Play again. */}
+          {daily ? null : (
+            <View style={styles.flex2}>
+              <Button variant="primary" label={t('final.playAgain')} onPress={() => leave(true)} />
+            </View>
+          )}
         </View>
       </ScrollView>
+      <View style={styles.offscreen} pointerEvents="none" importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+        <ShareCard ref={shareRef} data={shareDataFor(game, formatDateKey(dailyDateOf(game.id) ?? toDateKey(new Date())))} />
+      </View>
     </Screen>
   );
 }
@@ -231,4 +252,6 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', gap: space.md, marginTop: space.sm },
   flex: { flex: 1 },
   flex2: { flex: 2 },
+  share: { width: 56, minHeight: 56, borderRadius: radius.lg, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  offscreen: { position: 'absolute', left: -10000, top: 0 },
 });

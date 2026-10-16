@@ -1,7 +1,10 @@
 import v0Prerelease from '../migrations/__fixtures__/v0-prerelease.json';
+import v1Saved from '../migrations/__fixtures__/v1-saved.json';
+import { migration002CosmeticsAndAds } from '../migrations/002-cosmetics-and-ads';
+import { Repository } from '../repository';
 import { migration001Initial } from '../migrations/001-initial';
 import { MIGRATIONS, runMigrations, type Migration } from '../migrations';
-import { createDefaultData, SCHEMA_VERSION } from '../schema';
+import { createDefaultData, DEFAULT_ADS, SCHEMA_VERSION } from '../schema';
 
 describe('migration chain', () => {
   it('covers every version up to the current schema', () => {
@@ -36,5 +39,46 @@ describe('001-initial (v0 → v1)', () => {
 
   it.each([null, 'text', [1, 2], { settings: 'nope' }])('turns %p into defaults', (input) => {
     expect(migration001Initial.migrate(input)).toEqual(createDefaultData());
+  });
+});
+
+describe('002-cosmetics-and-ads (v1 → v2)', () => {
+  it('keeps every v1 value and adds the v2 defaults', () => {
+    const result = migration002CosmeticsAndAds.migrate(v1Saved) as ReturnType<typeof createDefaultData>;
+    expect(result.schemaVersion).toBe(2);
+    expect(result.settings).toEqual({
+      ...v1Saved.settings,
+      reduceMotion: false,
+      aiSpeed: 'normal',
+      diceSkin: 'ivory',
+      table: 'felt',
+    });
+    expect(result.stats).toEqual(v1Saved.stats);
+    expect(result.gameLog).toEqual(v1Saved.gameLog);
+    expect(result.daily).toEqual({ ...v1Saved.daily, reminderAsked: false });
+    expect(result.purchasesCache).toEqual(v1Saved.purchasesCache);
+    expect(result.ads).toEqual(DEFAULT_ADS);
+  });
+
+  it('never overwrites v2 fields that are already there', () => {
+    const partial = { ...v1Saved, settings: { ...v1Saved.settings, diceSkin: 'marble' }, ads: { ...DEFAULT_ADS, attPrompted: true } };
+    const result = migration002CosmeticsAndAds.migrate(partial) as ReturnType<typeof createDefaultData>;
+    expect(result.settings.diceSkin).toBe('marble');
+    expect(result.ads.attPrompted).toBe(true);
+  });
+
+  it('refuses a non-object so the repository keeps the old data', () => {
+    expect(() => migration002CosmeticsAndAds.migrate('x')).toThrow();
+  });
+
+  it('runs through the repository with a backup of the v1 blob', () => {
+    const raw = JSON.stringify(v1Saved);
+    const map = new Map([['root', raw]]);
+    const repo = new Repository({ getString: (k) => map.get(k), set: (k, v) => void map.set(k, v) });
+    const loaded = repo.load();
+    expect(loaded.readOnly).toBe(false);
+    expect(loaded.data.schemaVersion).toBe(2);
+    expect(map.get('backup_v1')).toBe(raw);
+    expect(JSON.parse(map.get('root')!).daily.results).toEqual({ '2026-10-15': 244 });
   });
 });

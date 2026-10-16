@@ -101,6 +101,7 @@ export default function GameScreen() {
       <View style={styles.feltZone}>
         <View style={styles.rollInfo}>
           <Text style={[styles.rollInfoText, { color: colors.onFelt2 }]}>
+            {game.mode === 'daily' ? `${t('daily.title')} · ` : ''}
             {rolled
               ? t('game.turnRoll', { turn: game.round, roll: game.rollsUsed })
               : t('game.turnStart', { turn: game.round })}

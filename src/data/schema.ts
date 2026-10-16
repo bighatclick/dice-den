@@ -2,9 +2,10 @@ import type { AiLevel, GameMode, GameState } from '../engine/game';
 import type { PresetId } from '../engine/rules/presets';
 
 /** Bump only together with a new file in migrations/ and its fixture test (CLAUDE.md rule 3). */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export type ThemeMode = 'system' | 'light' | 'dark';
+export type AiSpeed = 'slow' | 'normal' | 'fast';
 
 export interface Settings {
   themeMode: ThemeMode;
@@ -19,6 +20,13 @@ export interface Settings {
   leftHanded: boolean;
   dailyReminder: { enabled: boolean; hour: number; minute: number };
   onboardingDone: boolean;
+  /** v2: in-app Reduce Motion (on top of the system setting). */
+  reduceMotion: boolean;
+  /** v2: how fast computer turns play. */
+  aiSpeed: AiSpeed;
+  /** v2: chosen cosmetics (ids from src/ui/cosmetics.ts). */
+  diceSkin: string;
+  table: string;
 }
 
 export interface GameLogEntry {
@@ -32,6 +40,8 @@ export interface GameLogEntry {
   humanFaceCounts: number[];
   aiFaceCounts: number[];
   extraYatzys: number;
+  /** v2: Yatzys scored by people, including extra ones (older entries lack it). */
+  yatzys?: number;
   upperBonusMade: boolean;
 }
 
@@ -48,6 +58,21 @@ export interface DailyState {
   /** ISO week (YYYY-Www) in which the free streak-freeze was used. */
   freezeUsedWeek: string | null;
   results: Record<string, number>;
+  /** v2: the reminder permission is asked once, after the 2nd daily completion. */
+  reminderAsked: boolean;
+}
+
+/** v2: everything the ad and review rules need to remember (src/ads/policy.ts). */
+export interface AdsState {
+  lastInterstitialAt: string | null;
+  gamesAtLastInterstitial: number;
+  rewarded: { date: string | null; count: number };
+  attPrompted: boolean;
+  removeAdsCardShown: boolean;
+  reviewPrompts: string[];
+  lastAdShownAt: string | null;
+  /** Cosmetic id → ISO expiry of a rewarded 24 h trial. */
+  trials: Record<string, string>;
 }
 
 export interface Unlocks {
@@ -69,6 +94,7 @@ export interface RootData {
   unlocks: Unlocks;
   daily: DailyState;
   purchasesCache: PurchasesCache;
+  ads: AdsState;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -84,6 +110,21 @@ export const DEFAULT_SETTINGS: Settings = {
   leftHanded: false,
   dailyReminder: { enabled: false, hour: 19, minute: 0 },
   onboardingDone: false,
+  reduceMotion: false,
+  aiSpeed: 'normal',
+  diceSkin: 'ivory',
+  table: 'felt',
+};
+
+export const DEFAULT_ADS: AdsState = {
+  lastInterstitialAt: null,
+  gamesAtLastInterstitial: 0,
+  rewarded: { date: null, count: 0 },
+  attPrompted: false,
+  removeAdsCardShown: false,
+  reviewPrompts: [],
+  lastAdShownAt: null,
+  trials: {},
 };
 
 export function createDefaultData(): RootData {
@@ -94,7 +135,8 @@ export function createDefaultData(): RootData {
     gameLog: [],
     inProgress: null,
     unlocks: { dice: ['ivory', 'walnut'], tables: ['felt'] },
-    daily: { streak: 0, bestStreak: 0, lastCompleted: null, freezeUsedWeek: null, results: {} },
+    daily: { streak: 0, bestStreak: 0, lastCompleted: null, freezeUsedWeek: null, results: {}, reminderAsked: false },
     purchasesCache: { productIds: [], updatedAt: null },
+    ads: { ...DEFAULT_ADS, rewarded: { ...DEFAULT_ADS.rewarded }, reviewPrompts: [], trials: {} },
   };
 }

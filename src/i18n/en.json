@@ -16,7 +16,10 @@
     "shop": "Shop",
     "settings": "Settings",
     "resume": "Resume game",
-    "resumeSubtitle": "Turn {{turn}} of {{turns}}"
+    "resumeSubtitle": "Turn {{turn}} of {{turns}}",
+    "dailyDone": "Done today · {{score}}",
+    "dailyStreak_one": "{{count}}-day streak",
+    "dailyStreak_other": "{{count}}-day streak"
   },
   "screens": {
     "game": "Game",
@@ -111,7 +114,9 @@
     "yatzysChip": "Yatzys",
     "home": "Home",
     "playAgain": "Play again",
-    "winner": "Winner"
+    "winner": "Winner",
+    "share": "Share",
+    "dailyTitle": "Today's dice"
   },
   "handoff": {
     "hidden": "{{name}}'s dice hidden · Turn {{turn}} of {{turns}}",
@@ -151,5 +156,56 @@
     "replaceBody": "The game you have in progress will end.",
     "replaceConfirm": "Start new game",
     "cancel": "Cancel"
+  },
+  "daily": {
+    "title": "Today's dice",
+    "subtitle": "Same roll for everyone",
+    "streak_one": "{{count}}-day streak",
+    "streak_other": "{{count}}-day streak",
+    "best": "Best {{count}}",
+    "freezeInfo": "Miss one day a week and your streak is kept.",
+    "play": "Play today's dice",
+    "resume": "Resume today's dice",
+    "yourScore": "Your score today",
+    "locked": "Your first finish counts. Come back tomorrow for new dice.",
+    "share": "Share result",
+    "calendar": "Last 4 weeks",
+    "dayDone": "{{date}}: {{score}}",
+    "dayMissed": "{{date}}: not played",
+    "bestScore": "Your best daily: {{score}}",
+    "replaceTitle": "Play today's dice?",
+    "replaceBody": "The game you have in progress will end."
+  },
+  "share": {
+    "finalScore": "Final score",
+    "daily": "Today's dice",
+    "footer": "dicedengame.com",
+    "error": "Couldn't open sharing. Try again in a moment."
+  },
+  "stats": {
+    "title": "Stats",
+    "filter": "Rules",
+    "all": "All",
+    "games": "Games",
+    "highScore": "High score",
+    "average": "Average",
+    "yatzys": "Yatzys",
+    "bonusRate": "Upper bonus",
+    "vsComputer": "Against the computer",
+    "record": "{{won}} won of {{played}}",
+    "noGames": "None yet",
+    "passAndPlay": "Pass and play games",
+    "dailyGames": "Daily games",
+    "fairness": "Fair dice",
+    "fairnessBody": "Every face has a 1 in 6 chance (16.7%). Here is every die rolled so far.",
+    "you": "Your dice",
+    "computer": "Computer dice",
+    "rolls_one": "{{count}} roll",
+    "rolls_other": "{{count}} rolls",
+    "facePercent": "{{face}}: {{percent}}%, {{count}} times",
+    "daily": "Daily dice",
+    "streakNow": "Current streak",
+    "streakBest": "Best streak",
+    "empty": "Finish a game to see your stats here."
   }
 }

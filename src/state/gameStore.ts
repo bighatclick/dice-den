@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { nextAiStep } from '../ai';
-import { canRoll, createGame, gameReducer, rollAction, type GameAction, type GameState, type PlayerConfig } from '../engine/game';
+import { canRoll, createGame, emptyTally, gameReducer, playerTotal, rollAction, type GameAction, type GameState, type PlayerConfig } from '../engine/game';
+import { createDailyRng, type Rng } from '../engine/rng';
 import type { BoxId, PresetId } from '../engine/rules/presets';
 import { getAppData, updateAppData } from './appData';
+import { completeDaily, dailyDateOf, dailyGameId } from './daily';
 import { toLogEntry } from './gameLog';
 import { getGameRng } from './rng';
 
@@ -18,6 +20,8 @@ interface GameStore {
   rollSeq: number;
   hydrate(): void;
   start(options: StartOptions): GameState;
+  /** Today's seeded game (specs.md S7). `replay` > 0 replays a date already completed. */
+  startDaily(dateKey: string, you: PlayerConfig, replay?: number): GameState;
   roll(): void;
   toggleHold(index: number): void;
   score(box: BoxId): void;
@@ -33,6 +37,31 @@ interface GameStore {
 /** Only a person can take back their own last score; a computer's placement stands. */
 export function canUndo(game: GameState): boolean {
   return game.undo !== null && game.undo.players[game.undo.current].kind === 'human';
+}
+
+let dailyRng: { gameId: string; drawn: number; rng: Rng } | null = null;
+
+/**
+ * Normal games use the shared crypto RNG. A daily game replays the date's sfc32
+ * sequence; after a relaunch it fast-forwards past the faces already rolled.
+ */
+function rngFor(game: GameState): Rng {
+  const date = game.mode === 'daily' ? dailyDateOf(game.id) : null;
+  if (!date) return getGameRng();
+  const tally = game.faceTally ?? emptyTally();
+  const drawn = [...tally.human, ...tally.ai].reduce((a, b) => a + b, 0);
+  if (!dailyRng || dailyRng.gameId !== game.id || dailyRng.drawn !== drawn) {
+    const rng = createDailyRng(date);
+    for (let i = 0; i < drawn; i++) rng.nextFace();
+    dailyRng = { gameId: game.id, drawn, rng };
+  }
+  const cache = dailyRng;
+  return {
+    nextFace() {
+      cache.drawn += 1;
+      return cache.rng.nextFace();
+    },
+  };
 }
 
 function newGameId(): string {
@@ -53,10 +82,12 @@ export const useGameStore = create<GameStore>()((set, get) => {
     updateAppData((data) => {
       const updated = { ...data, inProgress: next };
       if (!justFinished) return updated;
+      const date = next.mode === 'daily' ? dailyDateOf(next.id) : null;
       return {
         ...updated,
         gameLog: [...data.gameLog, toLogEntry(next, new Date().toISOString())],
         stats: { ...data.stats, gamesCompleted: data.stats.gamesCompleted + 1 },
+        daily: date ? completeDaily(data.daily, date, playerTotal(next, 0)) : data.daily,
       };
     });
     set((s) => ({ game: next, rollSeq: action.type === 'roll' ? s.rollSeq + 1 : s.rollSeq }));
@@ -80,10 +111,16 @@ export const useGameStore = create<GameStore>()((set, get) => {
       set({ game });
       return game;
     },
+    startDaily(dateKey, you, replay = 0) {
+      const game = createGame({ id: dailyGameId(dateKey, replay), mode: 'daily', preset: 'classic', players: [you] });
+      updateAppData((data) => ({ ...data, inProgress: game }));
+      set({ game });
+      return game;
+    },
     roll() {
       const game = get().game;
       if (!game || !canRoll(game)) return;
-      apply(rollAction(game, getGameRng()));
+      apply(rollAction(game, rngFor(game)));
     },
     toggleHold(index) {
       apply({ type: 'toggleHold', index });

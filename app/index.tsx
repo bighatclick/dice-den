@@ -2,6 +2,9 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { PRESETS } from '../src/engine/rules/presets';
+import { toDateKey } from '../src/engine/rng';
+import { getAppData } from '../src/state/appData';
+import { currentStreak } from '../src/state/daily';
 import { useGameStore } from '../src/state/gameStore';
 import { Button } from '../src/ui/Button';
 import { Screen } from '../src/ui/Screen';
@@ -14,6 +17,15 @@ export default function HomeScreen() {
   const { colors } = useTheme();
   const game = useGameStore((s) => s.game);
   const resuming = game?.status === 'playing';
+  const today = toDateKey(new Date());
+  const daily = getAppData().daily;
+  const streak = currentStreak(daily, today);
+  const dailyStatus = [
+    daily.results[today] !== undefined ? t('home.dailyDone', { score: daily.results[today] }) : t('home.dailySubtitle'),
+    streak > 0 ? t('home.dailyStreak', { count: streak }) : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
@@ -28,7 +40,7 @@ export default function HomeScreen() {
           }
           onPress={() => router.push(game?.status === 'finished' ? '/final' : resuming ? '/game' : '/new-game')}
         />
-        <Button label={t('home.daily')} subtitle={t('home.dailySubtitle')} onPress={() => router.push('/daily')} />
+        <Button label={t('home.daily')} subtitle={dailyStatus} onPress={() => router.push('/daily')} />
         <Button
           label={t('home.passAndPlay')}
           subtitle={t('home.passAndPlaySubtitle')}
