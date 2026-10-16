@@ -1,0 +1,44 @@
+{
+  "app": { "name": "Dice Den" },
+  "common": { "back": "Back", "comingSoon": "This screen is being built." },
+  "home": {
+    "play": "Play",
+    "daily": "Today's dice",
+    "dailySubtitle": "Same roll for everyone",
+    "passAndPlay": "Pass and play",
+    "passAndPlaySubtitle": "2–6 at one table",
+    "stats": "Stats",
+    "shop": "Shop",
+    "settings": "Settings"
+  },
+  "screens": {
+    "game": "Game",
+    "daily": "Today's dice",
+    "stats": "Stats",
+    "shop": "Shop",
+    "settings": "Settings",
+    "onboarding": "Welcome"
+  },
+  "boxes": {
+    "ones": "Ones",
+    "twos": "Twos",
+    "threes": "Threes",
+    "fours": "Fours",
+    "fives": "Fives",
+    "sixes": "Sixes",
+    "onePair": "One pair",
+    "twoPairs": "Two pairs",
+    "threeKind": "3 of a kind",
+    "fourKind": "4 of a kind",
+    "fullHouse": "Full house",
+    "smallStraight": "Small straight",
+    "largeStraight": "Large straight",
+    "yatzy": "Yatzy",
+    "chance": "Chance"
+  },
+  "players": {
+    "computer_easy": "Computer (Easy)",
+    "computer_normal": "Computer (Normal)",
+    "computer_expert": "Computer (Expert)"
+  }
+}
