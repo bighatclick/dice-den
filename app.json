@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Dice Den",
+    "slug": "dice-den",
+    "scheme": "diceden",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F7F0E4",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dicedengame.app"
+    },
+    "android": {
+      "package": "com.dicedengame.app",
+      "allowBackup": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#8A4520",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-localization",
+      "expo-splash-screen"
+    ]
+  }
+}
