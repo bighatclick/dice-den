@@ -7,6 +7,7 @@ import { getAppData, updateAppData } from './appData';
 import { completeDaily, dailyDateOf, dailyGameId } from './daily';
 import { toLogEntry } from './gameLog';
 import { getGameRng } from './rng';
+import { grantEarnedUnlocks } from './unlocks';
 
 export interface StartOptions {
   preset?: PresetId;
@@ -18,6 +19,8 @@ interface GameStore {
   game: GameState | null;
   /** Bumps on every roll so the dice know to tumble; not persisted. */
   rollSeq: number;
+  /** Skins the game that just finished unlocked (10 games, 7-day streak); for the final scorecard. */
+  newUnlocks: string[];
   hydrate(): void;
   start(options: StartOptions): GameState;
   /** Today's seeded game (specs.md S7). `replay` > 0 replays a date already completed. */
@@ -79,23 +82,31 @@ export const useGameStore = create<GameStore>()((set, get) => {
     const next = gameReducer(game, action);
     if (next === game) return;
     const justFinished = game.status === 'playing' && next.status === 'finished';
+    let newUnlocks: string[] = [];
     updateAppData((data) => {
       const updated = { ...data, inProgress: next };
       if (!justFinished) return updated;
       const date = next.mode === 'daily' ? dailyDateOf(next.id) : null;
-      return {
+      const granted = grantEarnedUnlocks({
         ...updated,
         gameLog: [...data.gameLog, toLogEntry(next, new Date().toISOString())],
         stats: { ...data.stats, gamesCompleted: data.stats.gamesCompleted + 1 },
         daily: date ? completeDaily(data.daily, date, playerTotal(next, 0)) : data.daily,
-      };
+      });
+      newUnlocks = granted.newly;
+      return granted.data;
     });
-    set((s) => ({ game: next, rollSeq: action.type === 'roll' ? s.rollSeq + 1 : s.rollSeq }));
+    set((s) => ({
+      game: next,
+      rollSeq: action.type === 'roll' ? s.rollSeq + 1 : s.rollSeq,
+      newUnlocks: justFinished ? newUnlocks : s.newUnlocks,
+    }));
   }
 
   return {
     game: null,
     rollSeq: 0,
+    newUnlocks: [],
     hydrate() {
       set({ game: getAppData().inProgress });
     },
@@ -154,7 +165,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
     dismissFinished() {
       if (get().game?.status !== 'finished') return;
       updateAppData((data) => ({ ...data, inProgress: null }));
-      set({ game: null });
+      set({ game: null, newUnlocks: [] });
     },
   };
 });

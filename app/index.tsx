@@ -1,7 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Redirect, router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ensureAdsReady } from '../src/ads';
+import { requestTracking } from '../src/ads/att';
+import { shouldOfferAtt } from '../src/ads/policy';
 import { playerTotal } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
 import { toDateKey } from '../src/engine/rng';
@@ -12,6 +16,7 @@ import { useSettings } from '../src/state/settingsStore';
 import { computeStats } from '../src/state/stats';
 import { DieFace } from '../src/ui/Die';
 import { Felt } from '../src/ui/Felt';
+import { Button } from '../src/ui/Button';
 import { Avatar } from '../src/ui/GameParts';
 import { Screen } from '../src/ui/Screen';
 import { fonts, radius, space, touchTarget } from '../src/ui/tokens';
@@ -43,6 +48,21 @@ export default function HomeScreen() {
   const { colors } = useTheme();
   const game = useGameStore((s) => s.game);
   const { onboardingDone } = useSettings();
+  // ATT soft prompt: iOS, once, after the 3rd session, never mid-game (CLAUDE.md rule 7).
+  const [offerAtt, setOfferAtt] = useState(() => {
+    const { ads, stats } = getAppData();
+    return onboardingDone && shouldOfferAtt({ ads, stats, platform: Platform.OS, inGame: false });
+  });
+  // UMP consent and SDK start, once per launch and only after the first run.
+  // Nothing is ever shown here: interstitials appear only after a final scorecard.
+  useEffect(() => {
+    if (onboardingDone && !offerAtt) void ensureAdsReady();
+  }, [onboardingDone, offerAtt]);
+
+  async function continueToAtt() {
+    await requestTracking();
+    setOfferAtt(false);
+  }
 
   // First launch: the practice turn and rules picker (S11), skippable.
   if (!onboardingDone) return <Redirect href="/onboarding" />;
@@ -74,6 +94,20 @@ export default function HomeScreen() {
 
   return (
     <Screen>
+      <Modal visible={offerAtt} transparent animationType="fade" onRequestClose={() => void continueToAtt()}>
+        <View style={styles.scrim}>
+          <View style={[styles.attCard, { backgroundColor: colors.surface }]}>
+            <Ionicons name="shield-checkmark-outline" size={30} color={colors.accent} />
+            <Text accessibilityRole="header" style={[styles.attTitle, { color: colors.ink }]}>
+              {t('att.title')}
+            </Text>
+            <Text style={[styles.attBody, { color: colors.ink2 }]}>{t('att.body')}</Text>
+            <View style={styles.attButton}>
+              <Button variant="primary" label={t('att.continue')} onPress={() => void continueToAtt()} />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={[styles.logo, { backgroundColor: colors.primaryLo }]}>
@@ -290,4 +324,9 @@ const styles = StyleSheet.create({
   tileIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
   tileTitle: { fontFamily: fonts.bold, fontSize: 14.5 },
   tileSub: { fontFamily: fonts.body, fontSize: 12 },
+  scrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', padding: space.xl },
+  attCard: { borderRadius: radius.xl, padding: space.xl, gap: space.md, alignItems: 'center' },
+  attTitle: { fontFamily: fonts.display, fontSize: 22, textAlign: 'center' },
+  attBody: { fontFamily: fonts.body, fontSize: 15, lineHeight: 22, textAlign: 'center' },
+  attButton: { alignSelf: 'stretch', marginTop: space.sm },
 });

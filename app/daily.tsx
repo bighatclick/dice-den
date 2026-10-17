@@ -1,8 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { prepareRewarded, rewardedAvailableToday, watchRewarded } from '../src/ads';
 import { toDateKey } from '../src/engine/rng';
 import { enableDailyReminder } from '../src/notifications/reminder';
 import { getAppData, updateAppData } from '../src/state/appData';
@@ -20,7 +21,8 @@ import { useTheme } from '../src/ui/theme';
 
 /**
  * S7 Daily dice: one seeded game a day, the same dice for everyone. The first
- * finish is the day's result. No ads ever appear inside the daily dice.
+ * finish is the day's result. No ads ever appear inside the daily dice; a
+ * replay of a finished day is offered behind an opt-in rewarded ad.
  */
 export default function DailyScreen() {
   const { t } = useTranslation();
@@ -46,10 +48,16 @@ export default function DailyScreen() {
     useSettingsStore.getState().update({ dailyReminder: { enabled: on, hour: reminderHour, minute: 0 } });
   }
   const todayInProgress = game?.status === 'playing' && game.mode === 'daily' && dailyDateOf(game.id) === today;
+  const [replayNote, setReplayNote] = useState<'unavailable' | null>(null);
+  const replaysLeft = rewardedAvailableToday();
+  const finished = result !== undefined;
+  useEffect(() => {
+    if (finished) void prepareRewarded();
+  }, [finished]);
 
-  function play() {
+  function play(replay = 0) {
     const begin = () => {
-      useGameStore.getState().startDaily(today, { id: 'p1', name: t('players.you'), kind: 'human', color: SEAT_COLORS[0] });
+      useGameStore.getState().startDaily(today, { id: 'p1', name: t('players.you'), kind: 'human', color: SEAT_COLORS[0] }, replay);
       router.push('/game');
     };
     if (game?.status !== 'playing') return begin();
@@ -57,6 +65,13 @@ export default function DailyScreen() {
       { text: t('newGame.cancel'), style: 'cancel' },
       { text: t('daily.play'), style: 'destructive', onPress: begin },
     ]);
+  }
+
+  async function replay() {
+    setReplayNote(null);
+    const outcome = await watchRewarded();
+    if (outcome === 'earned') play(getAppData().ads.rewarded.count);
+    else if (outcome === 'unavailable') setReplayNote('unavailable');
   }
 
   return (
@@ -82,8 +97,23 @@ export default function DailyScreen() {
             <Button label={t('daily.share')} onPress={() => void shareCard(shareRef)} />
           </View>
         ) : (
-          <Button variant="primary" label={todayInProgress ? t('daily.resume') : t('daily.play')} onPress={todayInProgress ? () => router.push('/game') : play} />
+          <Button variant="primary" label={todayInProgress ? t('daily.resume') : t('daily.play')} onPress={todayInProgress ? () => router.push('/game') : () => play()} />
         )}
+        {finished && todayInProgress ? <Button variant="primary" label={t('daily.resume')} onPress={() => router.push('/game')} /> : null}
+        {finished && !todayInProgress ? (
+          replaysLeft > 0 ? (
+            <View testID="daily-replay">
+              <Button label={t('daily.replay')} subtitle={t('daily.replayHint')} onPress={() => void replay()} />
+            </View>
+          ) : (
+            <Text style={[styles.bestScore, { color: colors.ink2 }]}>{t('daily.replayNone')}</Text>
+          )
+        ) : null}
+        {replayNote ? (
+          <Text accessibilityLiveRegion="polite" style={[styles.bestScore, { color: colors.ink2 }]}>
+            {t('daily.replayUnavailable')}
+          </Text>
+        ) : null}
         {askReminder ? (
           <View style={[styles.result, { backgroundColor: colors.accentSoft, borderColor: colors.accent }]}>
             <Text style={[styles.askTitle, { color: colors.ink }]}>{t('reminder.askTitle')}</Text>

@@ -10,19 +10,22 @@ export function Button({
   variant = 'secondary',
   subtitle,
   disabled = false,
+  accessibilityLabel,
 }: {
   label: string;
   onPress: () => void;
   variant?: Variant;
   subtitle?: string;
   disabled?: boolean;
+  /** Overrides the spoken label when the visible one needs context. */
+  accessibilityLabel?: string;
 }) {
   const { colors } = useTheme();
   const primary = variant === 'primary';
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={subtitle ? `${label}, ${subtitle}` : label}
+      accessibilityLabel={accessibilityLabel ?? (subtitle ? `${label}, ${subtitle}` : label)}
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}

@@ -12,6 +12,7 @@ npm test                       # Jest unit + component tests
 npm run typecheck              # tsc --noEmit
 npm run lint
 maestro test e2e/              # E2E flows on the iOS simulator
+EXPO_PUBLIC_FAKE_STORE=1 npx expo run:android   # emulator build with the fake store (no store accounts)
 eas build --local -p ios       # release build (no EAS cloud quota)
 ```
 Push to GitHub at the end of every session: the rented Mac's disk can be wiped.

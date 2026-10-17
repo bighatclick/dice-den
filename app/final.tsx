@@ -3,14 +3,17 @@ import { Redirect, router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { interstitialAfterFinal, prepareInterstitial } from '../src/ads';
+import { shouldShowRemoveAdsCard } from '../src/ads/policy';
 import { playerTotal, type GameState } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
 import { totals } from '../src/engine/scoring';
 import { toDateKey } from '../src/engine/rng';
-import { getAppData } from '../src/state/appData';
+import { getAppData, updateAppData } from '../src/state/appData';
 import { dailyDateOf, formatDateKey } from '../src/state/daily';
 import { previousBest, winnerIndexes } from '../src/state/gameLog';
 import { useGameStore } from '../src/state/gameStore';
+import { hasRemoveAds } from '../src/state/shopStore';
 import { Button } from '../src/ui/Button';
 import { Avatar } from '../src/ui/GameParts';
 import { useReduceMotion } from '../src/ui/motion';
@@ -53,6 +56,22 @@ export default function FinalScreen() {
   // Set while Home / Play again is navigating away, so the redirect below stays quiet.
   const [leaving, setLeaving] = useState(false);
   const shareRef = useRef<ShareCardRef>(null);
+  const newUnlocks = useGameStore((s) => s.newUnlocks);
+  // When the scorecard appeared: an interstitial may follow only after 3 s on it.
+  const [shownAt] = useState(() => Date.now());
+  // The small Remove Ads card, once from game 3 on (specs.md §7.2). Inline, never covering the scorecard.
+  const [removeAdsCard] = useState(() => {
+    if (game?.status !== 'finished') return false;
+    const data = getAppData();
+    return shouldShowRemoveAdsCard({ ads: data.ads, stats: data.stats, removeAds: hasRemoveAds(), mode: game.mode });
+  });
+  const finishedMode = game?.status === 'finished' ? game.mode : null;
+  useEffect(() => {
+    if (finishedMode) void prepareInterstitial(finishedMode);
+  }, [finishedMode]);
+  useEffect(() => {
+    if (removeAdsCard) updateAppData((d) => ({ ...d, ads: { ...d.ads, removeAdsCardShown: true } }));
+  }, [removeAdsCard]);
 
   const summary = useMemo(() => {
     if (!game || game.status !== 'finished') return null;
@@ -92,11 +111,14 @@ export default function FinalScreen() {
     { key: 'final.yatzysChip', value: String(yatzyCount(heroPlayer)) },
   ];
 
-  function leave(again: boolean) {
-    if (!game) return;
+  async function leave(again: boolean) {
+    if (!game || leaving) return;
     const players = game.players.map(({ card: _card, extraYatzyCount: _extra, ...config }) => config);
-    const { preset: presetId, forcedOrder } = game;
+    const { preset: presetId, forcedOrder, mode } = game;
     setLeaving(true);
+    // The only interstitial placement: after leaving S5, before the next screen.
+    // Resolves at once when no ad is due or ready, so leaving is never held up.
+    await interstitialAfterFinal(mode, Date.now() - shownAt);
     dismissFinished();
     if (again) {
       start({ players, preset: presetId, forcedOrder });
@@ -184,6 +206,29 @@ export default function FinalScreen() {
           ))}
         </View>
 
+        {newUnlocks.length > 0 ? (
+          <View style={[styles.card, { backgroundColor: colors.goldSoft, borderColor: colors.gold }]}>
+            <Ionicons name="sparkles" size={20} color={colors.gold} />
+            <Text style={[styles.cardText, { color: colors.ink }]}>
+              {t('final.unlocked', { name: newUnlocks.map((id) => t(`shop.skins.${id}`)).join(', ') })}
+            </Text>
+            <Pressable accessibilityRole="button" onPress={() => router.push('/shop')} style={styles.cardButton}>
+              <Text style={[styles.cardLink, { color: colors.primary }]}>{t('final.unlockedCta')}</Text>
+            </Pressable>
+          </View>
+        ) : null}
+        {removeAdsCard ? (
+          <View testID="remove-ads-card" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+            <View style={styles.cardBody}>
+              <Text style={[styles.cardTitle, { color: colors.ink }]}>{t('final.removeAdsTitle')}</Text>
+              <Text style={[styles.cardText, { color: colors.ink2 }]}>{t('final.removeAdsBody')}</Text>
+            </View>
+            <Pressable accessibilityRole="button" onPress={() => router.push('/shop')} style={styles.cardButton}>
+              <Text style={[styles.cardLink, { color: colors.primary }]}>{t('final.removeAdsCta')}</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
         <View style={styles.actions}>
           <Pressable
             accessibilityRole="button"
@@ -194,12 +239,12 @@ export default function FinalScreen() {
             <Ionicons name="share-social" size={22} color={colors.ink} />
           </Pressable>
           <View style={styles.flex}>
-            <Button variant={daily ? 'primary' : 'secondary'} label={t('final.home')} onPress={() => leave(false)} />
+            <Button variant={daily ? 'primary' : 'secondary'} label={t('final.home')} disabled={leaving} onPress={() => void leave(false)} />
           </View>
           {/* The daily dice are one try a day; there is no Play again. */}
           {daily ? null : (
             <View style={styles.flex2}>
-              <Button variant="primary" label={t('final.playAgain')} onPress={() => leave(true)} />
+              <Button variant="primary" label={t('final.playAgain')} disabled={leaving} onPress={() => void leave(true)} />
             </View>
           )}
         </View>
@@ -254,4 +299,10 @@ const styles = StyleSheet.create({
   flex2: { flex: 2 },
   share: { width: 56, minHeight: 56, borderRadius: radius.lg, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   offscreen: { position: 'absolute', left: -10000, top: 0 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: space.md, borderWidth: 1, borderRadius: 18, padding: space.md, flexWrap: 'wrap' },
+  cardBody: { flex: 1, minWidth: 160, gap: 2 },
+  cardTitle: { fontFamily: fonts.bold, fontSize: 14.5 },
+  cardText: { fontFamily: fonts.body, fontSize: 13.5, lineHeight: 19, flexShrink: 1 },
+  cardButton: { minHeight: 44, justifyContent: 'center', paddingHorizontal: space.sm },
+  cardLink: { fontFamily: fonts.bold, fontSize: 14 },
 });

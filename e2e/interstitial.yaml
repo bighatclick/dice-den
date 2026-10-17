@@ -1,0 +1,28 @@
+# Counterpart of remove-ads.yaml: without Remove Ads, an interstitial appears only
+# after leaving the final scorecard of the 3rd game, in the 2nd session.
+# Needs network for Google's test ads; a missing ad is allowed (rule 9), so this
+# flow only checks that nothing ever covers the scorecard or the game.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- launchApp:
+    stopApp: true
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "Play"
+      - tapOn: "Start game"
+      - assertNotVisible: "Test Ad"
+      - runFlow: subflows/play-13-turns.yaml
+      - assertVisible: "FINAL SCORE"
+      - assertNotVisible: "Test Ad"
+      - waitForAnimationToEnd:
+          timeout: 4000
+      - tapOn: "Home"
+      # If an ad opened, close it and carry on.
+      - runFlow:
+          when:
+            visible: "Test Ad"
+          commands:
+            - back
+      - assertVisible: "Dice Den"

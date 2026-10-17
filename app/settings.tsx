@@ -1,11 +1,13 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { privacyOptionsRequired, showPrivacyOptions } from '../src/ads';
 import { disableDailyReminder, enableDailyReminder } from '../src/notifications/reminder';
 import { isReadOnly } from '../src/state/appData';
 import { useSettings, useSettingsStore } from '../src/state/settingsStore';
+import { useEntitlements, useShopStore } from '../src/state/shopStore';
 import { Screen } from '../src/ui/Screen';
 import { ScreenHeader } from '../src/ui/ScreenHeader';
 import { Segmented } from '../src/ui/Segmented';
@@ -21,13 +23,26 @@ function hourLabel(hour: number): string {
   return new Date(2026, 0, 1, hour).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
-/** S10 Settings. Purchases (Restore, Remove Ads) join with the shop. */
+/** S10 Settings. */
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const settings = useSettings();
   const update = useSettingsStore.getState().update;
   const [reminderDenied, setReminderDenied] = useState(false);
+  const { removeAds } = useEntitlements();
+  const restoring = useShopStore((s) => s.busy === 'restore');
+  const shopMessage = useShopStore((s) => s.message);
+  // EEA/UK: Google's form to change ad consent later, shown only where required.
+  const [adPrivacy, setAdPrivacy] = useState(false);
+  useEffect(() => {
+    let live = true;
+    void privacyOptionsRequired().then((required) => live && setAdPrivacy(required));
+    return () => {
+      live = false;
+      useShopStore.getState().clearMessage();
+    };
+  }, []);
 
   async function setReminder(enabled: boolean, hour = settings.dailyReminder.hour) {
     if (!enabled) {
@@ -86,6 +101,28 @@ export default function SettingsScreen() {
           <ToggleRow label={t('settings.highContrast')} value={settings.highContrastPips} onChange={(highContrastPips) => update({ highContrastPips })} />
           <ToggleRow label={t('settings.leftHanded')} subtitle={t('settings.leftHandedSubtitle')} value={settings.leftHanded} onChange={(leftHanded) => update({ leftHanded })} />
           <ToggleRow label={t('settings.reduceMotion')} subtitle={t('settings.reduceMotionSubtitle')} value={settings.reduceMotion} onChange={(reduceMotion) => update({ reduceMotion })} />
+          <LinkRow label={t('settings.diceAndTables')} onPress={() => router.push('/shop')} />
+        </SettingsGroup>
+
+        <SettingsGroup title={t('settings.purchases')}>
+          {removeAds ? (
+            <View style={styles.dataBox}>
+              <Text style={[styles.note, { color: colors.ink2 }]}>{t('settings.adsRemoved')}</Text>
+            </View>
+          ) : (
+            <LinkRow label={t('settings.removeAds')} onPress={() => router.push('/shop')} />
+          )}
+          <LinkRow
+            label={restoring ? t('shop.restoring') : t('settings.restore')}
+            icon="refresh"
+            onPress={() => void useShopStore.getState().restore()}
+          />
+          {shopMessage === 'restored' || shopMessage === 'nothingToRestore' || shopMessage === 'restoreFailed' ? (
+            <Text accessibilityLiveRegion="polite" style={[styles.note, styles.dataBox, { color: colors.ink2 }]}>
+              {t(`shop.${shopMessage}`)}
+            </Text>
+          ) : null}
+          {adPrivacy ? <LinkRow label={t('settings.adPrivacy')} onPress={() => void showPrivacyOptions()} /> : null}
         </SettingsGroup>
 
         <SettingsGroup title={t('settings.reminder')}>

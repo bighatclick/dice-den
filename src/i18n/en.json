@@ -130,7 +130,12 @@
     "playAgain": "Play again",
     "winner": "Winner",
     "share": "Share",
-    "dailyTitle": "Today's dice"
+    "dailyTitle": "Today's dice",
+    "removeAdsTitle": "Enjoying Dice Den?",
+    "removeAdsBody": "Remove the ads between games with a one-time purchase.",
+    "removeAdsCta": "See Remove Ads",
+    "unlocked": "New dice unlocked: {{name}}",
+    "unlockedCta": "Use them"
   },
   "handoff": {
     "hidden": "{{name}}'s dice hidden · Turn {{turn}} of {{turns}}",
@@ -188,7 +193,11 @@
     "dayMissed": "{{date}}: not played",
     "bestScore": "Your best daily: {{score}}",
     "replaceTitle": "Play today's dice?",
-    "replaceBody": "The game you have in progress will end."
+    "replaceBody": "The game you have in progress will end.",
+    "replay": "Replay today's dice",
+    "replayHint": "Watch an ad to play today's dice again. Your first score stays.",
+    "replayUnavailable": "No ad is available right now. Try again later.",
+    "replayNone": "No more replays today. New dice tomorrow."
   },
   "share": {
     "finalScore": "Final score",
@@ -261,7 +270,13 @@
     "dataOk": "Saved on this phone after every move, and included in your phone's backups.",
     "dataReadOnly": "Your saved games couldn't be read, so nothing is being changed. Your data is kept safe; please update the app.",
     "version": "Version {{version}}",
-    "replayTutorial": "Show the tutorial again"
+    "replayTutorial": "Show the tutorial again",
+    "diceAndTables": "Dice and tables",
+    "purchases": "Purchases",
+    "removeAds": "Remove Ads",
+    "adsRemoved": "Ads removed",
+    "restore": "Restore Purchases",
+    "adPrivacy": "Ad privacy choices"
   },
   "reminder": {
     "title": "Today's dice are ready",
@@ -295,5 +310,74 @@
     "rulesTitle": "Pick your rules",
     "rulesBody": "Classic is the 13-box score pad most people in the US know. Scandinavian has 15 boxes. You can change this for any new game.",
     "start": "Start playing"
+  },
+  "shop": {
+    "title": "Shop",
+    "intro": "Every item is a one-time purchase. Dice skins and tables change only the look, never the dice.",
+    "removeAds": "Remove Ads",
+    "removeAdsBody": "Removes the ads between games, forever. Ads you choose to watch for a reward stay available.",
+    "supporter": "Supporter Bundle",
+    "supporterBody": "Remove Ads, every dice skin and table now, and every one we add later.",
+    "classicPack": "Classic Dice Pack",
+    "classicPackBody": "4 dice skins: bone, casino red, marble and glass.",
+    "tablePack": "Table Pack",
+    "tablePackBody": "4 tables: walnut, slate, night and oxblood felt.",
+    "complete": "Complete Collection",
+    "completeBody": "All current dice skins and tables.",
+    "oneTime": "One-time purchase",
+    "buy": "Buy for {{price}}",
+    "buyA11y": "Buy {{name}} for {{price}}, one-time purchase",
+    "owned": "Owned",
+    "adsRemoved": "Ads removed. Thank you!",
+    "priceUnavailable": "Not available",
+    "dice": "Dice",
+    "tables": "Tables",
+    "equipped": "In use",
+    "use": "Use",
+    "inPack": "In {{pack}}",
+    "earnGames": "Finish {{count}} games",
+    "earnStreak": "Reach a {{count}}-day streak",
+    "earnedHint": "Earned by playing",
+    "trial": "Try for 24 h",
+    "trialA11y": "Watch an ad to try {{name}} for 24 hours",
+    "trialActive": "Trial",
+    "trialsLeft_one": "{{count}} ad to watch today",
+    "trialsLeft_other": "{{count}} ads to watch today",
+    "noTrials": "No more ads to watch today",
+    "trialUnavailable": "No ad is available right now. Try again later.",
+    "restore": "Restore Purchases",
+    "restoring": "Restoring…",
+    "storeUnavailable": "The store isn't available right now. Your dice and tables still work.",
+    "loading": "Loading prices…",
+    "thanks": "Thank you! It's yours.",
+    "pending": "Your purchase is waiting for approval. It will appear here once it goes through.",
+    "failed": "The purchase didn't go through. You weren't charged.",
+    "restored": "Your purchases are restored.",
+    "nothingToRestore": "No purchases were found for this account.",
+    "restoreFailed": "Couldn't reach the store. Try again later.",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "skins": {
+      "ivory": "Ivory",
+      "walnut": "Walnut",
+      "amber": "Amber",
+      "jade": "Jade",
+      "bone": "Bone",
+      "casinoRed": "Casino red",
+      "marble": "Marble",
+      "glass": "Glass"
+    },
+    "tableNames": {
+      "felt": "Green felt",
+      "walnut": "Walnut",
+      "slate": "Slate",
+      "night": "Night",
+      "oxblood": "Oxblood felt"
+    }
+  },
+  "att": {
+    "title": "About the ads",
+    "body": "Dice Den shows a few ads between games. On the next screen, your phone asks whether those ads may use your activity in other apps. Either answer is fine; the game is the same.",
+    "continue": "Continue"
   }
 }

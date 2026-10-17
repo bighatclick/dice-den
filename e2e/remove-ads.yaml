@@ -1,0 +1,25 @@
+# Remove Ads hides interstitials (specs.md §13). Fake store build
+# (EXPO_PUBLIC_FAKE_STORE=1) with Google's test ads, which are labelled "Test Ad".
+# Interstitials could show from the 3rd game in the 2nd session; with Remove Ads none may.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Shop"
+- tapOn: { id: "buy-removeAds" }
+- assertVisible: "Thank you! It's yours."
+# Second session: interstitials are never shown in session 1.
+- launchApp:
+    stopApp: true
+- repeat:
+    times: 4
+    commands:
+      - tapOn: "Play"
+      - tapOn: "Start game"
+      - runFlow: subflows/play-13-turns.yaml
+      - assertVisible: "FINAL SCORE"
+      # Policy: the scorecard stays up at least 3 s before an ad could follow it.
+      - waitForAnimationToEnd:
+          timeout: 4000
+      - tapOn: "Home"
+      - assertNotVisible: "Test Ad"
+      - assertVisible: "Dice Den"

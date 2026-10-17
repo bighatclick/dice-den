@@ -7,9 +7,11 @@ import { useEffect, type ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { getRepository } from '../src/data/mmkvStore';
-import { initAppData } from '../src/state/appData';
+import { initAppData, updateAppData } from '../src/state/appData';
 import { startCloudSync } from '../src/state/cloudSyncRunner';
 import { recordSession } from '../src/state/session';
+import { useShopStore } from '../src/state/shopStore';
+import { grantEarnedUnlocks } from '../src/state/unlocks';
 import { useGameStore } from '../src/state/gameStore';
 import { useSettings, useSettingsStore } from '../src/state/settingsStore';
 import { denFonts } from '../src/ui/fonts';
@@ -22,6 +24,10 @@ initAppData(getRepository());
 recordSession();
 useGameStore.getState().hydrate();
 useSettingsStore.getState().hydrate();
+// Purchases from the cache, so owned items work offline before the store answers.
+useShopStore.getState().hydrate();
+// Players who passed 10 games or a 7-day streak before this version get their skins.
+updateAppData((d) => grantEarnedUnlocks(d).data);
 
 export default function RootLayout() {
   const [loaded, error] = useFonts(denFonts);
@@ -32,6 +38,11 @@ export default function RootLayout() {
 
   // iCloud key-value sync of settings, stats summary, unlocks and streak (iOS only).
   useEffect(() => startCloudSync(), []);
+
+  // Connects to the store, finishes any unfinished purchase and refreshes ownership.
+  useEffect(() => {
+    void useShopStore.getState().load();
+  }, []);
 
   if (!loaded && !error) return null;
 

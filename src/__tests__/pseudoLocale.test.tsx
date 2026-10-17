@@ -10,6 +10,7 @@ import HomeScreen from '../../app/index';
 import NewGameScreen from '../../app/new-game';
 import OnboardingScreen from '../../app/onboarding';
 import SettingsScreen from '../../app/settings';
+import ShopScreen from '../../app/shop';
 import StatsScreen from '../../app/stats';
 import en from '../i18n/en.json';
 import { pseudoLocalize, pseudoString } from '../i18n/pseudo';
@@ -26,6 +27,7 @@ const routes = {
   daily: DailyScreen,
   stats: StatsScreen,
   settings: SettingsScreen,
+  shop: ShopScreen,
   fairness: FairnessScreen,
   onboarding: OnboardingScreen,
   'new-game': NewGameScreen,
@@ -74,7 +76,7 @@ describe('no hard-coded UI text (pseudo-locale pass)', () => {
     useGameStore.setState({ game: null, rollSeq: 0 });
   });
 
-  it.each(['/', '/settings', '/stats', '/daily', '/fairness', '/new-game?opponents=pass', '/game', '/onboarding'])(
+  it.each(['/', '/settings', '/shop', '/stats', '/daily', '/fairness', '/new-game?opponents=pass', '/game', '/onboarding'])(
     '%s shows only translated text',
     async (url) => {
       await renderRouter(routes, { initialUrl: url });

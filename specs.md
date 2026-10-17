@@ -141,12 +141,12 @@ Navigation: expo-router stack; the game table is full-screen. Back from the tabl
 | Consent | Google UMP form on first launch in EEA/UK (required before ad requests); ATT pre-prompt + system prompt only after the 3rd session and never during a game. If declined, serve non-personalised ads |
 | Failure handling | Ad load or show errors never block navigation; 2-second timeout then continue |
 
-### 7.2 In-app purchases (react-native-iap; all non-consumable)
+### 7.2 In-app purchases (expo-iap; all non-consumable)
 | Product ID | Name | Price (US) | Contents |
 |---|---|---|---|
 | `com.dicedengame.app.removeads` | Remove Ads | $3.99 | Removes all interstitials, forever; rewarded stays opt-in |
 | `com.dicedengame.app.pack.classic` | Classic Dice Pack | $1.99 | 4 dice skins (bone, casino red, marble, glass) |
-| `com.dicedengame.app.pack.tables` | Table Pack | $1.99 | 4 tables (green felt, walnut, slate, night) |
+| `com.dicedengame.app.pack.tables` | Table Pack | $1.99 | 4 tables (walnut, slate, night, oxblood felt; green felt is the starting table) |
 | `com.dicedengame.app.complete` | Complete Collection | $6.99 | All current skins + tables |
 | `com.dicedengame.app.supporter` | Supporter Bundle | $9.99 | Remove Ads + all current and future skins/tables |
 
@@ -211,7 +211,7 @@ Dynamic Type up to XXL on all text (score pad scales; switches to a single-colum
 | Engine | `src/engine/` pure TS, no React imports: `dice.ts`, `rng.ts` (crypto + sfc32), `scoring.ts`, `rules/` (presets), `ai/` (easy/normal/expert), `game.ts` (reducer: roll/hold/score/undo/next) |
 | Rendering | react-native-svg dice, Reanimated 3, react-native-gesture-handler |
 | Ads | react-native-google-mobile-ads (AdMob + UMP) |
-| IAP | react-native-iap (StoreKit 2 / Play Billing) |
+| IAP | expo-iap (StoreKit 2 / Play Billing; the Expo build of react-native-iap, which does not support Expo dev clients) |
 | Other | expo-haptics, expo-audio, expo-crypto, expo-store-review, expo-notifications, expo-sharing, react-native-view-shot, expo-tracking-transparency, @sentry/react-native (free tier, crash reporting only) |
 | Not allowed | Attribution SDKs (AppsFlyer, Adjust …), analytics that track across apps, any backend, login, photo/contacts permissions |
 | Build | Local on the rented Mac: `npx expo prebuild`, `npx expo run:ios`, `eas build --local -p ios`; push to GitHub at the end of every session |

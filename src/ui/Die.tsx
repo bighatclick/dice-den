@@ -12,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle, Defs, LinearGradient, RadialGradient, Rect, Stop } from 'react-native-svg';
 import type { Face } from '../engine/dice';
+import { useEquipped } from '../state/cosmetics';
+import type { DiceSkin } from './cosmetics';
 import { useReduceMotion } from './motion';
 import { fonts } from './tokens';
 import { useTheme } from './theme';
@@ -26,30 +28,37 @@ export const PIPS: Record<Face, readonly (readonly [number, number])[]> = {
   6: [[29, 25], [71, 25], [29, 50], [71, 50], [29, 75], [71, 75]],
 };
 
-/** Static ivory die face. */
-export function DieFace({ value, size, highContrast = false }: { value: Face; size: number; highContrast?: boolean }) {
+/** Static die face in the equipped skin (or `skin`, for shop previews). */
+export function DieFace({ value, size, highContrast = false, skin }: { value: Face; size: number; highContrast?: boolean; skin?: DiceSkin }) {
   const { colors } = useTheme();
+  const equipped = useEquipped().skin;
+  const s = skin ?? equipped;
+  const face = s.face ?? [colors.dieFace, '#F6EEE1', colors.dieFaceLo];
+  const pip = s.pip ?? ['#5A3E2B', colors.pip, '#120A05'];
   const r = highContrast ? 11.5 : 10;
+  // Gradient ids are per skin so two skins on one screen (the shop) never share one.
+  const faceId = `face-${s.id}`;
+  const pipId = `pip-${s.id}${highContrast ? '-hc' : ''}`;
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100">
       <Defs>
-        <LinearGradient id="face" x1="0" y1="0" x2="1" y2="1">
-          <Stop offset="0" stopColor={colors.dieFace} />
-          <Stop offset="0.55" stopColor="#F6EEE1" />
-          <Stop offset="1" stopColor={colors.dieFaceLo} />
+        <LinearGradient id={faceId} x1="0" y1="0" x2="1" y2="1">
+          <Stop offset="0" stopColor={face[0]} />
+          <Stop offset="0.55" stopColor={face[1]} />
+          <Stop offset="1" stopColor={face[2]} />
         </LinearGradient>
-        <RadialGradient id="pip" cx="40%" cy="35%" r="70%">
-          <Stop offset="0" stopColor={highContrast ? '#000000' : '#5A3E2B'} />
-          <Stop offset="0.55" stopColor={highContrast ? '#000000' : colors.pip} />
-          <Stop offset="1" stopColor="#120A05" />
+        <RadialGradient id={pipId} cx="40%" cy="35%" r="70%">
+          <Stop offset="0" stopColor={highContrast ? s.contrastPip : pip[0]} />
+          <Stop offset="0.55" stopColor={highContrast ? s.contrastPip : pip[1]} />
+          <Stop offset="1" stopColor={highContrast ? s.contrastPip : pip[2]} />
         </RadialGradient>
       </Defs>
-      <Rect x="0" y="0" width="100" height="100" rx="24" fill="url(#face)" />
+      <Rect x="0" y="0" width="100" height="100" rx="24" fill={`url(#${faceId})`} />
       {PIPS[value].map(([x, y]) => (
-        <Circle key={`h${x}-${y}`} cx={x} cy={y + 1.2} r={r} fill="rgba(255,255,255,0.9)" />
+        <Circle key={`h${x}-${y}`} cx={x} cy={y + 1.2} r={r} fill={s.pipShine ?? 'rgba(255,255,255,0.9)'} />
       ))}
       {PIPS[value].map(([x, y]) => (
-        <Circle key={`p${x}-${y}`} cx={x} cy={y} r={r} fill="url(#pip)" />
+        <Circle key={`p${x}-${y}`} cx={x} cy={y} r={r} fill={`url(#${pipId})`} />
       ))}
     </Svg>
   );
@@ -77,6 +86,7 @@ interface DieProps {
 export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, highContrast, onToggle }: DieProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { skin } = useEquipped();
   const reduceMotion = useReduceMotion();
   const lift = useSharedValue(held ? 1 : 0);
   const spin = useSharedValue(0);
@@ -144,8 +154,8 @@ export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, h
           animated,
         ]}
       >
-        <View style={[styles.edge, { borderRadius: size * 0.24, backgroundColor: colors.dieEdge }]} />
-        <DieFace value={value} size={size - 6} highContrast={highContrast} />
+        <View style={[styles.edge, { borderRadius: size * 0.24, backgroundColor: skin.edge ?? colors.dieEdge }]} />
+        <DieFace value={value} size={size - 6} highContrast={highContrast} skin={skin} />
       </Animated.View>
       <View style={styles.tagSlot}>
         {held ? (

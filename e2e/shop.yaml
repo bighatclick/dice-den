@@ -1,0 +1,16 @@
+# Shop (S9) against the fake store: build with EXPO_PUBLIC_FAKE_STORE=1 (see README).
+# Buy a pack, use a skin from it, and get it back with Restore Purchases.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Shop"
+- assertVisible: "One-time purchase"
+- assertVisible: "Restore Purchases"
+- tapOn: { id: "buy-classicPack" }
+- assertVisible: "Thank you! It's yours."
+- scrollUntilVisible: { element: { id: "cosmetic-dice-marble" } }
+- tapOn: { id: "cosmetic-dice-marble" }
+- assertVisible: "Marble, In use.*"
+- scrollUntilVisible: { element: { id: "restore-button" } }
+- tapOn: { id: "restore-button" }
+- assertVisible: "Your purchases are restored."
