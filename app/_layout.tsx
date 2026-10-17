@@ -3,12 +3,13 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { getRepository } from '../src/data/mmkvStore';
 import { initAppData } from '../src/state/appData';
 import { useGameStore } from '../src/state/gameStore';
+import { useSettings, useSettingsStore } from '../src/state/settingsStore';
 import { denFonts } from '../src/ui/fonts';
 import { ThemeProvider, useTheme } from '../src/ui/theme';
 
@@ -17,6 +18,7 @@ void SplashScreen.preventAutoHideAsync();
 // Load saved data (migrating if needed) before any screen reads a store.
 initAppData(getRepository());
 useGameStore.getState().hydrate();
+useSettingsStore.getState().hydrate();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts(denFonts);
@@ -30,12 +32,18 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>
+        <SettingsTheme>
           <ThemedStack />
-        </ThemeProvider>
+        </SettingsTheme>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
+}
+
+/** Dark mode follows Settings › Appearance (System, Light or Dark). */
+function SettingsTheme({ children }: { children: ReactNode }) {
+  const { themeMode } = useSettings();
+  return <ThemeProvider mode={themeMode}>{children}</ThemeProvider>;
 }
 
 function ThemedStack() {

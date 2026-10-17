@@ -95,6 +95,8 @@ export interface RootData {
   daily: DailyState;
   purchasesCache: PurchasesCache;
   ads: AdsState;
+  /** v2: when settings last changed here, for the iCloud merge (latest wins). */
+  syncMeta: { settingsUpdatedAt: string | null };
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -138,5 +140,6 @@ export function createDefaultData(): RootData {
     daily: { streak: 0, bestStreak: 0, lastCompleted: null, freezeUsedWeek: null, results: {}, reminderAsked: false },
     purchasesCache: { productIds: [], updatedAt: null },
     ads: { ...DEFAULT_ADS, rewarded: { ...DEFAULT_ADS.rewarded }, reviewPrompts: [], trials: {} },
+    syncMeta: { settingsUpdatedAt: null },
   };
 }

@@ -105,36 +105,44 @@ export function RollPips({ rollsUsed }: { rollsUsed: number }) {
 export function RollButton({
   rollsLeft,
   onPress,
+  disabled: blocked = false,
+  label,
 }: {
   rollsLeft: number;
   onPress: () => void;
+  /** Disabled for another reason than running out of rolls (the tutorial). */
+  disabled?: boolean;
+  label?: string;
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const disabled = rollsLeft === 0;
+  const outOfRolls = rollsLeft === 0;
+  const disabled = outOfRolls || blocked;
+  const text = label ?? t('game.roll');
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={disabled ? t('game.pickBox') : `${t('game.roll')}, ${t('game.a11yRollsLeft', { count: rollsLeft })}`}
+      accessibilityLabel={outOfRolls ? t('game.pickBox') : `${text}, ${t('game.a11yRollsLeft', { count: rollsLeft })}`}
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
         styles.roll,
         {
-          backgroundColor: disabled ? 'rgba(0,0,0,0.25)' : colors.primary,
-          borderBottomColor: disabled ? 'transparent' : colors.primaryLo,
-          borderTopColor: disabled ? 'transparent' : colors.primaryHi,
+          backgroundColor: outOfRolls ? 'rgba(0,0,0,0.25)' : colors.primary,
+          borderBottomColor: outOfRolls ? 'transparent' : colors.primaryLo,
+          borderTopColor: outOfRolls ? 'transparent' : colors.primaryHi,
         },
+        blocked && { opacity: 0.5 },
         pressed && styles.pressed,
       ]}
     >
-      {disabled ? (
+      {outOfRolls ? (
         <Text style={[styles.rollLabel, { color: colors.onFelt2 }]}>{t('game.pickBox')}</Text>
       ) : (
         <>
           <Ionicons name="sync" size={20} color={colors.onPrimary} />
-          <Text style={[styles.rollLabel, { color: colors.onPrimary }]}>{t('game.roll')}</Text>
+          <Text style={[styles.rollLabel, { color: colors.onPrimary }]}>{text}</Text>
           <View style={styles.kbd}>
             <Text style={[styles.kbdText, { color: colors.onPrimary }]}>{t('game.rollsLeft', { count: rollsLeft })}</Text>
           </View>

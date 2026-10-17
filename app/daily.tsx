@@ -1,13 +1,15 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { toDateKey } from '../src/engine/rng';
-import { getAppData } from '../src/state/appData';
+import { enableDailyReminder } from '../src/notifications/reminder';
+import { getAppData, updateAppData } from '../src/state/appData';
 import { currentStreak, dailyDateOf, dailyHistory, formatDateKey } from '../src/state/daily';
 import { useGameStore } from '../src/state/gameStore';
 import { SEAT_COLORS } from '../src/state/players';
+import { useSettingsStore } from '../src/state/settingsStore';
 import { Button } from '../src/ui/Button';
 import { Screen } from '../src/ui/Screen';
 import { ScreenHeader } from '../src/ui/ScreenHeader';
@@ -31,6 +33,18 @@ export default function DailyScreen() {
   const streak = currentStreak(daily, today);
   const history = dailyHistory(daily, today);
   const best = Object.values(daily.results).reduce<number | null>((m, s) => (m === null || s > m ? s : m), null);
+  // Ask about the reminder once, after the 2nd daily completion (specs.md F13).
+  const [askReminder, setAskReminder] = useState(
+    () => Object.keys(daily.results).length >= 2 && !daily.reminderAsked && !useSettingsStore.getState().settings.dailyReminder.enabled,
+  );
+  const reminderHour = 19;
+  async function answerReminder(yes: boolean) {
+    setAskReminder(false);
+    updateAppData((d) => ({ ...d, daily: { ...d.daily, reminderAsked: true } }));
+    if (!yes) return;
+    const on = await enableDailyReminder(reminderHour, 0, { title: t('reminder.title'), body: t('reminder.body') });
+    useSettingsStore.getState().update({ dailyReminder: { enabled: on, hour: reminderHour, minute: 0 } });
+  }
   const todayInProgress = game?.status === 'playing' && game.mode === 'daily' && dailyDateOf(game.id) === today;
 
   function play() {
@@ -70,6 +84,22 @@ export default function DailyScreen() {
         ) : (
           <Button variant="primary" label={todayInProgress ? t('daily.resume') : t('daily.play')} onPress={todayInProgress ? () => router.push('/game') : play} />
         )}
+        {askReminder ? (
+          <View style={[styles.result, { backgroundColor: colors.accentSoft, borderColor: colors.accent }]}>
+            <Text style={[styles.askTitle, { color: colors.ink }]}>{t('reminder.askTitle')}</Text>
+            <Text style={[styles.locked, { color: colors.ink2 }]}>
+              {t('reminder.askBody', { time: new Date(2026, 0, 1, reminderHour).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }) })}
+            </Text>
+            <View style={styles.askRow}>
+              <View style={styles.flex}>
+                <Button label={t('reminder.askNo')} onPress={() => void answerReminder(false)} />
+              </View>
+              <View style={styles.flex}>
+                <Button variant="primary" label={t('reminder.askYes')} onPress={() => void answerReminder(true)} />
+              </View>
+            </View>
+          </View>
+        ) : null}
         {best !== null ? <Text style={[styles.bestScore, { color: colors.ink2 }]}>{t('daily.bestScore', { score: best })}</Text> : null}
 
         <Text style={[styles.calendarTitle, { color: colors.ink3 }]}>{t('daily.calendar').toUpperCase()}</Text>
@@ -123,5 +153,8 @@ const styles = StyleSheet.create({
   calendar: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   day: { width: '12.5%', aspectRatio: 1, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center', flexGrow: 1 },
   dayNum: { fontFamily: fonts.bold, fontSize: 13, fontVariant: ['tabular-nums'] },
+  askTitle: { fontFamily: fonts.bold, fontSize: 16 },
+  askRow: { flexDirection: 'row', gap: space.sm, alignSelf: 'stretch' },
+  flex: { flex: 1 },
   offscreen: { position: 'absolute', left: -10000, top: 0 },
 });

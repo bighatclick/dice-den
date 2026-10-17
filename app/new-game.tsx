@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { AiLevel } from '../src/engine/game';
 import type { PresetId } from '../src/engine/rules/presets';
-import { getAppData, updateAppData } from '../src/state/appData';
+import { getAppData } from '../src/state/appData';
 import { useGameStore } from '../src/state/gameStore';
+import { useSettingsStore } from '../src/state/settingsStore';
 import { buildPlayers, lastTable, SEAT_COLORS, type Opponents, type SeatDraft, type TableDraft } from '../src/state/players';
 import { Button } from '../src/ui/Button';
 import { Screen } from '../src/ui/Screen';
@@ -59,7 +60,7 @@ export default function NewGameScreen() {
       computer: (level) => t(`players.computer_${level}`),
       seat: (n) => t('newGame.defaultName', { n }),
     });
-    updateAppData((d) => ({ ...d, settings: { ...d.settings, preset, forcedOrder } }));
+    useSettingsStore.getState().update({ preset, forcedOrder });
     useGameStore.getState().start({ players, preset, forcedOrder });
     router.replace('/game');
   }

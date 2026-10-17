@@ -7,19 +7,21 @@ import { nextAiStep } from '../src/ai';
 import { MAX_ROLLS } from '../src/engine/dice';
 import { playerTotal, scoreOptions } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
-import { getAppData } from '../src/state/appData';
 import { canUndo, useGameStore } from '../src/state/gameStore';
+import { useSettings } from '../src/state/settingsStore';
 import { Die } from '../src/ui/Die';
 import { holdFeedback, rollFeedback, scoreFeedback } from '../src/ui/feedback';
 import { Felt } from '../src/ui/Felt';
 import { CardTabs, GlassButton, PlayerBar, RollButton, RollPips, SkipButton } from '../src/ui/GameParts';
 import { Handoff } from '../src/ui/Handoff';
+import { playSound } from '../src/ui/sound';
 import { SEAT_COLORS } from '../src/state/players';
 import { ScorePad } from '../src/ui/ScorePad';
 import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 
 /** Pause before each visible computer step, in ms. */
+const AI_SPEED = { slow: 1.6, normal: 1, fast: 0.4 } as const;
 const AI_DELAY = { roll: 700, firstRollAfterUndoable: 1500, toggleHold: 260, score: 900 };
 
 /** S3 Game table. No ads can appear here, ever (CLAUDE.md rule 1). */
@@ -32,7 +34,7 @@ export default function GameScreen() {
   const { start, roll, toggleHold, score, undo, skipAiTurn } = useGameStore.getState();
   // Whose card the sheet shows; snaps back to the current player when the turn passes.
   const [picked, setPicked] = useState<{ turnOf: number; index: number } | null>(null);
-  const settings = getAppData().settings;
+  const settings = useSettings();
 
   // Opening the table with nothing in progress (e.g. a deep link) starts a solo game.
   useEffect(() => {
@@ -59,12 +61,15 @@ export default function GameScreen() {
     if (!game || !aiTurn) return;
     const step = nextAiStep(game);
     if (!step) return;
-    let delay: number = AI_DELAY[step.type];
+    let delay: number = AI_DELAY[step.type] * AI_SPEED[settings.aiSpeed];
     // Give the person who just scored a moment to undo before the computer's first roll.
     if (step.type === 'roll' && game.rollsUsed === 0 && canUndo(game)) delay = AI_DELAY.firstRollAfterUndoable;
-    const timer = setTimeout(() => useGameStore.getState().aiStep(), delay);
+    const timer = setTimeout(() => {
+      if (step.type === 'roll') playSound('roll');
+      useGameStore.getState().aiStep();
+    }, delay);
     return () => clearTimeout(timer);
-  }, [game, aiTurn]);
+  }, [game, aiTurn, settings.aiSpeed]);
 
   // Pass-and-play: cover the table until the next person is holding the phone.
   const [readyKey, setReadyKey] = useState<string | null>(null);
@@ -172,7 +177,7 @@ export default function GameScreen() {
           onScore={
             viewingCurrent && humanTurn
               ? (box) => {
-                  scoreFeedback();
+                  scoreFeedback(box === 'yatzy' && scoreOptions(game).yatzy === 50);
                   score(box);
                 }
               : undefined

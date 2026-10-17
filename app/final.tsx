@@ -3,7 +3,6 @@ import { Redirect, router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useReducedMotion } from 'react-native-reanimated';
 import { playerTotal, type GameState } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
 import { totals } from '../src/engine/scoring';
@@ -14,6 +13,7 @@ import { previousBest, winnerIndexes } from '../src/state/gameLog';
 import { useGameStore } from '../src/state/gameStore';
 import { Button } from '../src/ui/Button';
 import { Avatar } from '../src/ui/GameParts';
+import { useReduceMotion } from '../src/ui/motion';
 import { Screen } from '../src/ui/Screen';
 import { shareCard } from '../src/ui/share';
 import { ShareCard, shareDataFor, type ShareCardRef } from '../src/ui/ShareCard';
@@ -22,7 +22,7 @@ import { useTheme } from '../src/ui/theme';
 
 /** Counts up to `to` over 1.4 s; shows it at once with Reduce Motion. */
 function useCountUp(to: number): number {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (reduceMotion) return;

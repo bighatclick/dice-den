@@ -35,7 +35,16 @@
       "expo-localization",
       "expo-splash-screen",
       "expo-asset",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      "expo-notifications"
     ]
   }
 }

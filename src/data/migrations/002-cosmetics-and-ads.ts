@@ -5,8 +5,8 @@ type Json = Record<string, unknown>;
 const isRecord = (v: unknown): v is Json => typeof v === 'object' && v !== null && !Array.isArray(v);
 
 /**
- * v1 → v2: adds the cosmetics and motion settings, daily.reminderAsked and the
- * `ads` block. Everything already saved is kept exactly as it was.
+ * v1 → v2: adds the cosmetics and motion settings, daily.reminderAsked, the
+ * `ads` block and `syncMeta`. Everything already saved is kept exactly as it was.
  */
 export const migration002CosmeticsAndAds: Migration = {
   from: 1,
@@ -30,6 +30,7 @@ export const migration002CosmeticsAndAds: Migration = {
       ads: isRecord(input.ads)
         ? input.ads
         : { ...DEFAULT_ADS, rewarded: { ...DEFAULT_ADS.rewarded }, reviewPrompts: [], trials: {} },
+      syncMeta: isRecord(input.syncMeta) ? input.syncMeta : { settingsUpdatedAt: null },
     };
   },
 };

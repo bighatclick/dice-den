@@ -60,7 +60,6 @@ describe.each([
   ['/stats', 'Stats'],
   ['/shop', 'Shop'],
   ['/settings', 'Settings'],
-  ['/onboarding', 'Welcome'],
 ])('placeholder %s', (path, title) => {
   it('renders its title and goes back home', async () => {
     const router = await renderRouter(routes, { initialUrl: path });

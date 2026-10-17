@@ -58,6 +58,9 @@ describe('002-cosmetics-and-ads (v1 → v2)', () => {
     expect(result.daily).toEqual({ ...v1Saved.daily, reminderAsked: false });
     expect(result.purchasesCache).toEqual(v1Saved.purchasesCache);
     expect(result.ads).toEqual(DEFAULT_ADS);
+    expect(result.syncMeta).toEqual({ settingsUpdatedAt: null });
+    // Nothing is left out: the result has exactly the v2 shape.
+    expect(Object.keys(result).sort()).toEqual(Object.keys(createDefaultData()).sort());
   });
 
   it('never overwrites v2 fields that are already there', () => {

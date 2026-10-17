@@ -7,8 +7,9 @@ import GameScreen from '../../app/game';
 import HomeScreen from '../../app/index';
 import type { PlayerConfig } from '../engine/game';
 import { CLASSIC } from '../engine/rules/presets';
-import { getAppData, updateAppData } from '../state/appData';
+import { getAppData } from '../state/appData';
 import { useGameStore } from '../state/gameStore';
+import { useSettingsStore } from '../state/settingsStore';
 import { setGameRng } from '../state/rng';
 import { setUpAppData, scriptDice } from '../testing/appData';
 
@@ -68,7 +69,7 @@ describe('Game table (S3)', () => {
   });
 
   it('hides point hints when hints are off but still lets you score', async () => {
-    updateAppData((d) => ({ ...d, settings: { ...d.settings, hints: false } }));
+    useSettingsStore.getState().update({ hints: false });
     scriptDice([3, 3, 3, 3, 3]);
     await renderRouter(routes, { initialUrl: '/game' });
     await fireEvent.press(button('Roll, 3 rolls left'));

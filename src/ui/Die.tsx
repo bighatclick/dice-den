@@ -5,7 +5,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withSequence,
   withSpring,
@@ -13,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle, Defs, LinearGradient, RadialGradient, Rect, Stop } from 'react-native-svg';
 import type { Face } from '../engine/dice';
+import { useReduceMotion } from './motion';
 import { fonts } from './tokens';
 import { useTheme } from './theme';
 
@@ -77,7 +77,7 @@ interface DieProps {
 export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, highContrast, onToggle }: DieProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
   const lift = useSharedValue(held ? 1 : 0);
   const spin = useSharedValue(0);
   const drop = useSharedValue(0);
