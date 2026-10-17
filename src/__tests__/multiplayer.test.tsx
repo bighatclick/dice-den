@@ -161,6 +161,8 @@ describe('Pass handoff (S4)', () => {
 
     expect(screen.getByRole('header', { name: 'Dad' })).toBeTruthy();
     expect(screen.getByText("Mom's dice hidden · Turn 1 of 13")).toBeTruthy();
+    // Regression: screen readers could reach the table, and roll for Dad, behind the handoff.
+    expect(screen.queryByRole('button', { name: 'Roll, 3 rolls left' })).toBeNull();
     await fireEvent.press(button("Undo Mom's last score"));
     expect(game().current).toBe(0);
     expect(screen.queryByRole('header', { name: 'Dad' })).toBeNull();

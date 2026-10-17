@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { privacyOptionsRequired, showPrivacyOptions } from '../src/ads';
 import { disableDailyReminder, enableDailyReminder } from '../src/notifications/reminder';
 import { isReadOnly } from '../src/state/appData';
@@ -84,7 +84,7 @@ export default function SettingsScreen() {
         </SettingsGroup>
 
         <SettingsGroup title={t('settings.feel')}>
-          <ToggleRow label={t('settings.sound')} subtitle={t('settings.soundSubtitle')} value={settings.sound} onChange={(sound) => update({ sound })} />
+          <ToggleRow label={t('settings.sound')} subtitle={t(Platform.OS === 'android' ? 'settings.soundSubtitleAndroid' : 'settings.soundSubtitle')} value={settings.sound} onChange={(sound) => update({ sound })} />
           <ToggleRow label={t('settings.haptics')} value={settings.haptics} onChange={(haptics) => update({ haptics })} />
         </SettingsGroup>
 

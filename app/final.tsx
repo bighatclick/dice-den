@@ -107,6 +107,9 @@ export default function FinalScreen() {
   else headline = t('final.wins', { name: game.players[winners[0]].name });
 
   const heroPlayer = game.players[hero];
+  // With several players, say whose score the big number is: it may not be the winner's.
+  const heroCaption =
+    solo || daily ? null : heroPlayer.name === t('players.you') ? t('final.yourScore') : t('final.playerScore', { name: heroPlayer.name });
   const heroTotals = totals(preset, heroPlayer.card, heroPlayer.extraYatzyCount);
   const chips: { key: string; value: string; gold?: boolean }[] = [
     { key: 'final.upper', value: String(heroTotals.upper) },
@@ -148,6 +151,7 @@ export default function FinalScreen() {
           >
             {shown}
           </Text>
+          {heroCaption ? <Text style={[styles.caption, { color: colors.ink2 }]}>{heroCaption}</Text> : null}
           {personalBest ? (
             <View style={[styles.pb, { backgroundColor: colors.goldHi }]}>
               <Ionicons name="star" size={13} color="#4A2E06" />
@@ -278,6 +282,7 @@ const styles = StyleSheet.create({
   },
   headline: { fontFamily: fonts.heavy, fontSize: 11.5, letterSpacing: 2, marginTop: 14 },
   big: { fontFamily: fonts.display, fontSize: 84, letterSpacing: -3, fontVariant: ['tabular-nums'] },
+  caption: { fontFamily: fonts.semibold, fontSize: 14, marginTop: -6, marginBottom: space.sm },
   pb: {
     flexDirection: 'row',
     alignItems: 'center',

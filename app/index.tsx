@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Redirect, router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { ensureAdsReady } from '../src/ads';
 import { requestTracking } from '../src/ads/att';
 import { shouldOfferAtt } from '../src/ads/policy';
@@ -46,6 +46,7 @@ function IconButton({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyp
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { fontScale } = useWindowDimensions();
   const game = useGameStore((s) => s.game);
   const { onboardingDone } = useSettings();
   // ATT soft prompt: iOS, once, after the 3rd session, never mid-game (CLAUDE.md rule 7).
@@ -151,7 +152,7 @@ export default function HomeScreen() {
                 {game.players.slice(0, 3).map((p, i) => (
                   <View key={p.id} style={[styles.scoreChip, i === game.current && { borderColor: colors.goldHi }]}>
                     <Avatar player={p} size={22} />
-                    <Text style={[styles.scoreName, { color: colors.onFelt }]} numberOfLines={1}>
+                    <Text style={[styles.scoreName, { color: colors.onFelt, maxWidth: 90 * Math.max(1, fontScale) }]} numberOfLines={1}>
                       {p.name}
                     </Text>
                     <Text style={[styles.scoreValue, { color: colors.onFelt }]}>{playerTotal(game, i)}</Text>
@@ -189,8 +190,8 @@ export default function HomeScreen() {
         >
           <View style={styles.dailyRow}>
             <View style={[styles.cal, { borderColor: colors.line }]}>
-              <Text style={[styles.calMonth, { color: colors.danger }]}>{formatDateKey(today, { month: 'short' }).toUpperCase()}</Text>
-              <Text style={[styles.calDay, { color: colors.ink }]}>{now.getDate()}</Text>
+              <Text maxFontSizeMultiplier={1.5} style={[styles.calMonth, { color: colors.danger }]}>{formatDateKey(today, { month: 'short' }).toUpperCase()}</Text>
+              <Text maxFontSizeMultiplier={1.5} style={[styles.calDay, { color: colors.ink }]}>{now.getDate()}</Text>
             </View>
             <View style={styles.flex}>
               <Text style={[styles.dailyTitle, { color: colors.ink }]}>{t('home.daily')}</Text>
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: 'rgba(0,0,0,0.18)',
   },
-  scoreName: { fontFamily: fonts.semibold, fontSize: 12, maxWidth: 90 },
+  scoreName: { fontFamily: fonts.semibold, fontSize: 12 },
   scoreValue: { fontFamily: fonts.heavy, fontSize: 14, fontVariant: ['tabular-nums'] },
   turnBar: { flexDirection: 'row', gap: 3, marginTop: space.md },
   turnDot: { flex: 1, height: 5, borderRadius: 3 },
@@ -300,16 +301,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderBottomColor: '#E2CDA8',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
+    rowGap: 4,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
   },
   playText: { fontFamily: fonts.bold, fontSize: 17, color: '#4A230F' },
   kbd: { backgroundColor: 'rgba(122,62,29,0.12)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   kbdText: { fontFamily: fonts.semibold, fontSize: 12, color: '#4A230F', fontVariant: ['tabular-nums'] },
   daily: { borderRadius: 22, borderWidth: 1.5, padding: 14, gap: 12 },
   dailyRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  cal: { width: 46, borderRadius: 12, borderWidth: 1, alignItems: 'center', paddingVertical: 4 },
+  cal: { minWidth: 46, paddingHorizontal: 4, borderRadius: 12, borderWidth: 1, alignItems: 'center', paddingVertical: 4 },
   calMonth: { fontFamily: fonts.heavy, fontSize: 9.5, letterSpacing: 0.8 },
   calDay: { fontFamily: fonts.display, fontSize: 20, fontVariant: ['tabular-nums'] },
   dailyTitle: { fontFamily: fonts.bold, fontSize: 16 },

@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { PlayerState } from '../engine/game';
 import { fonts, radius, space } from './tokens';
@@ -34,8 +34,10 @@ export function Handoff({
 }) {
   const { t } = useTranslation();
   const top = Math.max(1, ...totals);
+  // The name column grows with the system text size so names stay readable and the bars stay aligned.
+  const { fontScale } = useWindowDimensions();
   return (
-    <View style={[StyleSheet.absoluteFill, styles.root]}>
+    <View accessibilityViewIsModal style={[StyleSheet.absoluteFill, styles.root]}>
       <SafeAreaView style={styles.safe}>
         <ScrollView contentContainerStyle={styles.body}>
           <View style={styles.pill}>
@@ -55,9 +57,9 @@ export function Handoff({
             {players.map((p, i) => (
               <View key={p.id} style={styles.standing}>
                 <View style={[styles.mini, { backgroundColor: p.color }]}>
-                  <Text style={styles.miniText}>{p.name.slice(0, 1).toUpperCase()}</Text>
+                  <Text maxFontSizeMultiplier={1.2} style={styles.miniText}>{p.name.slice(0, 1).toUpperCase()}</Text>
                 </View>
-                <Text style={styles.standingName} numberOfLines={1}>
+                <Text style={[styles.standingName, { width: 72 * Math.max(1, fontScale) }]} numberOfLines={1}>
                   {p.name}
                 </Text>
                 <View style={styles.bar}>
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
   standing: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   mini: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   miniText: { color: '#FFFFFF', fontFamily: fonts.heavy, fontSize: 11 },
-  standingName: { color: INK, fontFamily: fonts.semibold, fontSize: 13, width: 72 },
+  standingName: { color: INK, fontFamily: fonts.semibold, fontSize: 13 },
   bar: { flex: 1, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.12)', overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 3 },
   points: { color: INK, fontFamily: fonts.heavy, fontSize: 14, minWidth: 34, textAlign: 'right', fontVariant: ['tabular-nums'] },

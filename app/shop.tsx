@@ -34,7 +34,9 @@ export default function ShopScreen() {
   const { skin, table } = useEquipped();
   // Bumped after a trial starts so ownership (read from storage) is re-read.
   const [, setTrialSeq] = useState(0);
-  const [trialNote, setTrialNote] = useState(false);
+  // The tile whose ad could not be shown: the note goes right under its button, where the player is looking.
+  const [trialNote, setTrialNote] = useState<string | null>(null);
+  const [trialPending, setTrialPending] = useState<string | null>(null);
 
   useEffect(() => {
     void useShopStore.getState().load();
@@ -59,14 +61,17 @@ export default function ShopScreen() {
   }
 
   async function tryFor24h(kind: CosmeticKind, id: string) {
-    setTrialNote(false);
+    const key = trialKey(kind, id);
+    setTrialNote(null);
+    setTrialPending(key);
     const result = await watchRewarded();
+    setTrialPending(null);
     if (result === 'earned') {
       updateAppData((d) => ({ ...d, ads: grantTrial(d.ads, trialKey(kind, id), new Date()) }));
       equip(kind, id);
       setTrialSeq((n) => n + 1);
     } else if (result === 'unavailable') {
-      setTrialNote(true);
+      setTrialNote(key);
     }
   }
 
@@ -123,18 +128,25 @@ export default function ShopScreen() {
             testID={`trial-${kind}-${id}`}
             accessibilityRole="button"
             accessibilityLabel={t('shop.trialA11y', { name })}
+            accessibilityState={{ busy: trialPending === trialKey(kind, id), disabled: trialPending !== null }}
+            disabled={trialPending !== null}
             onPress={() => void tryFor24h(kind, id)}
-            style={({ pressed }) => [styles.trial, { borderColor: colors.line }, pressed && { opacity: 0.6 }]}
+            style={({ pressed }) => [styles.trial, { borderColor: colors.line }, (pressed || trialPending === trialKey(kind, id)) && { opacity: 0.6 }]}
           >
             <Ionicons name="play-circle-outline" size={15} color={colors.primary} />
             <Text style={[styles.trialText, { color: colors.primary }]}>{t('shop.trial')}</Text>
           </Pressable>
         ) : null}
+        {trialNote === trialKey(kind, id) ? (
+          <Text accessibilityLiveRegion="polite" accessibilityRole="alert" style={[styles.trialNote, { color: colors.ink2 }]}>
+            {t('shop.trialUnavailable')}
+          </Text>
+        ) : null}
       </View>
     );
   }
 
-  const notice = message ? t(`shop.${message}`) : trialNote ? t('shop.trialUnavailable') : null;
+  const notice = message ? t(`shop.${message}`) : null;
 
   return (
     <Screen>
@@ -284,6 +296,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   trialText: { fontFamily: fonts.bold, fontSize: 13 },
+  trialNote: { fontFamily: fonts.medium, fontSize: 12.5, textAlign: 'center' },
   restore: { marginTop: space.md },
   links: { flexDirection: 'row', justifyContent: 'center', gap: space.lg },
   link: { minHeight: touchTarget, justifyContent: 'center', paddingHorizontal: space.sm },

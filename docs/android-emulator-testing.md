@@ -171,16 +171,63 @@ Fixed during the run:
 - The status bar text was dark on the green felt (tutorial and table).
 - Switches that were off were nearly invisible in dark mode.
 
+### Second run results (17 Oct 2026, DiceDenPhone and DiceDenTablet, API 35)
+
+Passed:
+
+- vs Computer (Expert):
+  - the computer plays by itself, and "Tap to skip" finishes its turn at once;
+  - the final scorecard names the winner;
+  - Android Back on the final scorecard goes Home.
+- Starting a new game while one is saved asks "Start a new game?" first.
+- Pass and play with 3 people:
+  - names can be typed;
+  - the handoff hides the dice between people, and Back there asks "Leave game?";
+  - the next person starts on a fresh roll.
+- Landscape: the table and pad sit side by side, and the pad scrolls to every box. Home, Settings and the Shop lay out well.
+- 200% font size: the pad switches to one column and stays usable.
+- Reduce motion (in-app): the dice fade in without the drop and spin. A screen recording shows both behaviours.
+- With notifications allowed, the 7 PM reminder arrived ("Today's dice are ready"). It is an inexact alarm, so Android may deliver it up to about half an hour late.
+- Airplane mode (switched on with the app already running):
+  - a whole 3-person game plays to the end;
+  - leaving the final scorecard goes Home;
+  - the Shop says the store isn't available;
+  - "Try for 24 h" dims for about 2 s, then says "No ad is available right now" under the button.
+- EEA build (`EXPO_PUBLIC_UMP_DEBUG_EEA=1`):
+  - Google's consent form (the "Publisher Test Ads" sample) appears on Home;
+  - after "Do not consent", Settings › Purchases shows "Ad privacy choices", which reopens the form;
+  - a muted rewarded test ad still plays and grants the trial.
+- Finishing the 10th game shows "New dice unlocked: Amber" on the final scorecard, and Amber becomes usable in the Shop.
+- PENDING_TABLET
+
+Fixed during the run:
+
+- During the computer's turn the hint said "Roll to start your turn". It now says "Computer (Expert)'s turn".
+- The screen reader called the player's own card "Show You's card". It now says "Show your card".
+- When the computer won, the big number on the final scorecard was the player's own score with no label. It now says "Your score" whenever there was more than one player.
+- With TalkBack, the handoff screen let people reach the table behind it, including the Roll button. The table is now hidden from screen readers until the next person starts.
+- Dice not yet rolled this turn were meant to be dimmed, but the animation style overrode that (on iOS too). The last player's dice looked like a fresh roll; now they are dimmed.
+- At 200% text:
+  - the Resume button pushed its icon and "Turn 1 of 13" off the edges;
+  - the calendar badge broke "OCT" over two lines;
+  - names were cut short in the score chips and the handoff list;
+  - the letters in the small avatar circles were clipped.
+- Settings › Sound effects said "Muted by the silent switch" on Android, which has no such switch. It now says "Follows your media volume".
+- The daily reminder showed a blank circle as its icon. It now uses the dice icon (`assets/notification-icon.png`, set in `app.json`).
+- The player bar now scrolls to whoever is playing, so with 5–6 players or large text the current player is never off-screen.
+- When no rewarded ad was available, the Shop put its note at the top of the page, far above the "Try for 24 h" button, so nothing seemed to happen. The note now appears under the button that was tapped, and the button dims while the ad loads.
+
+Notes:
+
+- Changing the system font size recreates the app's window. In development this logs "Looks like you have configured linking in multiple places". It is harmless: the game state is kept.
+- `adb root` restarts adb and drops `adb reverse`. Run `adb reverse tcp:8081 tcp:8081` again afterwards.
+- The debug build loads its code from the PC, so start it with the network on, then switch on airplane mode. A release build has the code inside it. Code changes made while offline only reach the app after the network is back and the app reloads.
+- `npx expo prebuild` may delete and recreate `android/` after `app.json` changes. Stop Metro first, and keep logs and other files outside that folder. If Gradle then says "SDK location not found", recreate `android/local.properties` with the line `sdk.dir=C:\\Users\\<you>\\AppData\\Local\\Android\\Sdk`.
+
 Not covered yet:
 
-- vs Computer and pass and play;
-- landscape and the tablet;
-- largest font size;
-- reduce motion;
-- an allowed reminder arriving;
-- airplane mode;
-- the EEA consent form;
-- 10-game and 7-day unlocks.
+- The 7-day unlock (Jade): it needs a week of daily dice.
+- The reminder still fires on a day whose dice are already done. The spec allows this; skipping such days would mean rescheduling it each day.
 
 ## 4. If something goes wrong
 

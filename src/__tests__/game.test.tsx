@@ -85,10 +85,13 @@ describe('Game table (S3)', () => {
     await fireEvent.press(button('Roll, 3 rolls left'));
     await fireEvent.press(screen.getByRole('tab', { name: "Show Computer (Normal)'s card" }));
     expect(screen.getByLabelText('Fours, empty')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('tab', { name: "Show You's card" }));
+    await fireEvent.press(screen.getByRole('tab', { name: 'Show your card' }));
     await fireEvent.press(button('Fours, score 12 here'));
     // Computer's turn now: its card is shown, nothing is tappable until it rolls.
     expect(screen.getByLabelText('Computer (Normal), 0 points, playing now')).toBeTruthy();
+    // Regression: the hint used to say "Roll to start your turn" while the computer played.
+    expect(screen.queryByText('Roll to start your turn')).toBeNull();
+    expect(screen.getByText("Computer (Normal)'s turn")).toBeTruthy();
   });
 
   it('asks before leaving and says the game is saved', async () => {
@@ -153,6 +156,8 @@ describe('Final scorecard (S5)', () => {
     const router = await renderRouter(routes, { initialUrl: '/final' });
     expect(screen.getByRole('header', { name: "IT'S A TIE" })).toBeTruthy();
     expect(screen.queryByText('New personal best')).toBeNull();
+    // The big number is the player's own score, so it says so when others played.
+    expect(screen.getByText('Your score')).toBeTruthy();
     await fireEvent.press(button('Play again'));
     expect(router.getPathname()).toBe('/game');
     const game = useGameStore.getState().game!;

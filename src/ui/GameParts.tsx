@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 import type { PlayerState } from '../engine/game';
 import { fonts, radius, space, touchTarget } from './tokens';
 import { useTheme } from './theme';
@@ -35,7 +36,7 @@ export function Avatar({ player, size = 28 }: { player: PlayerState; size?: numb
       {player.kind === 'ai' ? (
         <Ionicons name="hardware-chip-outline" size={size * 0.5} color="#FFFFFF" />
       ) : (
-        <Text style={[styles.initial, { fontSize: size * 0.4 }]}>{player.name.slice(0, 1).toUpperCase()}</Text>
+        <Text maxFontSizeMultiplier={1.2} style={[styles.initial, { fontSize: size * 0.4 }]}>{player.name.slice(0, 1).toUpperCase()}</Text>
       )}
     </View>
   );
@@ -53,13 +54,23 @@ export function PlayerBar({
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  // With many players or large text the bar scrolls; keep whoever is playing in view.
+  const scroll = useRef<ScrollViewInstance>(null);
+  const offsets = useRef<number[]>([]);
+  useEffect(() => {
+    scroll.current?.scrollTo({ x: Math.max(0, (offsets.current[current] ?? 0) - space.lg), animated: true });
+  }, [current]);
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.players}>
+    <ScrollView ref={scroll} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.players}>
       {players.map((p, i) => {
         const on = i === current;
         return (
           <View
             key={p.id}
+            onLayout={(e) => {
+              offsets.current[i] = e.nativeEvent.layout.x;
+              if (i === current) scroll.current?.scrollTo({ x: Math.max(0, e.nativeEvent.layout.x - space.lg), animated: false });
+            }}
             accessible
             accessibilityLabel={t(on ? 'game.playerTurn' : 'game.playerTotal', { name: p.name, points: totals[i] })}
             style={[
@@ -196,7 +207,7 @@ export function CardTabs({
             <Pressable
               key={p.id}
               accessibilityRole="tab"
-              accessibilityLabel={t('game.viewCard', { name: p.name })}
+              accessibilityLabel={p.name === t('players.you') ? t('game.viewYourCard') : t('game.viewCard', { name: p.name })}
               accessibilityState={{ selected: on }}
               onPress={() => onSelect(i)}
               hitSlop={4}

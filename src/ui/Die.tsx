@@ -113,8 +113,11 @@ export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, h
   }, [rollSeq]);
 
   const tilt = held || !rolled ? 0 : restingTilt(index, rollSeq);
+  // Dice not rolled yet this turn are dimmed. This must live in the animated style:
+  // a plain `opacity` next to it is overridden, which left the last player's dice at full strength.
+  const dim = rolled ? 1 : 0.45;
   const animated = useAnimatedStyle(() => ({
-    opacity: fade.value,
+    opacity: fade.value * dim,
     transform: [
       { translateY: drop.value - lift.value * 12 },
       { scale: 1 + lift.value * 0.04 },
@@ -139,13 +142,13 @@ export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, h
       style={styles.hit}
     >
       <Animated.View
+        testID={`die-body-${index}`}
         style={[
           styles.die,
           {
             width: size,
             height: size,
             borderRadius: size * 0.24,
-            opacity: rolled ? 1 : 0.45,
             shadowColor: held ? colors.mint : '#000',
             shadowOpacity: held ? 0.75 : 0.45,
             shadowRadius: held ? 14 : 8,

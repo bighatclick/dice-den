@@ -3,7 +3,7 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 import { createAudioPlayer } from 'expo-audio';
 import * as Notifications from 'expo-notifications';
 import { renderRouter } from 'expo-router/testing-library';
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import DailyScreen from '../../app/daily';
 import FairnessScreen from '../../app/fairness';
 import GameScreen from '../../app/game';
@@ -57,6 +57,19 @@ describe('Settings (S10)', () => {
       expect(getAppData().settings[key]).toBe(!before);
     }
     expect(getAppData().syncMeta.settingsUpdatedAt).not.toBeNull();
+  });
+
+  // Regression: Android showed the iPhone-only "Muted by the silent switch" note.
+  it('mentions the silent switch on iPhone', async () => {
+    await renderRouter(routes, { initialUrl: '/settings' });
+    expect(screen.getByText('Muted by the silent switch')).toBeTruthy();
+  });
+
+  it('mentions media volume on Android', async () => {
+    const os = jest.replaceProperty(Platform, 'OS', 'android');
+    await renderRouter(routes, { initialUrl: '/settings' });
+    expect(screen.getByText('Follows your media volume')).toBeTruthy();
+    os.restore();
   });
 
   it('changes rules, theme and computer speed', async () => {

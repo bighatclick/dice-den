@@ -114,6 +114,16 @@ describe('Shop (S9)', () => {
     expect(screen.queryByTestId('trial-dice-glass')).toBeNull();
   });
 
+  // Regression: the "no ad" note went to the top of the Shop, out of sight of the button far below.
+  it('says right under the button when no ad is available', async () => {
+    ads.rewardedResult = 'unavailable';
+    await renderRouter(routes, { initialUrl: '/shop' });
+    await pressNode(await screen.findByTestId('trial-dice-glass'));
+    expect(screen.queryByTestId('shop-notice')).toBeNull();
+    expect(screen.getByRole('alert')).toHaveTextContent('No ad is available right now. Try again later.');
+    expect(useSettingsStore.getState().settings.diceSkin).not.toBe('glass');
+  });
+
   it('earned skins say how to earn them and have no trial', async () => {
     await renderRouter(routes, { initialUrl: '/shop' });
     expect(await screen.findByRole('button', { name: 'Amber, Finish 10 games' })).toBeTruthy();

@@ -138,7 +138,9 @@ export default function GameScreen() {
           ))}
         </View>
         <Text style={[styles.hint, { color: colors.onFelt2 }]}>
-          {t(!rolled ? 'game.hintFirst' : canHold ? 'game.hintHold' : 'game.hintLast')}
+          {aiTurn
+            ? t('game.hintAi', { name: game.players[game.current].name })
+            : t(!rolled ? 'game.hintFirst' : canHold ? 'game.hintHold' : 'game.hintLast')}
         </Text>
       </View>
       <View style={[styles.actions, settings.leftHanded && styles.actionsLeft]}>
@@ -196,7 +198,13 @@ export default function GameScreen() {
     <View style={[styles.root, { backgroundColor: colors.feltLo }]}>
       <Felt />
       <LightStatusBar />
-      <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+      {/* While the handoff covers the table, screen readers must not reach the dice or the Roll button behind it. */}
+      <SafeAreaView
+        style={styles.safe}
+        edges={['top', 'left', 'right']}
+        importantForAccessibility={handoffDue ? 'no-hide-descendants' : 'auto'}
+        accessibilityElementsHidden={handoffDue}
+      >
         <View style={styles.bar}>
           <GlassButton icon="chevron-back" label={t('game.leave')} onPress={confirmLeave} />
           <View style={styles.barPlayers}>
