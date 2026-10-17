@@ -42,3 +42,6 @@ yarn-error.*
 
 # test coverage
 coverage/
+
+# Native build output of local Expo modules
+modules/*/android/build/

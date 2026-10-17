@@ -13,6 +13,7 @@ import { RollButton } from '../src/ui/GameParts';
 import { Segmented } from '../src/ui/Segmented';
 import { fonts, radius, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
+import { LightStatusBar } from '../src/ui/LightStatusBar';
 
 /**
  * The practice turn uses fixed dice so it always teaches the same thing.
@@ -51,6 +52,7 @@ export default function OnboardingScreen() {
   return (
     <View style={[styles.root, { backgroundColor: colors.feltLo }]}>
       <Felt />
+      <LightStatusBar />
       <SafeAreaView style={styles.safe}>
         <View style={styles.top}>
           <Text style={[styles.badge, { color: colors.onFelt2 }]}>{step === 'welcome' || step === 'rules' ? '' : t('onboarding.demo').toUpperCase()}</Text>

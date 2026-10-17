@@ -187,7 +187,7 @@ export default function NewGameScreen() {
             accessibilityLabel={t('newGame.forcedOrder')}
             value={forcedOrder}
             onValueChange={setForcedOrder}
-            trackColor={{ true: colors.accent, false: colors.line }}
+            trackColor={{ true: colors.accent, false: colors.ink3 }}
           />
         </View>
       </ScrollView>

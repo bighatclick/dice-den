@@ -39,7 +39,7 @@ export function ToggleRow({
         accessibilityHint={subtitle}
         value={value}
         onValueChange={onChange}
-        trackColor={{ true: colors.accent, false: colors.line }}
+        trackColor={{ true: colors.accent, false: colors.ink3 }}
       />
     </View>
   );

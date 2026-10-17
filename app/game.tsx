@@ -20,6 +20,7 @@ import { ScorePad } from '../src/ui/ScorePad';
 import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 import { useAndroidBack } from '../src/ui/useAndroidBack';
+import { LightStatusBar } from '../src/ui/LightStatusBar';
 
 /** Pause before each visible computer step, in ms. */
 const AI_SPEED = { slow: 1.6, normal: 1, fast: 0.4 } as const;
@@ -194,6 +195,7 @@ export default function GameScreen() {
   return (
     <View style={[styles.root, { backgroundColor: colors.feltLo }]}>
       <Felt />
+      <LightStatusBar />
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
         <View style={styles.bar}>
           <GlassButton icon="chevron-back" label={t('game.leave')} onPress={confirmLeave} />

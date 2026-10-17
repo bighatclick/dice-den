@@ -36,6 +36,7 @@
       "expo-router",
       "expo-font",
       "expo-localization",
+      "./plugins/withShortCxxPath",
       [
         "expo-splash-screen",
         {

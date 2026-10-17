@@ -16,9 +16,15 @@ accounts.
 | `ANDROID_HOME`, `adb` on PATH | **Missing** (step 1) |
 | Maestro | **Missing** (step 5, optional) |
 
-The PC has an i3 with 4 threads and 20 GB RAM. Expect the **first** build to take
-20–40 minutes; later builds are a few minutes. Close Chrome and other heavy apps
-while building.
+The PC has an i3 with 4 threads and 20 GB RAM. The first build took about an hour
+here; later builds are a few minutes. Close Chrome and other heavy apps while
+building.
+
+Windows' 260-character path limit (`LongPathsEnabled` is 0 on this PC) broke the
+first C++ build with `ninja: error: mkdir(...): No such file or directory`. The
+config plugin `plugins/withShortCxxPath.js` now builds the app's C++ code in
+`E:\dd-cxx` instead, so no Windows setting needs to change. If a build ever fails
+with that error again, delete `android/app/.cxx` and `E:\dd-cxx` and rebuild.
 
 "Google APIs" images include Google Play services, so test ads work. They have no
 Play Store app, so real Play Billing purchases can't run on them; the fake store
@@ -71,7 +77,9 @@ $env:EXPO_PUBLIC_FAKE_STORE = "1"; $env:EXPO_PUBLIC_UMP_DEBUG_EEA = "1"; npx exp
 ```
 
 The `EXPO_PUBLIC_*` switches are read when Metro bundles the app. After changing
-them, stop Metro and run the command again. They only affect development builds.
+them, stop Metro and start it again with `npx expo start --clear`. They only
+affect development builds. Don't set `CI=1` for Metro: it turns off file
+watching, so code changes never reach the app.
 
 To start from a clean install (first launch, session 1), run this, then reopen the app:
 
@@ -133,6 +141,46 @@ Tick each item and note anything odd: a screenshot plus one line is enough.
 ### Build B (normal build, no store account)
 - [ ] The Shop says the store isn't available. Buttons show "Not available", and the dice and table picker still works.
 - [ ] Nothing hangs: leaving the shop and playing are instant.
+
+### First run results (17 Oct 2026, DiceDenPhone, API 35)
+
+Driven by Claude over adb. Passed:
+
+- Tutorial and the rules picker, with no permission prompt.
+- Solo games, roll, hold (lock and HELD), scoring and the final scorecard.
+- Back on the table asks "Leave game?". After a force-stop, Resume brings back the exact dice.
+- Ads:
+  - none until the rules allow one;
+  - a muted test interstitial after leaving the scorecard, then Home;
+  - none on the next game (1 per 2 games);
+  - the "Enjoying Dice Den?" card shows once, at game 3.
+- Shop (fake store):
+  - prices and "One-time purchase" on every item;
+  - buying the Classic Dice Pack;
+  - Casino red dice on the table;
+  - a Night table trial through a test rewarded ad;
+  - Remove Ads, after which no interstitial appeared even where the rules allowed one;
+  - Restore in Settings.
+- Dark theme.
+- The notification prompt, plus the explanation when it is denied.
+- Today's dice: the result locks with no Play again, the streak shows 1, and Share opens the sheet with the image. Replay through a rewarded ad starts a new table.
+- Build B: the Shop says the store isn't available, and owned items stay owned.
+
+Fixed during the run:
+
+- The status bar text was dark on the green felt (tutorial and table).
+- Switches that were off were nearly invisible in dark mode.
+
+Not covered yet:
+
+- vs Computer and pass and play;
+- landscape and the tablet;
+- largest font size;
+- reduce motion;
+- an allowed reminder arriving;
+- airplane mode;
+- the EEA consent form;
+- 10-game and 7-day unlocks.
 
 ## 4. If something goes wrong
 
