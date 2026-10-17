@@ -187,7 +187,7 @@ Passed:
 - Landscape: the table and pad sit side by side, and the pad scrolls to every box. Home, Settings and the Shop lay out well.
 - 200% font size: the pad switches to one column and stays usable.
 - Reduce motion (in-app): the dice fade in without the drop and spin. A screen recording shows both behaviours.
-- With notifications allowed, the 7 PM reminder arrived ("Today's dice are ready"). It is an inexact alarm, so Android may deliver it up to about half an hour late.
+- With notifications allowed, the 7 PM reminder arrived ("Today's dice are ready"). It is an inexact alarm, so Android may deliver it late (up to about an hour).
 - Airplane mode (switched on with the app already running):
   - a whole 3-person game plays to the end;
   - leaving the final scorecard goes Home;
@@ -229,7 +229,10 @@ Notes:
 Not covered yet:
 
 - The 7-day unlock (Jade): it needs a week of daily dice.
-- The reminder still fires on a day whose dice are already done. The spec allows this; skipping such days would mean rescheduling it each day.
+- (Fixed later the same day.) The reminder used to fire on days whose dice were already done. It is now 7 one-off notifications for the coming days, rescheduled when today's dice are finished and whenever the app opens.
+  - Checked on the tablet: with today not played, the 9 PM alarm was set for tonight. Finishing today's dice moved the first alarm to tomorrow, and no reminder came at 9 PM.
+  - With the clock moved to the next evening, the reminder arrived with the dice icon.
+  - Android may deliver these best-effort alarms up to an hour after the chosen time.
 
 ## 4. If something goes wrong
 

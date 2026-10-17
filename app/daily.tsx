@@ -44,7 +44,8 @@ export default function DailyScreen() {
     setAskReminder(false);
     updateAppData((d) => ({ ...d, daily: { ...d.daily, reminderAsked: true } }));
     if (!yes) return;
-    const on = await enableDailyReminder(reminderHour, 0, { title: t('reminder.title'), body: t('reminder.body') });
+    // Asked right after finishing today's dice, so today is already played.
+    const on = await enableDailyReminder(reminderHour, 0, { title: t('reminder.title'), body: t('reminder.body') }, finished);
     useSettingsStore.getState().update({ dailyReminder: { enabled: on, hour: reminderHour, minute: 0 } });
   }
   const todayInProgress = game?.status === 'playing' && game.mode === 'daily' && dailyDateOf(game.id) === today;

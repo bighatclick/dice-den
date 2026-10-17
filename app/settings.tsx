@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Linking, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { privacyOptionsRequired, showPrivacyOptions } from '../src/ads';
 import { disableDailyReminder, enableDailyReminder } from '../src/notifications/reminder';
+import { playedToday } from '../src/notifications/reminderRunner';
 import { isReadOnly } from '../src/state/appData';
 import { useSettings, useSettingsStore } from '../src/state/settingsStore';
 import { useEntitlements, useShopStore } from '../src/state/shopStore';
@@ -50,7 +51,7 @@ export default function SettingsScreen() {
       update({ dailyReminder: { ...settings.dailyReminder, enabled: false } });
       return;
     }
-    const on = await enableDailyReminder(hour, 0, { title: t('reminder.title'), body: t('reminder.body') });
+    const on = await enableDailyReminder(hour, 0, { title: t('reminder.title'), body: t('reminder.body') }, playedToday());
     setReminderDenied(!on);
     update({ dailyReminder: { enabled: on, hour, minute: 0 } });
   }

@@ -85,7 +85,7 @@ describe('Settings (S10)', () => {
     await act(async () => fireEvent(screen.getByLabelText('Daily reminder'), 'valueChange', true));
     expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledWith(
       expect.objectContaining({
-        trigger: { type: 'daily', hour: 19, minute: 0 },
+        trigger: { type: 'date', date: expect.any(Date) },
         content: expect.objectContaining({ title: "Today's dice are ready" }),
       }),
     );

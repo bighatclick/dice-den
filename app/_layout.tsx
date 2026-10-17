@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { getRepository } from '../src/data/mmkvStore';
 import { initAppData, updateAppData } from '../src/state/appData';
+import { startReminderRefresh } from '../src/notifications/reminderRunner';
 import { startCloudSync } from '../src/state/cloudSyncRunner';
 import { recordSession } from '../src/state/session';
 import { useShopStore } from '../src/state/shopStore';
@@ -38,6 +39,9 @@ export default function RootLayout() {
 
   // iCloud key-value sync of settings, stats summary, unlocks and streak (iOS only).
   useEffect(() => startCloudSync(), []);
+
+  // The daily reminder skips days already played, so it is rescheduled as play goes on.
+  useEffect(() => startReminderRefresh(), []);
 
   // Connects to the store, finishes any unfinished purchase and refreshes ownership.
   useEffect(() => {

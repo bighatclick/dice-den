@@ -25,7 +25,8 @@ jest.mock('expo-notifications', () => ({
   requestPermissionsAsync: jest.fn(async () => ({ granted: true })),
   scheduleNotificationAsync: jest.fn(async () => 'id'),
   cancelScheduledNotificationAsync: jest.fn(async () => undefined),
-  SchedulableTriggerInputTypes: { DAILY: 'daily' },
+  getAllScheduledNotificationsAsync: jest.fn(async () => []),
+  SchedulableTriggerInputTypes: { DAILY: 'daily', DATE: 'date' },
 }));
 
 // Ads, purchases and ATT are native-only; tests swap in fakes (src/testing/fakeAds.ts,

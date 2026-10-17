@@ -119,8 +119,9 @@ describe('Shop (S9)', () => {
     ads.rewardedResult = 'unavailable';
     await renderRouter(routes, { initialUrl: '/shop' });
     await pressNode(await screen.findByTestId('trial-dice-glass'));
+    // The ad result arrives asynchronously; wait for the note rather than racing it.
+    expect(await screen.findByRole('alert')).toHaveTextContent('No ad is available right now. Try again later.');
     expect(screen.queryByTestId('shop-notice')).toBeNull();
-    expect(screen.getByRole('alert')).toHaveTextContent('No ad is available right now. Try again later.');
     expect(useSettingsStore.getState().settings.diceSkin).not.toBe('glass');
   });
 
