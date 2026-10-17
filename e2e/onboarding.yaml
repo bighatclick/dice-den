@@ -1,0 +1,16 @@
+# First run: practice turn (roll, hold the 5s, score) and the rules picker.
+appId: com.dicedengame.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Show me how"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- tapOn: { id: "die-2" }
+- tapOn: { id: "die-4" }
+- tapOn: { id: "roll-button" }
+- tapOn: "Fives"
+- tapOn: "Next"
+- tapOn: "Classic.*"
+- tapOn: "Start playing"
+- assertVisible: "Dice Den"

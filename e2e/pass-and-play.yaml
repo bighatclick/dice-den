@@ -1,0 +1,17 @@
+# Two people at one phone: the handoff screen hides the last player's dice.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Pass and play.*"
+- tapOn: "Player 1 name"
+- inputText: "Mom"
+- tapOn: "Player 2 name"
+- inputText: "Dad"
+- hideKeyboard
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-chance" }
+- assertVisible: "Pass the phone to"
+- assertVisible: "Dad"
+- tapOn: "Start Dad's turn"
+- assertVisible: "Turn 1 · Ready to roll"

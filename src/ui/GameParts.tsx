@@ -126,6 +126,7 @@ export function RollButton({
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
+      testID="roll-button"
       style={({ pressed }) => [
         styles.roll,
         {

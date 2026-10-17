@@ -1,0 +1,1 @@
+games,roll,scorecard,offline,party,board,yacht,poker,strategy,luck,solo,bonus,pass,play,relaxing

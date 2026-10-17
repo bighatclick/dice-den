@@ -1,0 +1,13 @@
+# Play one turn against the computer and let it take its turn (or skip it).
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- tapOn: "vs Computer"
+- tapOn: "Expert"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-chance" }
+- assertVisible: "Computer \(Expert\) is playing"
+- tapOn: "Skip Computer \(Expert\)'s turn"
+- assertVisible: "Turn 2 · Ready to roll"

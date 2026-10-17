@@ -8,6 +8,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { getRepository } from '../src/data/mmkvStore';
 import { initAppData } from '../src/state/appData';
+import { startCloudSync } from '../src/state/cloudSyncRunner';
+import { recordSession } from '../src/state/session';
 import { useGameStore } from '../src/state/gameStore';
 import { useSettings, useSettingsStore } from '../src/state/settingsStore';
 import { denFonts } from '../src/ui/fonts';
@@ -17,6 +19,7 @@ void SplashScreen.preventAutoHideAsync();
 
 // Load saved data (migrating if needed) before any screen reads a store.
 initAppData(getRepository());
+recordSession();
 useGameStore.getState().hydrate();
 useSettingsStore.getState().hydrate();
 
@@ -26,6 +29,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded || error) void SplashScreen.hideAsync();
   }, [loaded, error]);
+
+  // iCloud key-value sync of settings, stats summary, unlocks and streak (iOS only).
+  useEffect(() => startCloudSync(), []);
 
   if (!loaded && !error) return null;
 

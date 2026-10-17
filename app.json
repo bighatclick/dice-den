@@ -10,7 +10,10 @@
     "backgroundColor": "#F7F0E4",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dicedengame.app"
+      "bundleIdentifier": "com.dicedengame.app",
+      "entitlements": {
+        "com.apple.developer.ubiquity-kvstore-identifier": "$(TeamIdentifierPrefix)$(CFBundleIdentifier)"
+      }
     },
     "android": {
       "package": "com.dicedengame.app",
@@ -33,7 +36,18 @@
       "expo-router",
       "expo-font",
       "expo-localization",
-      "expo-splash-screen",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F0E4",
+          "dark": {
+            "backgroundColor": "#16100C"
+          }
+        }
+      ],
       "expo-asset",
       "expo-sharing",
       [

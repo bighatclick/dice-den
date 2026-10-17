@@ -1,0 +1,17 @@
+# specs.md F2 / §13: kill the app mid-turn and relaunch to an identical state.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- assertVisible: "HELD"
+- assertVisible: "Turn 1 · Roll 1 of 3"
+- stopApp
+- launchApp
+- tapOn: "Resume game.*"
+- assertVisible: "HELD"
+- assertVisible: "Turn 1 · Roll 1 of 3"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Turn 1 · Roll 2 of 3"

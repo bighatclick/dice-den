@@ -124,6 +124,7 @@ export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, h
       accessibilityState={{ selected: held, disabled: !canHold }}
       disabled={!canHold}
       onPress={() => onToggle(index)}
+      testID={`die-${index}`}
       hitSlop={6}
       style={styles.hit}
     >

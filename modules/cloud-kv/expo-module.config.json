@@ -1,0 +1,5 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": { "modules": ["CloudKvModule"] },
+  "android": { "modules": ["expo.modules.cloudkv.CloudKvModule"] }
+}

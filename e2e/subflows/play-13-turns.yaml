@@ -1,0 +1,36 @@
+# Plays a Classic game to the end: roll once each turn, fill boxes top to bottom.
+appId: com.dicedengame.app
+---
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-twos" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-threes" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fours" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fives" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-sixes" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-threeKind" } }
+- tapOn: { id: "box-threeKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fourKind" } }
+- tapOn: { id: "box-fourKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fullHouse" } }
+- tapOn: { id: "box-fullHouse" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-smallStraight" } }
+- tapOn: { id: "box-smallStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-largeStraight" } }
+- tapOn: { id: "box-largeStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-yatzy" } }
+- tapOn: { id: "box-yatzy" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }

@@ -1,0 +1,7 @@
+# Launch with no saved data and skip the first-run tutorial.
+appId: com.dicedengame.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Skip"
+- assertVisible: "Dice Den"

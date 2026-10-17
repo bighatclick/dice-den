@@ -1,0 +1,13 @@
+# Today's dice: play once, the result locks, Share is offered, no Play again.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Today's dice.*"
+- tapOn: "Play today's dice"
+- runFlow: subflows/play-13-turns.yaml
+- assertVisible: "TODAY'S DICE"
+- assertNotVisible: "Play again"
+- tapOn: "Home"
+- tapOn: "Today's dice.*"
+- assertVisible: "YOUR SCORE TODAY"
+- assertVisible: "1-day streak"

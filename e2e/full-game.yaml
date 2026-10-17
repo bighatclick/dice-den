@@ -1,0 +1,15 @@
+# specs.md §13: new game → 13 turns → final scorecard.
+appId: com.dicedengame.app
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- assertVisible: "New game"
+- tapOn: "Start game"
+- assertVisible: "Roll to start your turn"
+- runFlow: subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- assertVisible: "Play again"
+# No ad or popup may cover the final scorecard (F9).
+- assertNotVisible: "Advertisement"
+- tapOn: "Home"
+- assertVisible: "Roll the dice"
