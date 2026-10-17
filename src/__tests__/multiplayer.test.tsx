@@ -149,6 +149,25 @@ describe('Computer turns', () => {
   });
 });
 
+describe('Score grid on tablets and in landscape (S3)', () => {
+  it("shows every player's column and scores only in the current one", async () => {
+    jest.spyOn(jest.requireActual<typeof import('react-native')>('react-native'), 'useWindowDimensions').mockReturnValue({ width: 1280, height: 800, scale: 2, fontScale: 1 });
+    scriptDice([3, 3, 3, 1, 2]);
+    useGameStore.getState().start({ players: [human('a', 'Mom'), human('b', 'Dad'), human('c', 'Gran')] });
+    await renderRouter(routes, { initialUrl: '/game' });
+    // No tabs: everyone's column is on screen at once.
+    expect(screen.queryByRole('tab')).toBeNull();
+    expect(screen.getByLabelText('Dad: Threes, empty')).toBeTruthy();
+    await fireEvent.press(button('Roll, 3 rolls left'));
+    expect(screen.queryByRole('button', { name: /^Dad: / })).toBeNull();
+    await fireEvent.press(button('Threes, score 9 here'));
+    expect(game().players[0].card.threes).toBe(9);
+    await fireEvent.press(button("Start Dad's turn"));
+    expect(screen.getByLabelText('Mom: Threes, scored 9')).toBeTruthy();
+    jest.restoreAllMocks();
+  });
+});
+
 describe('Pass handoff (S4)', () => {
   it("covers the table between people and offers the last player's undo", async () => {
     scriptDice([3, 3, 3, 1, 2]);

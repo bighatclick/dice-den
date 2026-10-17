@@ -107,6 +107,7 @@
     "bonusMade": "Made",
     "extraYatzys_one": "Extra Yatzy",
     "extraYatzys_other": "{{count}} extra Yatzys",
+    "extraYatzysTitle": "Extra Yatzys",
     "a11yScored": "{{box}}, scored {{points}}",
     "a11yOption": "{{box}}, score {{points}} here",
     "a11yOpen": "{{box}}, score here",

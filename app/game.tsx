@@ -16,6 +16,7 @@ import { CardTabs, GlassButton, PlayerBar, RollButton, RollPips, SkipButton } fr
 import { Handoff } from '../src/ui/Handoff';
 import { playSound } from '../src/ui/sound';
 import { SEAT_COLORS } from '../src/state/players';
+import { ScoreGrid } from '../src/ui/ScoreGrid';
 import { ScorePad } from '../src/ui/ScorePad';
 import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
@@ -160,7 +161,31 @@ export default function GameScreen() {
     </View>
   );
 
-  const sheet = (
+  // Tablets and landscape show every player's column at once (specs.md S3); phones in portrait use tabs.
+  const grid = wide && game.players.length > 1;
+  const gridWidth = Math.min(width * 0.62, 190 + 78 * game.players.length);
+  const sheet = grid ? (
+    <View style={[styles.sheet, styles.sheetWide, { maxWidth: gridWidth, backgroundColor: colors.sheet }]}>
+      <View style={[styles.grab, { backgroundColor: colors.line }]} />
+      <ScrollView contentContainerStyle={styles.padScroll}>
+        <ScoreGrid
+          preset={preset}
+          players={game.players}
+          current={game.current}
+          options={humanTurn ? scoreOptions(game) : {}}
+          hints={settings.hints}
+          onScore={
+            humanTurn
+              ? (box) => {
+                  scoreFeedback(box === 'yatzy' && scoreOptions(game).yatzy === 50);
+                  score(box);
+                }
+              : undefined
+          }
+        />
+      </ScrollView>
+    </View>
+  ) : (
     <View style={[styles.sheet, wide && styles.sheetWide, { backgroundColor: colors.sheet }]}>
       <View style={[styles.grab, { backgroundColor: colors.line }]} />
       <View style={styles.sheetHead}>

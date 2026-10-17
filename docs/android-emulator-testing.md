@@ -198,7 +198,7 @@ Passed:
   - after "Do not consent", Settings › Purchases shows "Ad privacy choices", which reopens the form;
   - a muted rewarded test ad still plays and grants the trial.
 - Finishing the 10th game shows "New dice unlocked: Amber" on the final scorecard, and Amber becomes usable in the Shop.
-- PENDING_TABLET
+- Tablet (DiceDenTablet, Pixel Tablet, landscape): the tutorial, Home, Settings and a 3-person game all work. Every player's column now shows beside the dice (see below).
 
 Fixed during the run:
 
@@ -215,6 +215,8 @@ Fixed during the run:
 - Settings › Sound effects said "Muted by the silent switch" on Android, which has no such switch. It now says "Follows your media volume".
 - The daily reminder showed a blank circle as its icon. It now uses the dice icon (`assets/notification-icon.png`, set in `app.json`).
 - The player bar now scrolls to whoever is playing, so with 5–6 players or large text the current player is never off-screen.
+- Tablets and landscape showed one player's card at a time behind tabs. specs.md S3 asks for every player's column there, so a new score grid (`src/ui/ScoreGrid.tsx`) now shows all columns side by side, with only the current player's column tappable. Phones in portrait keep the tabs.
+- On the tablet every screen stretched edge to edge (2560 px wide buttons and cards). Screens now keep a readable width (`CONTENT_MAX_WIDTH`, 720 pt), and so does the tutorial.
 - When no rewarded ad was available, the Shop put its note at the top of the page, far above the "Try for 24 h" button, so nothing seemed to happen. The note now appears under the button that was tapped, and the button dims while the ad loads.
 
 Notes:

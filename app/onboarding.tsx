@@ -10,6 +10,7 @@ import { Button } from '../src/ui/Button';
 import { Die } from '../src/ui/Die';
 import { Felt } from '../src/ui/Felt';
 import { RollButton } from '../src/ui/GameParts';
+import { CONTENT_MAX_WIDTH } from '../src/ui/Screen';
 import { Segmented } from '../src/ui/Segmented';
 import { fonts, radius, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
   badge: { fontFamily: fonts.heavy, fontSize: 11, letterSpacing: 1.4 },
   skip: { minHeight: 44, minWidth: 44, justifyContent: 'center', alignItems: 'flex-end' },
   skipText: { fontFamily: fonts.bold, fontSize: 15 },
-  body: { flexGrow: 1, justifyContent: 'center', padding: space.xl, gap: space.xl },
+  body: { flexGrow: 1, justifyContent: 'center', padding: space.xl, gap: space.xl, width: '100%', maxWidth: CONTENT_MAX_WIDTH, alignSelf: 'center' },
   title: { fontFamily: fonts.display, fontSize: 34, textAlign: 'center' },
   text: { fontFamily: fonts.medium, fontSize: 17, lineHeight: 25, textAlign: 'center' },
   dice: { flexDirection: 'row', justifyContent: 'center', gap: space.sm },
