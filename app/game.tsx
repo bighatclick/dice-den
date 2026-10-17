@@ -19,6 +19,7 @@ import { SEAT_COLORS } from '../src/state/players';
 import { ScorePad } from '../src/ui/ScorePad';
 import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
+import { useAndroidBack } from '../src/ui/useAndroidBack';
 
 /** Pause before each visible computer step, in ms. */
 const AI_SPEED = { slow: 1.6, normal: 1, fast: 0.4 } as const;
@@ -74,6 +75,16 @@ export default function GameScreen() {
   // Pass-and-play: cover the table until the next person is holding the phone.
   const [readyKey, setReadyKey] = useState<string | null>(null);
 
+  function confirmLeave() {
+    Alert.alert(t('game.leaveTitle'), t('game.leaveBody'), [
+      { text: t('game.stay'), style: 'cancel' },
+      { text: t('game.leaveConfirm'), onPress: () => (router.canGoBack() ? router.back() : router.replace('/')) },
+    ]);
+  }
+
+  // Android Back asks first, like the on-screen Leave button (specs.md §5: "Leave game? It's saved.").
+  useAndroidBack(confirmLeave);
+
   if (!game || game.status === 'finished') return <View style={[styles.root, { backgroundColor: colors.feltLo }]} />;
 
   const preset = PRESETS[game.preset];
@@ -93,13 +104,6 @@ export default function GameScreen() {
     readyKey !== turnKey;
   const rollsLeft = MAX_ROLLS - game.rollsUsed;
   const wide = width > height && width >= 640;
-
-  function confirmLeave() {
-    Alert.alert(t('game.leaveTitle'), t('game.leaveBody'), [
-      { text: t('game.stay'), style: 'cancel' },
-      { text: t('game.leaveConfirm'), onPress: () => (router.canGoBack() ? router.back() : router.replace('/')) },
-    ]);
-  }
 
   const table = (
     <View style={wide ? styles.tableWide : undefined}>

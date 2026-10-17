@@ -22,6 +22,7 @@ import { shareCard } from '../src/ui/share';
 import { ShareCard, shareDataFor, type ShareCardRef } from '../src/ui/ShareCard';
 import { fonts, radius, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
+import { useAndroidBack } from '../src/ui/useAndroidBack';
 
 /** Counts up to `to` over 1.4 s; shows it at once with Reduce Motion. */
 function useCountUp(to: number): number {
@@ -87,6 +88,9 @@ export default function FinalScreen() {
       .map(([, i]) => i);
     return { scores, winners, humans, hero, order, personalBest: best !== null && scores[hero] > best };
   }, [game]);
+
+  // Android Back from the scorecard means Home, through the same exit as the button.
+  useAndroidBack(() => void leave(false));
 
   const shown = useCountUp(summary ? summary.scores[summary.hero] : 0);
   if (!game || !summary) return leaving ? null : <Redirect href="/" />;

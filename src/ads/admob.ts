@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import mobileAds, {
   AdEventType,
   AdsConsent,
+  AdsConsentDebugGeography,
   AdsConsentPrivacyOptionsRequirementStatus,
   InterstitialAd,
   MaxAdContentRating,
@@ -43,7 +44,10 @@ export function createAdMobProvider(): AdProvider {
   return {
     async init() {
       // UMP decides whether ads may be requested at all (EEA/UK need consent first).
-      const consent = await AdsConsent.gatherConsent();
+      // EXPO_PUBLIC_UMP_DEBUG_EEA=1 makes a development build act as if in the EEA,
+      // so the consent form can be checked on an emulator (emulators are test devices).
+      const debugEea = __DEV__ && process.env.EXPO_PUBLIC_UMP_DEBUG_EEA === '1';
+      const consent = await AdsConsent.gatherConsent(debugEea ? { debugGeography: AdsConsentDebugGeography.EEA } : undefined);
       if (!consent.canRequestAds) return false;
       await mobileAds().setRequestConfiguration({ maxAdContentRating: MaxAdContentRating.G });
       await mobileAds().initialize();

@@ -44,6 +44,7 @@ jest.mock('react-native-google-mobile-ads', () => ({
     showPrivacyOptionsForm: jest.fn(async () => ({})),
   },
   AdsConsentPrivacyOptionsRequirementStatus: { REQUIRED: 'REQUIRED', NOT_REQUIRED: 'NOT_REQUIRED' },
+  AdsConsentDebugGeography: { EEA: 1, NOT_EEA: 2 },
   AdEventType: { LOADED: 'loaded', ERROR: 'error', OPENED: 'opened', CLOSED: 'closed' },
   RewardedAdEventType: { LOADED: 'rewarded_loaded', EARNED_REWARD: 'rewarded_earned_reward' },
   MaxAdContentRating: { G: 'G' },
