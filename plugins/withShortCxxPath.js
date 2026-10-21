@@ -10,7 +10,7 @@ const MARKER = '// withShortCxxPath';
 const snippet = `
 ${MARKER}
 if (System.getProperty('os.name').toLowerCase().contains('windows')) {
-    android.externalNativeBuild.cmake.buildStagingDirectory = new File(rootDir.toPath().getRoot().toFile(), 'dd-cxx')
+    android.externalNativeBuild.cmake.buildStagingDirectory = new File(rootDir.toPath().getRoot().toFile(), 'c')
 }
 `;
 

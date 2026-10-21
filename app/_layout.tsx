@@ -1,4 +1,5 @@
 import '../src/i18n/i18n';
+import { initCrashReporting, wrapRoot } from '../src/crash/crashReporting';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -18,6 +19,8 @@ import { useSettings, useSettingsStore } from '../src/state/settingsStore';
 import { denFonts } from '../src/ui/fonts';
 import { ThemeProvider, useTheme } from '../src/ui/theme';
 
+// First, so a crash while loading saved data is reported too.
+initCrashReporting();
 void SplashScreen.preventAutoHideAsync();
 
 // Load saved data (migrating if needed) before any screen reads a store.
@@ -30,7 +33,9 @@ useShopStore.getState().hydrate();
 // Players who passed 10 games or a 7-day streak before this version get their skins.
 updateAppData((d) => grantEarnedUnlocks(d).data);
 
-export default function RootLayout() {
+export default wrapRoot(RootLayout);
+
+function RootLayout() {
   const [loaded, error] = useFonts(denFonts);
 
   useEffect(() => {

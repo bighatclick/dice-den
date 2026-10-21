@@ -45,3 +45,4 @@ coverage/
 
 # Native build output of local Expo modules
 modules/*/android/build/
+sentry.options.json

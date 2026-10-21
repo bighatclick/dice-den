@@ -1,5 +1,6 @@
 import { createMMKV } from 'react-native-mmkv';
 import { Repository, type KeyValueStore } from './repository';
+import { reportError } from '../crash/crashReporting';
 
 let repository: Repository | null = null;
 
@@ -11,7 +12,8 @@ export function getRepository(): Repository {
       getString: (key) => mmkv.getString(key),
       set: (key, value) => mmkv.set(key, value),
     };
-    repository = new Repository(store);
+    // Safe mode keeps the old data untouched; the crash report says why (specs.md §5).
+    repository = new Repository(store, { onError: reportError });
   }
   return repository;
 }

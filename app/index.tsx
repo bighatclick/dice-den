@@ -122,6 +122,7 @@ export default function HomeScreen() {
               {t('app.name')}
             </Text>
           </View>
+          <IconButton icon="help-circle-outline" label={t('home.help')} onPress={() => router.push('/help')} />
           <IconButton icon="storefront-outline" label={t('home.shop')} onPress={() => router.push('/shop')} />
           <IconButton icon="settings-outline" label={t('home.settings')} onPress={() => router.push('/settings')} />
         </View>

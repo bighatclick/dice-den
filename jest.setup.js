@@ -68,3 +68,8 @@ jest.mock('expo-tracking-transparency', () => ({
   isAvailable: jest.fn(() => true),
   requestTrackingPermissionsAsync: jest.fn(async () => ({ granted: false })),
 }));
+jest.mock('@sentry/react-native', () => ({
+  init: jest.fn(),
+  wrap: (component) => component,
+  captureException: jest.fn(),
+}));

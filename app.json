@@ -83,7 +83,15 @@
           ]
         }
       ],
-      "expo-iap"
+      "expo-iap",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraProguardRules": "# WorkManager (pulled in by expo-notifications) creates its Room database by reflection at app start.\n# Without these, the release build crashes on launch.\n-keep class * extends androidx.room.RoomDatabase { <init>(); }\n-keep class androidx.work.impl.WorkDatabase_Impl { *; }"
+          }
+        }
+      ]
     ]
   }
 }

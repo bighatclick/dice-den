@@ -33,7 +33,8 @@
     "turnOf": "Turn {{turn}} of {{turns}}",
     "statsSubtitle": "Best {{best}} · {{count}} games",
     "statsEmpty": "Scores and fair dice",
-    "dailyWeek": "This week"
+    "dailyWeek": "This week",
+    "help": "How to play"
   },
   "screens": {
     "game": "Game",
@@ -42,7 +43,8 @@
     "shop": "Shop",
     "settings": "Settings",
     "onboarding": "Welcome",
-    "final": "Final scorecard"
+    "final": "Final scorecard",
+    "help": "How to play"
   },
   "boxes": {
     "ones": "Ones",
@@ -282,7 +284,8 @@
     "removeAds": "Remove Ads",
     "adsRemoved": "Ads removed",
     "restore": "Restore Purchases",
-    "adPrivacy": "Ad privacy choices"
+    "adPrivacy": "Ad privacy choices",
+    "help": "How to play and FAQ"
   },
   "reminder": {
     "title": "Today's dice are ready",
@@ -385,5 +388,82 @@
     "title": "About the ads",
     "body": "Dice Den shows a few ads between games. On the next screen, your phone asks whether those ads may use your activity in other apps. Either answer is fine; the game is the same.",
     "continue": "Continue"
+  },
+  "help": {
+    "title": "How to play",
+    "turnTitle": "Your turn",
+    "turn": {
+      "roll": "Roll the five dice. You get up to 3 rolls.",
+      "keep": "After a roll, tap the dice you want to keep. Then roll the rest again.",
+      "score": "When you're happy, tap an empty box on the score pad to take its points.",
+      "once": "Each box can be used only once. If your dice don't fit any box, you still pick one and get 0 points there.",
+      "undo": "Tapped the wrong box? Tap Undo before the next roll.",
+      "end": "The game ends when every box is filled. The highest total wins."
+    },
+    "boxesTitle": "What each box scores",
+    "rulesLabel": "Rules",
+    "upper": "Only the dice showing {{face}}, added up.",
+    "bonus": "Bonus: if your 1s to 6s add up to 63 or more, you get {{bonus}} extra points.",
+    "classic": {
+      "threeKind": "At least 3 dice the same. You get all 5 dice added up.",
+      "fourKind": "At least 4 dice the same. You get all 5 dice added up.",
+      "fullHouse": "3 of one number and 2 of another. You get 25.",
+      "smallStraight": "4 numbers in a row, like 2-3-4-5. You get 30.",
+      "largeStraight": "5 numbers in a row, like 1-2-3-4-5. You get 40.",
+      "yatzy": "All 5 dice the same. You get 50.",
+      "chance": "Any dice. You get all 5 dice added up.",
+      "extra": "Another Yatzy after you already have 50 in the Yatzy box gives you 100 extra points. Put it in the matching box from 1s to 6s if that box is empty. If not, any box below works, and Full House and the straights still give full points."
+    },
+    "scandinavian": {
+      "onePair": "2 dice the same. You get those 2 dice added up. With more than one pair, the higher pair counts.",
+      "twoPairs": "2 different pairs. You get those 4 dice added up.",
+      "threeKind": "3 dice the same. You get those 3 dice added up.",
+      "fourKind": "4 dice the same. You get those 4 dice added up.",
+      "smallStraight": "Exactly 1-2-3-4-5. You get 15.",
+      "largeStraight": "Exactly 2-3-4-5-6. You get 20.",
+      "fullHouse": "3 of one number and 2 of another. You get all 5 dice added up.",
+      "chance": "Any dice. You get all 5 dice added up.",
+      "yatzy": "All 5 dice the same. You get 50."
+    },
+    "forcedOrder": "Forced order is an option for new games. With it on, you fill the boxes from top to bottom.",
+    "faqTitle": "Questions",
+    "faq": {
+      "fair": {
+        "q": "Are the dice fair?",
+        "a": "Yes. Each number has the same 1 in 6 chance. You and the computer use the same dice, and nobody gets better dice for being behind."
+      },
+      "daily": {
+        "q": "What are today's dice?",
+        "a": "Each day, everyone gets the same dice. Your first score of the day is the one that counts."
+      },
+      "streak": {
+        "q": "How does the streak work?",
+        "a": "Play today's dice every day to grow your streak. If you miss one day in a week, your streak is kept."
+      },
+      "closed": {
+        "q": "What if I close the app during a game?",
+        "a": "Your game is saved after every move. Open the app and pick up where you left off."
+      },
+      "rules": {
+        "q": "Classic or Scandinavian?",
+        "a": "Classic has 13 boxes and a 35-point bonus. Scandinavian has 15 boxes, with pairs, and a 50-point bonus. You can change the rules in Settings for your next game."
+      },
+      "friends": {
+        "q": "How do I play with friends?",
+        "a": "Pick Pass and play and add 2 to 6 players. After each turn, pass the phone to the next player."
+      },
+      "ads": {
+        "q": "When do ads show?",
+        "a": "Never during a game. Sometimes an ad shows after a game ends. Remove Ads in the Shop stops these with a one-time purchase."
+      },
+      "restore": {
+        "q": "I got a new phone. How do I get my purchases back?",
+        "a": "Sign in with the same store account, then tap Restore Purchases in Settings."
+      },
+      "offline": {
+        "q": "Do I need the internet?",
+        "a": "No. You can play everything offline. Only ads and purchases need the internet."
+      }
+    }
   }
 }

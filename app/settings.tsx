@@ -142,6 +142,7 @@ export default function SettingsScreen() {
         </SettingsGroup>
 
         <SettingsGroup title={t('settings.about')}>
+          <LinkRow label={t('settings.help')} onPress={() => router.push('/help')} />
           <LinkRow label={t('settings.fairness')} onPress={() => router.push('/fairness')} />
           <LinkRow label={t('settings.replayTutorial')} onPress={() => router.push('/onboarding')} />
           <LinkRow label={t('settings.privacy')} icon="open-outline" onPress={() => void Linking.openURL(PRIVACY_URL)} />
