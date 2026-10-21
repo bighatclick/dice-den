@@ -34,6 +34,28 @@ describe('Game table (S3)', () => {
     expect(screen.queryByRole('button', { name: /score .* here/ })).toBeNull();
   });
 
+  // Regression: boxes worth 0 were faded and looked disabled, though they can be tapped.
+  // Every tappable box now looks the same; only the best number is green.
+  it('highlights every box you can tap, with only the best number in green', async () => {
+    scriptDice([5, 1, 5, 6, 1]);
+    await renderRouter(routes, { initialUrl: '/game' });
+    await fireEvent.press(button('Roll, 3 rolls left'));
+    const flat = (style: unknown) => Object.assign({}, ...[style].flat(Infinity).filter(Boolean));
+    const row = (box: string) => flat(screen.getByTestId(`box-${box}`).props.style);
+    const hint = (box: string) => flat(screen.getByTestId(`hint-${box}`).props.style);
+
+    expect(row('twos')).toEqual(row('fives'));
+    expect(row('twos').borderWidth).toBe(1.5);
+    expect(hint('twos').opacity).toBeUndefined();
+    // Chance (18) is the best box here: only its number changes colour.
+    expect(hint('chance').color).not.toBe(hint('twos').color);
+    expect(hint('fives').color).toBe(hint('twos').color);
+    expect(hint('ones').color).toBe(hint('twos').color);
+
+    await fireEvent.press(button('Twos, score 0 here'));
+    expect(screen.getByLabelText('Twos, scored 0')).toBeTruthy();
+  });
+
   it('rolls, holds, shows hints, scores and undoes', async () => {
     scriptDice([5, 5, 2, 5, 6]);
     await renderRouter(routes, { initialUrl: '/game' });

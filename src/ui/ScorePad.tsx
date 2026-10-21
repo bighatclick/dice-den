@@ -73,7 +73,8 @@ export function ScorePad({ preset, card, extraYatzyCount, options, hints, onScor
         style={({ pressed }) => [
           styles.row,
           { borderBottomColor: colors.line },
-          isBest && { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1.5, borderBottomWidth: 1.5 },
+          // Every box you can tap now looks the same; only the best number stands out (in green).
+          allowed && { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1.5, borderBottomWidth: 1.5 },
           pressed && { opacity: 0.6 },
         ]}
       >
@@ -84,7 +85,6 @@ export function ScorePad({ preset, card, extraYatzyCount, options, hints, onScor
               styles.labelText,
               { color: colors.ink },
               box === 'yatzy' && styles.yatzyLabel,
-              isBest && styles.bestLabel,
             ]}
           >
             {name}
@@ -93,13 +93,7 @@ export function ScorePad({ preset, card, extraYatzyCount, options, hints, onScor
         {scored !== undefined ? (
           <Text style={[type.score, styles.value, { color: colors.ink }]}>{scored}</Text>
         ) : allowed && hints ? (
-          <Text
-            style={[
-              styles.hint,
-              { color: isBest ? colors.accent : colors.ink3, opacity: option === 0 ? 0.5 : 1 },
-              isBest && styles.bestHint,
-            ]}
-          >
+          <Text testID={`hint-${box}`} style={[styles.hint, { color: isBest ? colors.accent : colors.ink }, isBest && styles.bestHint]}>
             {option}
           </Text>
         ) : null}
@@ -165,7 +159,6 @@ const styles = StyleSheet.create({
   label: { flexDirection: 'row', alignItems: 'center', gap: 7, flexShrink: 1 },
   labelText: { fontFamily: fonts.medium, fontSize: 13.5 },
   yatzyLabel: { fontFamily: fonts.display },
-  bestLabel: { fontFamily: fonts.bold },
   value: { fontSize: 15 },
   hint: { fontFamily: fonts.semibold, fontSize: 14, fontVariant: ['tabular-nums'] },
   bestHint: { fontFamily: fonts.heavy },

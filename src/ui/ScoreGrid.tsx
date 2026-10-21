@@ -66,16 +66,14 @@ export function ScoreGrid({ preset, players, current, options, hints, onScore }:
               testID={i === current ? `grid-${box}` : undefined}
               style={({ pressed }) => [
                 ...columnStyle(i),
-                isBest && { borderColor: colors.accent, borderWidth: 1.5 },
+                allowed && { borderColor: colors.accent, borderWidth: 1.5 },
                 pressed && { opacity: 0.6 },
               ]}
             >
               {scored !== undefined ? (
                 <Text style={[type.score, styles.value, { color: colors.ink }]}>{scored}</Text>
               ) : allowed && hints ? (
-                <Text style={[styles.hint, { color: isBest ? colors.accent : colors.ink3, opacity: option === 0 ? 0.5 : 1 }, isBest && styles.bestHint]}>
-                  {option}
-                </Text>
+                <Text style={[styles.hint, { color: isBest ? colors.accent : colors.ink }, isBest && styles.bestHint]}>{option}</Text>
               ) : null}
             </Pressable>
           );
