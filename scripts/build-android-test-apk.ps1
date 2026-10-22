@@ -1,4 +1,7 @@
-# Builds a standalone Android test APK (fake store, debug-signed: not for the Play Store).
+# Builds a standalone Android test APK. It is signed with the upload key when
+# ~/.gradle/gradle.properties names one (plugins/withReleaseSigning.js), else with the debug key.
+# Ads and purchases stay off unless EXPO_PUBLIC_MONETIZATION=1 is set; only then does it
+# use the fake store, so a normal build has no way to grant purchases.
 # Windows has a 260-character path limit that the native build breaks from E:\PP\dice-den,
 # so the build runs in a git worktree at a short path. It builds the latest commit on main,
 # so commit first. Run from the project folder:
@@ -30,7 +33,7 @@ if (-not (Test-Path $stamp) -or (Get-Content $stamp) -ne $lockHash) {
   Set-Content $stamp $lockHash
 }
 
-$env:EXPO_PUBLIC_FAKE_STORE = '1'
+if ($env:EXPO_PUBLIC_MONETIZATION -eq '1') { $env:EXPO_PUBLIC_FAKE_STORE = '1' } else { Remove-Item Env:EXPO_PUBLIC_FAKE_STORE -ErrorAction SilentlyContinue }
 $env:NODE_ENV = 'production'
 if ($Monetization) { $env:EXPO_PUBLIC_MONETIZATION = '1' } else { Remove-Item Env:EXPO_PUBLIC_MONETIZATION -ErrorAction SilentlyContinue }
 if ($DebugEea) { $env:EXPO_PUBLIC_UMP_DEBUG_EEA = '1' } else { Remove-Item Env:EXPO_PUBLIC_UMP_DEBUG_EEA -ErrorAction SilentlyContinue }

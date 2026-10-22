@@ -37,6 +37,7 @@
       "expo-font",
       "expo-localization",
       "./plugins/withShortCxxPath",
+      "./plugins/withReleaseSigning",
       [
         "expo-splash-screen",
         {
