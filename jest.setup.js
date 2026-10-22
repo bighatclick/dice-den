@@ -1,3 +1,6 @@
+// Ads and purchases are off in builds for now (src/config/features.ts); most tests cover them switched on.
+// monetizationOff.test.tsx covers the off state.
+process.env.EXPO_PUBLIC_MONETIZATION = '1';
 // Worklets' official mock; Reanimated is mapped to jest/reanimated-mock.js in jest.config.js.
 jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'));
 

@@ -1,3 +1,4 @@
+import { MONETIZATION_ENABLED } from '../config/features';
 import { toDateKey } from '../engine/rng';
 import type { GameMode } from '../engine/game';
 import { getAppData, updateAppData } from '../state/appData';
@@ -9,6 +10,8 @@ let provider: AdProvider | null = null;
 let ready: Promise<boolean> | null = null;
 
 function getProvider(): AdProvider {
+  // Switched off: no SDK, no consent form, no ads, whatever provider is set.
+  if (!MONETIZATION_ENABLED) return nullAdProvider;
   if (provider) return provider;
   try {
     // Loaded lazily so Expo Go and builds without the native module still run.
@@ -64,6 +67,7 @@ export async function interstitialAfterFinal(mode: GameMode, finalShownMs: numbe
 }
 
 export function rewardedAvailableToday(): number {
+  if (!MONETIZATION_ENABLED) return 0;
   return rewardedLeft(getAppData().ads, toDateKey(new Date()));
 }
 

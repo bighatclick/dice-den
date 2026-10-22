@@ -9,6 +9,9 @@ module.exports = {
     '^react-native-reanimated/mock$': '<rootDir>/jest/reanimated-mock.js',
   },
   testMatch: ['**/__tests__/**/*.test.ts?(x)'],
+  // Other Claude sessions keep worktree copies of the project under .claude/.
+  testPathIgnorePatterns: ['/node_modules/', '/\\.claude/'],
+  modulePathIgnorePatterns: ['<rootDir>/\\.claude/'],
   collectCoverageFrom: ['src/engine/**/*.ts', 'src/data/**/*.ts', '!**/__tests__/**'],
   coverageThreshold: {
     './src/engine/scoring.ts': { branches: 100, functions: 100, lines: 100, statements: 100 },

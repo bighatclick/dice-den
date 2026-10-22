@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { privacyOptionsRequired, showPrivacyOptions } from '../src/ads';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { disableDailyReminder, enableDailyReminder } from '../src/notifications/reminder';
 import { playedToday } from '../src/notifications/reminderRunner';
 import { isReadOnly } from '../src/state/appData';
@@ -105,7 +106,8 @@ export default function SettingsScreen() {
           <LinkRow label={t('settings.diceAndTables')} onPress={() => router.push('/shop')} />
         </SettingsGroup>
 
-        <SettingsGroup title={t('settings.purchases')}>
+        {MONETIZATION_ENABLED ? (
+          <SettingsGroup title={t('settings.purchases')}>
           {removeAds ? (
             <View style={styles.dataBox}>
               <Text style={[styles.note, { color: colors.ink2 }]}>{t('settings.adsRemoved')}</Text>
@@ -124,7 +126,8 @@ export default function SettingsScreen() {
             </Text>
           ) : null}
           {adPrivacy ? <LinkRow label={t('settings.adPrivacy')} onPress={() => void showPrivacyOptions()} /> : null}
-        </SettingsGroup>
+          </SettingsGroup>
+        ) : null}
 
         <SettingsGroup title={t('settings.reminder')}>
           <ToggleRow label={t('settings.reminder')} subtitle={t('settings.reminderSubtitle')} value={settings.dailyReminder.enabled} onChange={(on) => void setReminder(on)} />

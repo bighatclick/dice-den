@@ -12,6 +12,7 @@ import { initAppData, updateAppData } from '../src/state/appData';
 import { startReminderRefresh } from '../src/notifications/reminderRunner';
 import { startCloudSync } from '../src/state/cloudSyncRunner';
 import { recordSession } from '../src/state/session';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { useShopStore } from '../src/state/shopStore';
 import { grantEarnedUnlocks } from '../src/state/unlocks';
 import { useGameStore } from '../src/state/gameStore';
@@ -50,7 +51,7 @@ function RootLayout() {
 
   // Connects to the store, finishes any unfinished purchase and refreshes ownership.
   useEffect(() => {
-    void useShopStore.getState().load();
+    if (MONETIZATION_ENABLED) void useShopStore.getState().load();
   }, []);
 
   if (!loaded && !error) return null;

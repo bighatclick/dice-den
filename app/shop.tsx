@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { prepareRewarded, rewardedAvailableToday, watchRewarded } from '../src/ads';
 import { grantTrial } from '../src/ads/policy';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { PRODUCT_IDS, entitlementsFor, packFor, type ProductId, type ProductKey } from '../src/iap/products';
 import { getAppData, updateAppData } from '../src/state/appData';
 import { ownedCosmetics, trialKey, useEquipped, type CosmeticKind } from '../src/state/cosmetics';
@@ -26,6 +27,8 @@ const TERMS_URL = 'https://dicedengame.com/terms';
  * S9 Shop: Remove Ads, packs, the Supporter Bundle, the dice and table picker,
  * rewarded 24 h trials and Restore Purchases. Prices only ever come from the
  * store (CLAUDE.md rule 8); with no store the picker still works.
+ * With ads and purchases switched off (src/config/features.ts) it is only the
+ * dice and table picker: free and earned styles, nothing to buy or try.
  */
 export default function ShopScreen() {
   const { t } = useTranslation();
@@ -39,8 +42,10 @@ export default function ShopScreen() {
   const [trialPending, setTrialPending] = useState<string | null>(null);
 
   useEffect(() => {
-    void useShopStore.getState().load();
-    void prepareRewarded();
+    if (MONETIZATION_ENABLED) {
+      void useShopStore.getState().load();
+      void prepareRewarded();
+    }
     return () => useShopStore.getState().clearMessage();
   }, []);
 
@@ -82,6 +87,11 @@ export default function ShopScreen() {
     { key: 'tablePack', title: t('shop.tablePack'), body: t('shop.tablePackBody') },
     { key: 'complete', title: t('shop.complete'), body: t('shop.completeBody') },
   ];
+
+  // With purchases off, styles that only come in a pack are hidden (unless already owned).
+  function forSale(source: CosmeticSource, has: boolean): boolean {
+    return MONETIZATION_ENABLED || has || packFor(source) === null;
+  }
 
   function lockedHint(source: CosmeticSource): string {
     if (source === 'games10') return t('shop.earnGames', { count: GAMES_FOR_UNLOCK });
@@ -150,9 +160,9 @@ export default function ShopScreen() {
 
   return (
     <Screen>
-      <ScreenHeader title={t('shop.title')} />
+      <ScreenHeader title={MONETIZATION_ENABLED ? t('shop.title') : t('settings.diceAndTables')} />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.intro, { color: colors.ink2 }]}>{t('shop.intro')}</Text>
+        {MONETIZATION_ENABLED ? <Text style={[styles.intro, { color: colors.ink2 }]}>{t('shop.intro')}</Text> : null}
         {notice ? (
           <View accessibilityLiveRegion="polite" style={[styles.notice, { backgroundColor: colors.accentSoft }]}>
             <Text testID="shop-notice" style={[styles.noticeText, { color: colors.ink }]}>
@@ -167,7 +177,7 @@ export default function ShopScreen() {
         ) : null}
 
         {products
-          .filter(({ key }) => key !== 'complete' || !ownsProduct('complete'))
+          .filter(({ key }) => MONETIZATION_ENABLED && (key !== 'complete' || !ownsProduct('complete')))
           .map(({ key, title, body }) => {
             const id: ProductId = PRODUCT_IDS[key];
             const price = prices[id];
@@ -207,11 +217,13 @@ export default function ShopScreen() {
         <Text accessibilityRole="header" style={[styles.section, { color: colors.ink3 }]}>
           {t('shop.dice').toUpperCase()}
         </Text>
-        <Text style={[styles.note, { color: colors.ink3 }]}>
-          {trialsLeft > 0 ? t('shop.trialsLeft', { count: trialsLeft }) : t('shop.noTrials')}
-        </Text>
+        {MONETIZATION_ENABLED ? (
+          <Text style={[styles.note, { color: colors.ink3 }]}>
+            {trialsLeft > 0 ? t('shop.trialsLeft', { count: trialsLeft }) : t('shop.noTrials')}
+          </Text>
+        ) : null}
         <View style={styles.grid}>
-          {DICE_SKINS.map((s) =>
+          {DICE_SKINS.filter((s) => forSale(s.source, mine.dice.has(s.id))).map((s) =>
             tile('dice', s.id, s.source, t(`shop.skins.${s.id}`), <DieFace value={5} size={40} skin={s} />),
           )}
         </View>
@@ -220,7 +232,7 @@ export default function ShopScreen() {
           {t('shop.tables').toUpperCase()}
         </Text>
         <View style={styles.grid}>
-          {TABLES.map((tb) =>
+          {TABLES.filter((tb) => forSale(tb.source, mine.tables.has(tb.id))).map((tb) =>
             tile(
               'table',
               tb.id,
@@ -233,13 +245,15 @@ export default function ShopScreen() {
           )}
         </View>
 
-        <View testID="restore-button" style={styles.restore}>
-          <Button
-            label={busy === 'restore' ? t('shop.restoring') : t('shop.restore')}
-            disabled={busy !== null}
-            onPress={() => void useShopStore.getState().restore()}
-          />
-        </View>
+        {MONETIZATION_ENABLED ? (
+          <View testID="restore-button" style={styles.restore}>
+            <Button
+              label={busy === 'restore' ? t('shop.restoring') : t('shop.restore')}
+              disabled={busy !== null}
+              onPress={() => void useShopStore.getState().restore()}
+            />
+          </View>
+        ) : null}
         <View style={styles.links}>
           <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(TERMS_URL)} style={styles.link}>
             <Text style={[styles.linkText, { color: colors.ink2 }]}>{t('shop.terms')}</Text>

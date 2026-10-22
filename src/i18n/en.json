@@ -204,7 +204,8 @@
     "replay": "Replay today's dice",
     "replayHint": "Watch an ad to play today's dice again. Your first score stays.",
     "replayUnavailable": "No ad is available right now. Try again later.",
-    "replayNone": "No more replays today. New dice tomorrow."
+    "replayNone": "No more replays today. New dice tomorrow.",
+    "comeBack": "New dice tomorrow."
   },
   "share": {
     "finalScore": "Final score",

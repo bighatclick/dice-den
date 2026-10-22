@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { prepareRewarded, rewardedAvailableToday, watchRewarded } from '../src/ads';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { toDateKey } from '../src/engine/rng';
 import { enableDailyReminder } from '../src/notifications/reminder';
 import { getAppData, updateAppData } from '../src/state/appData';
@@ -101,7 +102,10 @@ export default function DailyScreen() {
           <Button variant="primary" label={todayInProgress ? t('daily.resume') : t('daily.play')} onPress={todayInProgress ? () => router.push('/game') : () => play()} />
         )}
         {finished && todayInProgress ? <Button variant="primary" label={t('daily.resume')} onPress={() => router.push('/game')} /> : null}
-        {finished && !todayInProgress ? (
+        {finished && !todayInProgress && !MONETIZATION_ENABLED ? (
+          <Text style={[styles.bestScore, { color: colors.ink2 }]}>{t('daily.comeBack')}</Text>
+        ) : null}
+        {finished && !todayInProgress && MONETIZATION_ENABLED ? (
           replaysLeft > 0 ? (
             <View testID="daily-replay">
               <Button label={t('daily.replay')} subtitle={t('daily.replayHint')} onPress={() => void replay()} />

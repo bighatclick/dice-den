@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { isUpperBox, PRESETS, upperFace, type PresetId } from '../src/engine/rules/presets';
 import { useSettings } from '../src/state/settingsStore';
 import { Screen } from '../src/ui/Screen';
@@ -10,7 +11,9 @@ import { fonts, radius, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 
 const TURN = ['roll', 'keep', 'score', 'once', 'undo', 'end'] as const;
-const FAQ = ['fair', 'daily', 'streak', 'closed', 'rules', 'friends', 'ads', 'restore', 'offline'] as const;
+const ALL_FAQ = ['fair', 'daily', 'streak', 'closed', 'rules', 'friends', 'ads', 'restore', 'offline'] as const;
+// Questions about ads and purchases only make sense while those are switched on.
+const FAQ = ALL_FAQ.filter((q) => MONETIZATION_ENABLED || (q !== 'ads' && q !== 'restore'));
 
 /**
  * How to play and FAQ, in plain English. The box list comes from the rule presets,

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { interstitialAfterFinal, prepareInterstitial } from '../src/ads';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { shouldShowRemoveAdsCard } from '../src/ads/policy';
 import { playerTotal, type GameState } from '../src/engine/game';
 import { PRESETS } from '../src/engine/rules/presets';
@@ -64,7 +65,7 @@ export default function FinalScreen() {
   const [removeAdsCard] = useState(() => {
     if (game?.status !== 'finished') return false;
     const data = getAppData();
-    return shouldShowRemoveAdsCard({ ads: data.ads, stats: data.stats, removeAds: hasRemoveAds(), mode: game.mode });
+    return MONETIZATION_ENABLED && shouldShowRemoveAdsCard({ ads: data.ads, stats: data.stats, removeAds: hasRemoveAds(), mode: game.mode });
   });
   const finishedMode = game?.status === 'finished' ? game.mode : null;
   useEffect(() => {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { ensureAdsReady } from '../src/ads';
+import { MONETIZATION_ENABLED } from '../src/config/features';
 import { requestTracking } from '../src/ads/att';
 import { shouldOfferAtt } from '../src/ads/policy';
 import { playerTotal } from '../src/engine/game';
@@ -52,12 +53,12 @@ export default function HomeScreen() {
   // ATT soft prompt: iOS, once, after the 3rd session, never mid-game (CLAUDE.md rule 7).
   const [offerAtt, setOfferAtt] = useState(() => {
     const { ads, stats } = getAppData();
-    return onboardingDone && shouldOfferAtt({ ads, stats, platform: Platform.OS, inGame: false });
+    return MONETIZATION_ENABLED && onboardingDone && shouldOfferAtt({ ads, stats, platform: Platform.OS, inGame: false });
   });
   // UMP consent and SDK start, once per launch and only after the first run.
   // Nothing is ever shown here: interstitials appear only after a final scorecard.
   useEffect(() => {
-    if (onboardingDone && !offerAtt) void ensureAdsReady();
+    if (MONETIZATION_ENABLED && onboardingDone && !offerAtt) void ensureAdsReady();
   }, [onboardingDone, offerAtt]);
 
   async function continueToAtt() {
@@ -123,7 +124,9 @@ export default function HomeScreen() {
             </Text>
           </View>
           <IconButton icon="help-circle-outline" label={t('home.help')} onPress={() => router.push('/help')} />
-          <IconButton icon="storefront-outline" label={t('home.shop')} onPress={() => router.push('/shop')} />
+          {MONETIZATION_ENABLED ? (
+            <IconButton icon="storefront-outline" label={t('home.shop')} onPress={() => router.push('/shop')} />
+          ) : null}
           <IconButton icon="settings-outline" label={t('home.settings')} onPress={() => router.push('/settings')} />
         </View>
 
