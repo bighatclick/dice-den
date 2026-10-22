@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
@@ -36,9 +36,11 @@ export function DieFace({ value, size, highContrast = false, skin }: { value: Fa
   const face = s.face ?? [colors.dieFace, '#F6EEE1', colors.dieFaceLo];
   const pip = s.pip ?? ['#5A3E2B', colors.pip, '#120A05'];
   const r = highContrast ? 11.5 : 10;
-  // Gradient ids are per skin so two skins on one screen (the shop) never share one.
-  const faceId = `face-${s.id}`;
-  const pipId = `pip-${s.id}${highContrast ? '-hc' : ''}`;
+  // Gradient ids are per die: on the web, a shared id can resolve to a die on a hidden
+  // screen, and a gradient inside a hidden SVG paints nothing.
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const faceId = `face-${s.id}-${uid}`;
+  const pipId = `pip-${s.id}-${uid}`;
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100">
       <Defs>
@@ -158,7 +160,11 @@ export function Die({ index, value, held, canHold, rolled, rollSeq, size = 56, h
         ]}
       >
         <View style={[styles.edge, { borderRadius: size * 0.24, backgroundColor: skin.edge ?? colors.dieEdge }]} />
-        <DieFace value={value} size={size - 6} highContrast={highContrast} skin={skin} />
+        {/* Wrapped so the face paints above the edge on the web too, where an absolute
+            sibling would otherwise cover a bare SVG. */}
+        <View>
+          <DieFace value={value} size={size - 6} highContrast={highContrast} skin={skin} />
+        </View>
       </Animated.View>
       <View style={styles.tagSlot}>
         {held ? (

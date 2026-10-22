@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { StyleSheet } from 'react-native';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useEquipped } from '../state/cosmetics';
@@ -10,7 +11,8 @@ export function Felt({ table }: { table?: TableStyle } = {}) {
   const equipped = useEquipped().table;
   const t = table ?? equipped;
   const [hi, mid, lo] = t.colors ?? [colors.feltHi, colors.felt, colors.feltLo];
-  const id = `table-${t.id}`;
+  // Unique per felt, like the dice: a shared id can point at a hidden screen on the web.
+  const id = `table-${t.id}-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   return (
     <Svg style={StyleSheet.absoluteFill} preserveAspectRatio="none" viewBox="0 0 100 100" pointerEvents="none">
       <Defs>
