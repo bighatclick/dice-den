@@ -244,7 +244,10 @@ export function decide(view: AiView, level: AiLevel, choose: Chooser = (n) => Ma
   const pick = <T>(sorted: T[]): T => {
     if (level !== 'easy') return sorted[0];
     const top = Math.min(3, sorted.length);
-    return sorted[Math.max(0, Math.min(top - 1, Math.floor(choose(top))))];
+    // A chooser that returns NaN or ±Infinity counts as 0 (the best option), so a pick is never undefined.
+    const raw = Math.floor(choose(top));
+    const i = Number.isFinite(raw) ? raw : 0;
+    return sorted[Math.max(0, Math.min(top - 1, i))];
   };
 
   const boxes = rankedBoxes(view, view.dice);

@@ -165,6 +165,18 @@ describe('Easy', () => {
     expect(decide(v, 'easy', () => 2.9)).toEqual(decide(v, 'easy', () => 2));
   });
 
+  // Regression: a NaN chooser result made the pick undefined and the next .box read threw.
+  it('treats a chooser returning NaN or ±Infinity as 0, for scores and for holds', () => {
+    for (const rollsUsed of [1, 3]) {
+      const v = view([1, 2, 3, 4, 6], { rollsUsed });
+      const best = decide(v, 'easy', () => 0);
+      for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+        expect(() => decide(v, 'easy', () => bad)).not.toThrow();
+        expect(decide(v, 'easy', () => bad)).toEqual(best);
+      }
+    }
+  });
+
   it('with fewer than three options it never picks outside them', () => {
     const card = Object.fromEntries(CLASSIC.boxes.slice(0, -2).map((b) => [b, 0])) as Scorecard;
     for (const n of [0, 1, 2, 7]) {
