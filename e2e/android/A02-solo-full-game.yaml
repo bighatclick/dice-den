@@ -1,0 +1,69 @@
+# A02 A whole solo Classic game: 13 turns, bonus progress, final scorecard, stats line on Home.
+appId: com.dicedengame.app
+name: A02 solo full game
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- assertVisible: "New game"
+- assertVisible: { text: "Solo", selected: true }
+- assertVisible: { text: "Classic, 13 boxes · bonus +35", selected: true }
+- tapOn: "Start game"
+- assertVisible: "Turn 1 · Ready to roll"
+- assertVisible: "Upper bonus 35: 0 of 63"
+- assertVisible: "Die 1, not rolled yet"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Turn 1 · Roll 1 of 3"
+- assertVisible: "Die 1, showing [1-6]"
+- assertVisible: "Tap dice to hold · tap a box to score"
+- tapOn: { id: "box-ones" }
+- assertVisible: "Turn 2 · Ready to roll"
+- assertVisible: "Ones, scored [0-9]+"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-twos" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-threes" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fours" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fives" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-sixes" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-threeKind" } }
+- tapOn: { id: "box-threeKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fourKind" } }
+- tapOn: { id: "box-fourKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fullHouse" } }
+- tapOn: { id: "box-fullHouse" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-smallStraight" } }
+- tapOn: { id: "box-smallStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-largeStraight" } }
+- tapOn: { id: "box-largeStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-yatzy" } }
+- tapOn: { id: "box-yatzy" }
+- assertVisible: "Turn 13 · Ready to roll"
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+# S5: the scorecard is shown first and nothing covers it.
+- assertVisible: "FINAL SCORE"
+- assertVisible: "You, [0-9]+ points"
+- assertVisible: "Upper [0-9]+"
+- assertVisible: "Bonus .*"
+- assertVisible: "Lower [0-9]+"
+- assertVisible: "Yatzys [0-9]+"
+- assertVisible: "Play again"
+- assertVisible: "Home"
+- assertNotVisible: "Test Ad"
+- assertNotVisible: "Enjoying Dice Den?"
+- tapOn: "Home"
+- assertVisible: "Roll the dice"
+- assertVisible: "Best [0-9]+ · 1 games"
+# The finished game is no longer in progress.
+- assertNotVisible: "Resume game.*"

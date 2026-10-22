@@ -1,0 +1,77 @@
+# B03 Interstitial cadence (fake store, Google test ads, network on): none in session 1,
+# none before game 3, at most 1 per 2 games, never covering a game or the scorecard.
+# A missing ad is allowed (rule 9); the cadence check only runs when one did show.
+appId: com.dicedengame.app
+name: B03 interstitial cadence
+tags: [monetized, ads, long]
+---
+- runFlow: ../subflows/fresh-start.yaml
+# Session 1: three games, never an ad, the Remove Ads card once at game 3.
+- repeat:
+    times: 2
+    commands:
+      - tapOn: "Play"
+      - tapOn: "Start game"
+      - runFlow: ../../subflows/play-13-turns.yaml
+      - assertVisible: "FINAL SCORE"
+      - assertNotVisible: "Enjoying Dice Den?"
+      - waitForAnimationToEnd:
+          timeout: 4000
+      - tapOn: "Home"
+      - assertNotVisible: "Test Ad"
+- tapOn: "Play"
+- tapOn: "Start game"
+- runFlow: ../../subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- assertVisible: "Enjoying Dice Den?"
+- assertVisible: "See Remove Ads"
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn: "Home"
+- assertNotVisible: "Test Ad"
+# Session 2, game 4: an ad may follow the scorecard, never cover it.
+- launchApp:
+    stopApp: true
+- assertNotVisible: "Test Ad"
+- tapOn: "Play"
+- tapOn: "Start game"
+- assertNotVisible: "Test Ad"
+- runFlow: ../../subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- assertNotVisible: "Test Ad"
+- assertNotVisible: "Enjoying Dice Den?"
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn: "Home"
+- evalScript: ${output.adShown = false}
+- runFlow:
+    when:
+      visible: "Test Ad"
+    commands:
+      - evalScript: ${output.adShown = true}
+      - takeScreenshot: b03-test-interstitial
+      - back
+- extendedWaitUntil:
+    visible: "Dice Den"
+    timeout: 10000
+# Game 5: if game 4 showed an ad, this one must not (1 per 2 games).
+- tapOn: "Play"
+- tapOn: "Start game"
+- runFlow: ../../subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn: "Home"
+- runFlow:
+    when:
+      true: ${output.adShown}
+    commands:
+      - assertNotVisible: "Test Ad"
+- runFlow:
+    when:
+      visible: "Test Ad"
+    commands:
+      - back
+- extendedWaitUntil:
+    visible: "Dice Den"
+    timeout: 10000

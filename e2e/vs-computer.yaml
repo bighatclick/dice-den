@@ -8,6 +8,6 @@ appId: com.dicedengame.app
 - tapOn: "Start game"
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "box-chance" }
-- assertVisible: "Computer \(Expert\) is playing"
-- tapOn: "Skip Computer \(Expert\)'s turn"
+- assertVisible: 'Computer \(Expert\) is playing'
+- tapOn: 'Skip Computer \(Expert\)''s turn'
 - assertVisible: "Turn 2 · Ready to roll"

@@ -1,0 +1,41 @@
+# A12 Daily reminder (F13): Android 13+ asks for the notification permission only when the
+# player turns the reminder on; Allow enables it with a time picker; Deny explains.
+appId: com.dicedengame.app
+name: A12 daily reminder permission
+tags: [release, core, android]
+---
+# Allow path.
+- launchApp:
+    clearState: true
+    permissions:
+      notifications: unset
+- tapOn: "Skip"
+- tapOn: "Settings"
+- assertVisible: { text: "Daily reminder", checked: false }
+- tapOn: "Daily reminder"
+- extendedWaitUntil:
+    visible: "(?i)^allow$"
+    timeout: 5000
+- tapOn: "(?i)^allow$"
+- assertVisible: { text: "Daily reminder", checked: true }
+- assertVisible: "Reminder time"
+- tapOn: "8:00.*"
+- assertVisible: { text: "8:00.*", selected: true }
+- tapOn: "Daily reminder"
+- assertVisible: { text: "Daily reminder", checked: false }
+- assertNotVisible: "Reminder time"
+# Deny path on a fresh install.
+- launchApp:
+    clearState: true
+    permissions:
+      notifications: deny
+- tapOn: "Skip"
+- tapOn: "Settings"
+- tapOn: "Daily reminder"
+- runFlow:
+    when:
+      visible: "(?i)don.t allow"
+    commands:
+      - tapOn: "(?i)don.t allow"
+- assertVisible: "Notifications are off for Dice Den.*"
+- assertVisible: { text: "Daily reminder", checked: false }

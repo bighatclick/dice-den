@@ -1,0 +1,80 @@
+# A04 The Android Back button on every screen: asks on the table, goes Home from the
+# scorecard, closes sheets and secondary screens, and never loses a game.
+appId: com.dicedengame.app
+name: A04 Android Back
+tags: [release, core, android]
+---
+- runFlow: subflows/fresh-start.yaml
+# Secondary screens: Back goes Home.
+- tapOn: "Settings"
+- back
+- assertVisible: "Roll the dice"
+- tapOn: "Stats"
+- back
+- assertVisible: "Roll the dice"
+- tapOn: "Play"
+- assertVisible: "New game"
+- back
+- assertVisible: "Roll the dice"
+# On the table: Back asks first; Stay keeps the game on screen.
+- tapOn: "Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- assertVisible: "HELD"
+- back
+- assertVisible: "Leave game?"
+- assertVisible: "It's saved.*"
+- tapOn: "(?i)^stay$"
+- assertVisible: "HELD"
+- assertVisible: "Turn 1 · Roll 1 of 3"
+# Leave: Home offers Resume, and the exact state comes back.
+- back
+- tapOn: "(?i)^leave$"
+- assertVisible: "Resume game, Turn 1 of 13"
+- assertVisible: "Game in progress"
+- tapOn: "Resume game.*"
+- assertVisible: "HELD"
+- assertVisible: "Turn 1 · Roll 1 of 3"
+- assertVisible: "Die 1, showing [1-6], held"
+# Finish, then Back on the final scorecard means Home.
+- tapOn: { id: "box-ones" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-twos" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-threes" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fours" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fives" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-sixes" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-threeKind" } }
+- tapOn: { id: "box-threeKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fourKind" } }
+- tapOn: { id: "box-fourKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fullHouse" } }
+- tapOn: { id: "box-fullHouse" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-smallStraight" } }
+- tapOn: { id: "box-smallStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-largeStraight" } }
+- tapOn: { id: "box-largeStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-yatzy" } }
+- tapOn: { id: "box-yatzy" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- assertVisible: "FINAL SCORE"
+- back
+- assertVisible: "Roll the dice"
+- assertNotVisible: "Play again"
+- assertNotVisible: "Resume game.*"
+# Back on Home leaves the app rather than reopening anything.
+- back
+- assertNotVisible: "Dice Den"

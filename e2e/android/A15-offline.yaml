@@ -1,0 +1,27 @@
+# A15 Offline-first (CLAUDE.md rule 7, rule 9): with airplane mode on, a whole game, the
+# scorecard, leaving it, today's dice and the picker all work and nothing is held up.
+appId: com.dicedengame.app
+name: A15 airplane mode
+tags: [release, android]
+---
+- runFlow: subflows/fresh-start.yaml
+- setAirplaneMode: enabled
+- runFlow: subflows/solo-game-to-home.yaml
+- tapOn: "Today's dice.*"
+- tapOn: "Play today's dice"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- tapOn: "Dice and tables"
+- assertVisible: "Ivory, In use"
+- tapOn: { id: "cosmetic-dice-walnut" }
+- assertVisible: "Walnut, In use"
+# Nothing to buy or watch is offered offline either (switch off, so never).
+- assertNotVisible: "Try for 24 h"
+- assertNotVisible: "Buy for .*"
+- setAirplaneMode: disabled
+- back
+- back
+- assertVisible: "Resume game, Turn 2 of 13"

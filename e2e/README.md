@@ -1,5 +1,10 @@
 # End-to-end flows (Maestro)
 
+The Android emulator suite (Back button, force-stop, airplane mode, permissions,
+landscape, large text, dark mode, tablet, and the monetized test build) lives in
+`e2e/android/` and runs through `scripts/android-e2e.ps1`; the case table is in
+`docs/android-test-suite.md`. The flows below are the original iOS-first set.
+
 Run on the iOS simulator with a development build (`npx expo run:ios`):
 
 ```bash

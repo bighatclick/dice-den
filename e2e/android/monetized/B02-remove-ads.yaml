@@ -1,0 +1,36 @@
+# B02 Remove Ads (fake store): no interstitial after 4 games in session 2, the card is gone,
+# Settings says "Ads removed", and rewarded trials still work.
+appId: com.dicedengame.app
+name: B02 Remove Ads hides interstitials
+tags: [monetized, ads]
+---
+- runFlow: ../subflows/fresh-start.yaml
+- tapOn: "Shop"
+- scrollUntilVisible: { element: { id: "buy-removeAds" } }
+- tapOn: { id: "buy-removeAds" }
+- extendedWaitUntil:
+    visible: "Thank you! It's yours."
+    timeout: 8000
+- back
+- tapOn: "Settings"
+- assertVisible: "Ads removed"
+- assertNotVisible: "Remove Ads"
+- back
+- launchApp:
+    stopApp: true
+- repeat:
+    times: 4
+    commands:
+      - tapOn: "Play"
+      - tapOn: "Start game"
+      - runFlow: ../../subflows/play-13-turns.yaml
+      - assertVisible: "FINAL SCORE"
+      - assertNotVisible: "Enjoying Dice Den?"
+      - waitForAnimationToEnd:
+          timeout: 4000
+      - tapOn: "Home"
+      - assertNotVisible: "Test Ad"
+      - assertVisible: "Dice Den"
+# Rewarded ads stay opt-in after Remove Ads.
+- tapOn: "Shop"
+- assertVisible: "3 ads to watch today"

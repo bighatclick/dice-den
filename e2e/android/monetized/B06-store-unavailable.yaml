@@ -1,0 +1,25 @@
+# B06 Monetization on but no store account (a normal development build without the fake
+# store): the Shop says so, prices read "Not available", nothing hangs, the picker works.
+appId: com.dicedengame.app
+name: B06 store unavailable
+tags: [monetized, nostore]
+---
+- runFlow: ../subflows/fresh-start.yaml
+- tapOn: "Shop"
+- extendedWaitUntil:
+    visible: "The store isn't available right now.*"
+    timeout: 6000
+- assertVisible: "Not available"
+- assertVisible: { text: "Not available", enabled: false }
+- scrollUntilVisible: { element: { id: "cosmetic-dice-walnut" } }
+- tapOn: { id: "cosmetic-dice-walnut" }
+- assertVisible: "Walnut, In use"
+- scrollUntilVisible: { element: { id: "restore-button" } }
+- tapOn: { id: "restore-button" }
+- extendedWaitUntil:
+    visible: "Couldn't reach the store.*"
+    timeout: 6000
+- back
+- tapOn: "Play"
+- tapOn: "Start game"
+- assertVisible: "Roll to start your turn"

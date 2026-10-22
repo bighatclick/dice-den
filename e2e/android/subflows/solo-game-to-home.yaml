@@ -1,0 +1,27 @@
+# From Home with no game in progress: start a solo Classic game, play it out,
+# check the scorecard is uncovered, leave to Home (closing a test ad if one opened).
+appId: com.dicedengame.app
+---
+- tapOn: "Play"
+- assertVisible: "New game"
+- tapOn: "Solo"
+- tapOn: "Start game"
+- assertVisible: "Roll to start your turn"
+- assertNotVisible: "Test Ad"
+- runFlow: ../../subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- assertVisible: "Play again"
+- assertNotVisible: "Test Ad"
+- assertNotVisible: "Advertisement"
+# The scorecard stays up at least 3 s before any ad may follow it (specs.md S5).
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn: "Home"
+- runFlow:
+    when:
+      visible: "Test Ad"
+    commands:
+      - back
+- extendedWaitUntil:
+    visible: "Roll the dice"
+    timeout: 10000

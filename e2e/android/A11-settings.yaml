@@ -1,0 +1,74 @@
+# A11 Settings: every switch and picker takes effect, is saved, and the table honours it
+# (hints off, left-hand layout, large dice, high contrast, reduce motion, theme).
+appId: com.dicedengame.app
+name: A11 settings take effect
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Settings"
+- assertVisible: "Settings"
+- assertVisible: 'Version 1\.0\.0'
+- assertVisible: "Follows your media volume"
+- assertNotVisible: "Muted by the silent switch"
+- tapOn: "Score hints"
+- assertVisible: { text: "Score hints", checked: false }
+- tapOn: "Left-hand layout"
+- tapOn: "Large dice"
+- tapOn: "High-contrast pips"
+- tapOn: "Reduce motion"
+- tapOn: "Sound effects"
+- tapOn: "Haptics"
+- tapOn: "Dark"
+- tapOn: "Slow"
+- assertVisible: { text: "Dark", selected: true }
+- assertVisible: { text: "Slow", selected: true }
+- takeScreenshot: a11-settings-dark
+- back
+- takeScreenshot: a11-home-dark
+# Hints off: boxes can be tapped but show no numbers.
+- tapOn: "Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Chance, score here"
+- assertNotVisible: "Chance, score [0-9]+ here"
+- assertVisible: "Roll, 2 rolls left"
+- takeScreenshot: a11-table-large-dice-left-hand-dark
+- tapOn: { id: "die-0" }
+- assertVisible: "HELD"
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- assertVisible: "Chance, scored [0-9]+"
+# Light theme and system theme again; everything persists across a restart.
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- tapOn: "Light"
+- takeScreenshot: a11-settings-light
+- tapOn: "System"
+- killApp
+- launchApp
+- tapOn: "Settings"
+- assertVisible: { text: "System", selected: true }
+- assertVisible: { text: "Score hints", checked: false }
+- assertVisible: { text: "Left-hand layout", checked: true }
+- assertVisible: { text: "Large dice", checked: true }
+- assertVisible: { text: "High-contrast pips", checked: true }
+- assertVisible: { text: "Reduce motion", checked: true }
+- assertVisible: { text: "Sound effects", checked: false }
+- assertVisible: { text: "Haptics", checked: false }
+- assertVisible: { text: "Slow", selected: true }
+# Links and the fairness page.
+- tapOn: "How the dice work"
+- assertVisible: "Every die has an equal 1 in 6 chance.*"
+- assertVisible: "The computer players roll the same dice.*"
+- tapOn: "See your dice in Stats"
+- assertVisible: "Fair dice"
+- assertVisible: "Your dice"
+- assertVisible: "Computer dice"
+- back
+- back
+- tapOn: "Settings"
+- tapOn: "Show the tutorial again"
+- assertVisible: "Welcome to Dice Den"
+- tapOn: "Skip"
+- assertVisible: "Roll the dice"

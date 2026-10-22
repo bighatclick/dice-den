@@ -1,0 +1,22 @@
+# A17 Ten finished games unlock the Amber dice, announced on the scorecard, usable in the picker.
+appId: com.dicedengame.app
+name: A17 ten games unlock Amber
+tags: [release, long]
+---
+- runFlow: subflows/fresh-start.yaml
+- repeat:
+    times: 9
+    commands:
+      - runFlow: subflows/solo-game-to-home.yaml
+- assertVisible: "Best [0-9]+ · 9 games"
+- tapOn: "Play"
+- tapOn: "Start game"
+- runFlow: ../subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- assertVisible: "New dice unlocked: Amber"
+- tapOn: "Use them"
+- assertVisible: "Dice and tables"
+- scrollUntilVisible: { element: { id: "cosmetic-dice-amber" } }
+- assertVisible: "Amber, Use"
+- tapOn: { id: "cosmetic-dice-amber" }
+- assertVisible: "Amber, In use"

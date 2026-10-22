@@ -1,0 +1,15 @@
+# A14 The diceden:// scheme opens screens directly (and a table deep link starts a solo game).
+appId: com.dicedengame.app
+name: A14 deep links
+tags: [release, android]
+---
+- runFlow: subflows/fresh-start.yaml
+- openLink: "diceden://daily"
+- assertVisible: "Same roll for everyone"
+- openLink: "diceden://stats"
+- assertVisible: "Fair dice"
+- openLink: "diceden://game"
+- assertVisible: "Roll to start your turn"
+- back
+- tapOn: "(?i)^leave$"
+- assertVisible: "Resume game, Turn 1 of 13"

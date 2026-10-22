@@ -1,0 +1,27 @@
+# A21 Tablet (run on DiceDenTablet): content keeps a readable width, the score grid shows every
+# column beside the dice, and the tutorial fits.
+appId: com.dicedengame.app
+name: A21 tablet layout
+tags: [tablet]
+---
+- launchApp:
+    clearState: true
+- takeScreenshot: a21-tutorial-tablet
+- tapOn: "Skip"
+- takeScreenshot: a21-home-tablet
+- tapOn: "Pass and play.*"
+- tapOn: "Add player"
+- tapOn: "Start game"
+- assertVisible: "Player 2: Ones, empty"
+- assertVisible: "Player 3: Ones, empty"
+- takeScreenshot: a21-table-tablet
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "grid-chance" }
+- assertVisible: "Pass the phone to"
+- takeScreenshot: a21-handoff-tablet
+- tapOn: "Start Player 2's turn"
+- assertVisible: "Player 1: Chance, scored [0-9]+"
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- takeScreenshot: a21-settings-tablet

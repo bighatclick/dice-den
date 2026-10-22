@@ -1,0 +1,63 @@
+# B01 Shop (fake store build): five products with prices and "One-time purchase", buy the
+# Classic and Table packs, equip a skin and a table, Restore in the Shop and in Settings.
+appId: com.dicedengame.app
+name: B01 shop products, packs and restore
+tags: [monetized, shop]
+---
+- runFlow: ../subflows/fresh-start.yaml
+- tapOn: "Shop"
+- assertVisible: "Every item is a one-time purchase.*"
+- extendedWaitUntil:
+    visible: "Buy Remove Ads for .*, one-time purchase"
+    timeout: 8000
+- assertVisible: "Remove Ads"
+- assertVisible: "Supporter Bundle"
+- assertVisible: "Classic Dice Pack"
+- assertVisible: "Table Pack"
+- assertVisible: "Complete Collection"
+- assertVisible: "3 ads to watch today"
+- assertNotVisible: "Not available"
+# Locked pack skins cannot be equipped before buying.
+- scrollUntilVisible: { element: { id: "cosmetic-dice-marble" } }
+- assertVisible: { id: "cosmetic-dice-marble", enabled: false }
+- assertVisible: "Marble, In Classic Dice Pack"
+- scrollUntilVisible: { element: { id: "buy-classicPack" } }
+- tapOn: { id: "buy-classicPack" }
+- extendedWaitUntil:
+    visible: "Thank you! It's yours."
+    timeout: 8000
+- assertVisible: "Owned"
+- scrollUntilVisible: { element: { id: "cosmetic-dice-marble" } }
+- tapOn: { id: "cosmetic-dice-marble" }
+- assertVisible: "Marble, In use"
+- assertVisible: "Casino red, Use"
+- scrollUntilVisible: { element: { id: "buy-tablePack" } }
+- tapOn: { id: "buy-tablePack" }
+- extendedWaitUntil:
+    visible: "Thank you! It's yours."
+    timeout: 8000
+- scrollUntilVisible: { element: { id: "cosmetic-table-night" } }
+- tapOn: { id: "cosmetic-table-night" }
+- assertVisible: "Night, In use"
+# Complete Collection disappears once both packs are owned.
+- scrollUntilVisible: { element: { text: "Remove Ads" } }
+- assertNotVisible: "Complete Collection"
+- scrollUntilVisible: { element: { id: "restore-button" } }
+- tapOn: { id: "restore-button" }
+- extendedWaitUntil:
+    visible: "Your purchases are restored."
+    timeout: 8000
+- back
+# The equipped skin and table show on the game table.
+- tapOn: "Play"
+- tapOn: "Start game"
+- takeScreenshot: b01-marble-dice-night-table
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- assertVisible: "Purchases"
+- assertVisible: "Remove Ads"
+- tapOn: "Restore Purchases"
+- extendedWaitUntil:
+    visible: "Your purchases are restored."
+    timeout: 8000

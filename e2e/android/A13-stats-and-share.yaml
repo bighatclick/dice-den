@@ -1,0 +1,45 @@
+# A13 Stats fill in from the game log, the rules filter works, the dice chart counts every
+# face, and Share opens the Android share sheet from the scorecard and the daily result.
+appId: com.dicedengame.app
+name: A13 stats and share
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Stats"
+- assertVisible: "Finish a game to see your stats here."
+- assertVisible: "Games 0"
+- assertVisible: "High score None yet"
+- back
+- runFlow: subflows/solo-game-to-home.yaml
+- tapOn: "Stats"
+- assertNotVisible: "Finish a game to see your stats here."
+- assertVisible: "Games 1"
+- assertVisible: "High score [0-9]+"
+- assertVisible: "Average [0-9]+"
+- assertVisible: "Upper bonus [0-9]+%"
+- assertVisible: "Daily games 0"
+- assertVisible: "Pass and play games"
+# 13 turns, one roll each: 65 of your dice, none for the computer.
+- scrollUntilVisible: { element: { text: "Your dice" } }
+- assertVisible: "65 rolls"
+- assertVisible: "[1-6]: [0-9.]+%, [0-9]+ times"
+- scrollUntilVisible: { element: { text: "Computer dice" } }
+- assertVisible: "0 rolls"
+- scrollUntilVisible: { element: { text: "Rules" } }
+- tapOn: "Scandinavian"
+- assertVisible: "Games 0"
+- tapOn: "Classic"
+- assertVisible: "Games 1"
+- back
+# Share from the final scorecard: the sheet opens and Back returns to the scorecard.
+- tapOn: "Play"
+- tapOn: "Start game"
+- runFlow: ../subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- tapOn: "Share"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: a13-share-sheet
+- back
+- assertVisible: "FINAL SCORE"
+- tapOn: "Home"

@@ -1,0 +1,67 @@
+# A06 Each computer level plays its own turn, by itself and on tap-to-skip; its card is read-only;
+# a person cannot undo the computer's score; "Start a new game?" guards a game in progress.
+appId: com.dicedengame.app
+name: A06 computer opponents at every level
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+# Easy: let it play by itself.
+- tapOn: "Play"
+- tapOn: "vs Computer"
+- tapOn: "Easy"
+- tapOn: "Start game"
+- assertVisible: 'Computer \(Easy\), 0 points'
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- assertVisible: 'Computer \(Easy\) is playing'
+- assertVisible: "Tap to skip"
+# Nothing on the computer's card can be tapped while it plays.
+- assertNotVisible: "Chance, score [0-9]+ here"
+- extendedWaitUntil:
+    visible: "Turn 2 · Ready to roll"
+    timeout: 25000
+- assertNotVisible: "Undo last score"
+# Replacing the game asks first; Cancel keeps it.
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Pass and play.*"
+- tapOn: "vs Computer"
+- tapOn: "Normal"
+- tapOn: "Start game"
+- assertVisible: "Start a new game?"
+- tapOn: "(?i)^cancel$"
+- assertVisible: "New game"
+- tapOn: "Start game"
+- tapOn: "(?i)start new game"
+- assertVisible: 'Computer \(Normal\), 0 points'
+# Normal: skip its turn at once.
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- tapOn: 'Skip Computer \(Normal\)''s turn'
+- assertVisible: "Turn 2 · Ready to roll"
+- assertVisible: 'Computer \(Normal\), [0-9]+ points'
+# Looking at the computer's card: filled box visible, nothing tappable, then back to yours.
+- tapOn: 'Show Computer \(Normal\)''s card'
+- assertNotVisible: "Ones, score [0-9]+ here"
+- tapOn: "Show your card"
+- assertVisible: "Chance, scored [0-9]+"
+# Expert, with the fast computer speed from Settings.
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- tapOn: "Fast"
+- back
+- tapOn: "Pass and play.*"
+- tapOn: "vs Computer"
+- tapOn: "Expert"
+- tapOn: "Start game"
+- tapOn: "(?i)start new game"
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- extendedWaitUntil:
+    visible: "Turn 2 · Ready to roll"
+    timeout: 12000
+- assertVisible: 'Computer \(Expert\), [0-9]+ points'

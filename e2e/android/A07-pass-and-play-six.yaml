@@ -1,0 +1,73 @@
+# A07 Pass and play with six seats (people and a computer): names, add and remove seats,
+# the handoff hides dice between people, undo from the handoff, no handoff after a computer.
+appId: com.dicedengame.app
+name: A07 pass and play, six seats
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Pass and play.*"
+- assertVisible: { text: "Pass and play", selected: true }
+- tapOn: "Player 1 name"
+- inputText: "Mom"
+- tapOn: "Player 2 name"
+- inputText: "Dad"
+- hideKeyboard
+# Seats cannot go below 2 (no Remove yet) or above 6 (Add disappears).
+- assertNotVisible: "Remove .*"
+- tapOn: "Add player"
+- tapOn: "Add player"
+- tapOn: "Add player"
+- tapOn: "Add player"
+- assertVisible: "Player 6 name"
+- assertNotVisible: "Add player"
+- tapOn: "Remove Player 6"
+- assertVisible: "Add player"
+# Seat 3 becomes an Expert computer.
+- tapOn:
+    text: "Computer"
+    index: 2
+- assertVisible: 'Computer \(Normal\)'
+- tapOn:
+    text: "Expert"
+    index: 0
+- assertVisible: 'Computer \(Expert\)'
+- tapOn: "Start game"
+- assertVisible: "Mom, 0 points, playing now"
+- assertVisible: 'Computer \(Expert\), 0 points'
+# Mom plays; the handoff covers the table for Dad.
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- assertVisible: "Pass the phone to"
+- assertVisible: "Dad"
+- assertVisible: "Mom's dice hidden · Turn 1 of 13"
+- assertVisible: 'Scores so far: Mom [0-9]+, Dad 0, Computer \(Expert\) 0, Player 4 0, Player 5 0'
+- assertNotVisible: "Roll, 3 rolls left"
+# Mom can still take her score back from the handoff.
+- tapOn: "Undo Mom's last score"
+- assertVisible: "Mom, 0 points, playing now"
+- assertVisible: "Ones, score [0-9]+ here"
+- tapOn: { id: "box-ones" }
+- tapOn: "Start Dad's turn"
+- assertVisible: "Turn 1 · Ready to roll"
+- assertVisible: "Dad, 0 points, playing now"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+# Next is the computer: no handoff, it just plays.
+- assertNotVisible: "Pass the phone to"
+- assertVisible: 'Computer \(Expert\) is playing'
+- tapOn: 'Skip Computer \(Expert\)''s turn'
+# Player 4 is handed the phone from Dad, the last person, not from the computer.
+- assertVisible: "Pass the phone to"
+- assertVisible: "Player 4"
+- assertVisible: "Dad's dice hidden · Turn 1 of 13"
+- assertNotVisible: "Undo .*"
+- tapOn: "Start Player 4's turn"
+- assertVisible: "Player 4, 0 points, playing now"
+# Back during the handoff still asks "Leave game?".
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- assertVisible: "Pass the phone to"
+- back
+- assertVisible: "Leave game?"
+- tapOn: "(?i)^stay$"
+- assertVisible: "Pass the phone to"

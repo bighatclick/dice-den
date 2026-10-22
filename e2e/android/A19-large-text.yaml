@@ -1,0 +1,33 @@
+# A19 Largest system font size (the runner sets font_scale 2.0): every screen stays usable,
+# the pad goes to one column, and a whole turn can be played.
+appId: com.dicedengame.app
+name: A19 large text
+tags: [visual, fontscale]
+---
+- runFlow: subflows/fresh-start.yaml
+- takeScreenshot: a19-home-200
+- tapOn: "Play"
+- takeScreenshot: a19-new-game-200
+- tapOn: "vs Computer"
+- tapOn: "Expert"
+- tapOn: "Start game"
+- takeScreenshot: a19-table-200
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- assertVisible: "HELD"
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- tapOn: 'Skip Computer \(Expert\)''s turn'
+- assertVisible: "Turn 2 · Ready to roll"
+- back
+- tapOn: "(?i)^leave$"
+- assertVisible: "Resume game, Turn 2 of 13"
+- takeScreenshot: a19-home-resume-200
+- tapOn: "Settings"
+- takeScreenshot: a19-settings-200
+- back
+- tapOn: "Stats"
+- takeScreenshot: a19-stats-200
+- back
+- tapOn: "Today's dice.*"
+- takeScreenshot: a19-daily-200

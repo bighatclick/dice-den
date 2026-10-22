@@ -1,0 +1,53 @@
+# A01 First launch on a clean install: tutorial, no permission prompt, rules picker,
+# and (shipping build) nothing about ads or purchases anywhere.
+appId: com.dicedengame.app
+name: A01 first launch and tutorial
+tags: [release, core]
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Welcome to Dice Den"
+# CLAUDE.md rule 7: no permission prompt on first run.
+- assertNotVisible: "(?i)^allow$"
+- assertNotVisible: "(?i)don.t allow"
+- tapOn: "Show me how"
+- assertVisible: "Tap Roll to throw all five dice."
+- tapOn: { id: "roll-button" }
+- assertVisible: "Three 5s!.*"
+# The second roll stays locked until every 5 is held.
+- assertVisible: { id: "roll-button", enabled: false }
+- tapOn: { id: "die-0" }
+- tapOn: { id: "die-2" }
+- tapOn: { id: "die-4" }
+- assertVisible: { id: "roll-button", enabled: true }
+- tapOn: { id: "roll-button" }
+- assertVisible: "Four 5s.*"
+- tapOn: "Fives, score 20 here"
+- assertVisible: "That's a turn.*"
+- tapOn: "Next"
+- assertVisible: "Pick your rules"
+- tapOn: "Scandinavian.*"
+- tapOn: "Start playing"
+- assertVisible: "Dice Den"
+- assertVisible: "Roll the dice"
+# The chosen rules are remembered.
+- tapOn: "Settings"
+- assertVisible: { text: "Scandinavian, 15 boxes · bonus +50", selected: true }
+# Shipping build (ads and purchases switched off): no Purchases group anywhere in Settings,
+# no Shop icon on Home, no ad or restore questions in Help.
+- scrollUntilVisible: { element: { text: "Your data" } }
+- assertVisible: "Saved on this phone after every move.*"
+- assertNotVisible: "Purchases"
+- assertNotVisible: "Remove Ads"
+- assertNotVisible: "Restore Purchases"
+- assertNotVisible: "Ad privacy choices"
+- scrollUntilVisible: { element: { text: "Rules for new games" }, direction: UP }
+- assertNotVisible: "Purchases"
+- back
+- assertNotVisible: "Shop"
+- tapOn: "How to play"
+- assertVisible: "Are the dice fair?"
+- assertNotVisible: "When do ads show?"
+- assertNotVisible: "I got a new phone.*"
+- back
+- assertVisible: "Dice Den"

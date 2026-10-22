@@ -1,0 +1,30 @@
+# A20 System dark mode (the runner turns night mode on) with Theme = System: every screen
+# renders in the dark palette. Screenshots are the evidence; the asserts prove nothing broke.
+appId: com.dicedengame.app
+name: A20 system dark mode
+tags: [visual, darkmode]
+---
+- runFlow: subflows/fresh-start.yaml
+- takeScreenshot: a20-home-dark
+- tapOn: "Play"
+- takeScreenshot: a20-new-game-dark
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- takeScreenshot: a20-table-dark
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- assertVisible: { text: "System", selected: true }
+- takeScreenshot: a20-settings-dark
+- tapOn: "Dice and tables"
+- takeScreenshot: a20-picker-dark
+- back
+- back
+- tapOn: "Stats"
+- takeScreenshot: a20-stats-dark
+- back
+- tapOn: "Today's dice.*"
+- takeScreenshot: a20-daily-dark
+- back
+- tapOn: "How to play"
+- takeScreenshot: a20-help-dark

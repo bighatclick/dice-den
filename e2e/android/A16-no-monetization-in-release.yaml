@@ -1,0 +1,32 @@
+# A16 Shipping build: with ads and purchases switched off, four games in a second session
+# show no ad, no "Enjoying Dice Den?" card and no shop; earned dice still work.
+appId: com.dicedengame.app
+name: A16 release build shows nothing to buy or watch
+tags: [release, long]
+---
+- runFlow: subflows/fresh-start.yaml
+- launchApp:
+    stopApp: true
+- repeat:
+    times: 4
+    commands:
+      - runFlow: subflows/solo-game-to-home.yaml
+- assertVisible: "Best [0-9]+ · 4 games"
+- assertNotVisible: "Shop"
+- tapOn: "Settings"
+- assertNotVisible: "Purchases"
+- tapOn: "Dice and tables"
+- assertVisible: "Dice and tables"
+- assertNotVisible: "One-time purchase"
+- assertNotVisible: "Buy for .*"
+- assertNotVisible: "Try for 24 h"
+- assertNotVisible: "Restore Purchases"
+# Free and earned styles only; pack-only styles are hidden.
+- assertVisible: "Ivory, In use"
+- assertVisible: "Walnut, Use"
+- assertVisible: "Amber, Finish 10 games"
+- assertVisible: "Jade, Reach a 7-day streak"
+- assertNotVisible: "Marble.*"
+- assertNotVisible: "Casino red.*"
+- assertVisible: "Green felt, In use"
+- assertNotVisible: "Night.*"

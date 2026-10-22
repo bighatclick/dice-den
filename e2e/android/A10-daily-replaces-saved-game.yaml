@@ -1,0 +1,27 @@
+# A10 Starting today's dice while a normal game is saved asks first; Cancel keeps the game.
+appId: com.dicedengame.app
+name: A10 today's dice over a saved game
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Today's dice.*"
+- tapOn: "Play today's dice"
+- assertVisible: "Play today's dice?"
+- assertVisible: "The game you have in progress will end."
+- tapOn: "(?i)^cancel$"
+- assertVisible: "Same roll for everyone"
+- back
+- assertVisible: "Resume game, Turn 2 of 13"
+- tapOn: "Today's dice.*"
+- tapOn: "Play today's dice"
+- tapOn: "(?i)play today.s dice"
+- assertVisible: "Today's dice · Turn 1 · Ready to roll"
+- back
+- tapOn: "(?i)^leave$"
+- assertVisible: "Resume game, Turn 1 of 13"

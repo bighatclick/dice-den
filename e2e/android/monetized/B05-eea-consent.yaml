@@ -1,0 +1,22 @@
+# B05 EEA/UK consent (build with EXPO_PUBLIC_UMP_DEBUG_EEA=1 and the fake store): Google's
+# form appears on Home after the tutorial, before any ad; "Ad privacy choices" reopens it.
+appId: com.dicedengame.app
+name: B05 EEA consent form
+tags: [monetized, eea]
+---
+- launchApp:
+    clearState: true
+- tapOn: "Skip"
+- extendedWaitUntil:
+    visible: "(?i)consent"
+    timeout: 15000
+- takeScreenshot: b05-consent-form
+- tapOn: "(?i)do not consent"
+- assertVisible: "Dice Den"
+- tapOn: "Settings"
+- assertVisible: "Ad privacy choices"
+- tapOn: "Ad privacy choices"
+- extendedWaitUntil:
+    visible: "(?i)consent"
+    timeout: 15000
+- back

@@ -1,0 +1,16 @@
+# Clean install state (session 1), tutorial skipped, Home on screen.
+appId: com.dicedengame.app
+---
+- launchApp:
+    clearState: true
+# A slow emulator sometimes shows "<launcher> isn't responding" over the app: dismiss it.
+- runFlow:
+    when:
+      visible: "(?i).*isn.t responding.*"
+    commands:
+      - tapOn: "(?i)^wait$"
+- extendedWaitUntil:
+    visible: "Skip"
+    timeout: 15000
+- tapOn: "Skip"
+- assertVisible: "Dice Den"

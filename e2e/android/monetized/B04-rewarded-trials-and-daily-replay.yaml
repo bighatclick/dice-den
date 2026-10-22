@@ -1,0 +1,65 @@
+# B04 Rewarded ads (fake store, test ads, network on): a 24 h trial equips the skin and marks
+# it Trial; today's dice can be replayed once finished and the locked score stays; three a day.
+appId: com.dicedengame.app
+name: B04 rewarded trial and daily replay
+tags: [monetized, ads]
+---
+- runFlow: ../subflows/fresh-start.yaml
+- tapOn: "Shop"
+- assertVisible: "3 ads to watch today"
+- scrollUntilVisible: { element: { id: "trial-dice-glass" } }
+- tapOn: { id: "trial-dice-glass" }
+# The test rewarded ad: wait for the reward, then close it.
+- extendedWaitUntil:
+    visible: "Test Ad"
+    timeout: 15000
+- takeScreenshot: b04-test-rewarded
+- extendedWaitUntil:
+    notVisible: "[0-9]+ seconds.*"
+    timeout: 40000
+- back
+- runFlow:
+    when:
+      visible: "(?i)close"
+    commands:
+      - tapOn: "(?i)close"
+- extendedWaitUntil:
+    visible: "Glass, In use · Trial"
+    timeout: 10000
+- assertVisible: "2 ads to watch today"
+- assertNotVisible: { id: "trial-dice-glass" }
+- back
+# Today's dice: finish, then replay through a rewarded ad; the first score is kept.
+- tapOn: "Today's dice.*"
+- tapOn: "Play today's dice"
+- runFlow: ../../subflows/play-13-turns.yaml
+- assertVisible: "TODAY'S DICE"
+- assertNotVisible: "Test Ad"
+- tapOn: "Home"
+- tapOn: "Today's dice.*"
+- copyTextFrom: "[0-9]+"
+- assertVisible: "Replay today's dice"
+- tapOn: "Replay today's dice"
+- extendedWaitUntil:
+    visible: "Test Ad"
+    timeout: 15000
+- extendedWaitUntil:
+    notVisible: "[0-9]+ seconds.*"
+    timeout: 40000
+- back
+- runFlow:
+    when:
+      visible: "(?i)close"
+    commands:
+      - tapOn: "(?i)close"
+- extendedWaitUntil:
+    visible: "Today's dice · Turn 1 · Ready to roll"
+    timeout: 10000
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Today's dice.*"
+- assertVisible: "YOUR SCORE TODAY"
+- assertVisible: "${maestro.copiedText}"
+- assertVisible: "Resume today's dice"

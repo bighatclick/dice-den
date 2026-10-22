@@ -5,7 +5,12 @@
 #   powershell -File scripts\build-android-test-apk.ps1
 param(
   [string]$BuildDir = 'E:\dd',
-  [string]$Abis = 'arm64-v8a,x86_64'
+  [string]$Abis = 'arm64-v8a,x86_64',
+  # Turns ads and purchases on (src/config/features.ts) for the e2e fakestore suite.
+  # The output is then dist\dice-den-test-monetized.apk, so it is never mistaken for the shipping build.
+  [switch]$Monetization,
+  # Makes a development build behave as if in the EEA, so Google's consent form shows (e2e eea suite).
+  [switch]$DebugEea
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
@@ -27,6 +32,9 @@ if (-not (Test-Path $stamp) -or (Get-Content $stamp) -ne $lockHash) {
 
 $env:EXPO_PUBLIC_FAKE_STORE = '1'
 $env:NODE_ENV = 'production'
+if ($Monetization) { $env:EXPO_PUBLIC_MONETIZATION = '1' } else { Remove-Item Env:EXPO_PUBLIC_MONETIZATION -ErrorAction SilentlyContinue }
+if ($DebugEea) { $env:EXPO_PUBLIC_UMP_DEBUG_EEA = '1' } else { Remove-Item Env:EXPO_PUBLIC_UMP_DEBUG_EEA -ErrorAction SilentlyContinue }
+$apkName = if ($Monetization) { 'dice-den-test-monetized.apk' } else { 'dice-den-test.apk' }
 
 # Regenerate android/ only when its inputs changed: regenerating forces a full native
 # rebuild (over an hour), while a JS-only change rebuilds in minutes.
@@ -50,5 +58,5 @@ Pop-Location
 if ($code -ne 0) { throw "Gradle build failed ($code)" }
 
 New-Item -ItemType Directory -Force "$repo\dist" | Out-Null
-Copy-Item "$BuildDir\android\app\build\outputs\apk\release\app-release.apk" "$repo\dist\dice-den-test.apk" -Force
-Write-Host "APK: $repo\dist\dice-den-test.apk"
+Copy-Item "$BuildDir\android\app\build\outputs\apk\release\app-release.apk" "$repo\dist\$apkName" -Force
+Write-Host "APK: $repo\dist\$apkName"

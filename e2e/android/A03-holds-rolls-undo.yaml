@@ -1,0 +1,43 @@
+# A03 Holds survive rerolls, the third roll ends the turn, undo works once until the next roll.
+appId: com.dicedengame.app
+name: A03 holds, three rolls and undo
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- tapOn: "Start game"
+# Dice cannot be held before the first roll.
+- assertVisible: { id: "die-0", enabled: false }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- tapOn: { id: "die-1" }
+- assertVisible: "HELD"
+- assertVisible: "Die 1, showing [1-6], held"
+- assertVisible: "Die 2, showing [1-6], held"
+# Releasing a held die.
+- tapOn: { id: "die-1" }
+- assertNotVisible: "Die 2, showing [1-6], held"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Turn 1 · Roll 2 of 3"
+- assertVisible: "Die 1, showing [1-6], held"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Turn 1 · Roll 3 of 3"
+- assertVisible: "No rolls left · tap a box to score"
+# After the third roll: Roll is "Pick a box" and dice can no longer be held.
+- assertVisible: "Pick a box"
+- assertVisible: { id: "roll-button", enabled: false }
+- assertVisible: { id: "die-2", enabled: false }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- assertVisible: "Turn 2 · Ready to roll"
+- assertVisible: "Chance, scored [0-9]+"
+# Undo: one level, available until the next roll.
+- tapOn: "Undo last score"
+- assertVisible: "Turn 1 · Roll 3 of 3"
+- assertVisible: "Chance, score [0-9]+ here"
+- assertNotVisible: "Undo last score"
+- tapOn: { id: "box-chance" }
+- assertVisible: "Undo last score"
+- tapOn: { id: "roll-button" }
+- assertNotVisible: "Undo last score"
+- assertVisible: "Turn 2 · Roll 1 of 3"

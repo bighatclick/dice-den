@@ -1,0 +1,79 @@
+# A09 Today's dice: resume, the result locks, streak starts, no Play again, no replay in the
+# shipping build, the home card updates, and starting it over a saved game asks first.
+appId: com.dicedengame.app
+name: A09 today's dice
+tags: [release, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Today's dice, Same roll for everyone"
+- assertVisible: "Same roll for everyone"
+- assertVisible: "0-day streak"
+- assertVisible: "Miss one day a week and your streak is kept."
+- assertVisible: "LAST 4 WEEKS"
+- tapOn: "Play today's dice"
+- assertVisible: "Today's dice · Turn 1 · Ready to roll"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+# Leave and come back: the daily game resumes from the Daily screen and from Home.
+- back
+- tapOn: "(?i)^leave$"
+- assertVisible: "Resume game, Turn 2 of 13"
+- tapOn: "Today's dice.*"
+- assertVisible: "Resume today's dice"
+- assertNotVisible: "Play today's dice"
+- tapOn: "Resume today's dice"
+- assertVisible: "Today's dice · Turn 2 · Ready to roll"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-twos" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-threes" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fours" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fives" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-sixes" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-threeKind" } }
+- tapOn: { id: "box-threeKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fourKind" } }
+- tapOn: { id: "box-fourKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fullHouse" } }
+- tapOn: { id: "box-fullHouse" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-smallStraight" } }
+- tapOn: { id: "box-smallStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-largeStraight" } }
+- tapOn: { id: "box-largeStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-yatzy" } }
+- tapOn: { id: "box-yatzy" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- assertVisible: "TODAY'S DICE"
+- assertNotVisible: "Play again"
+- assertVisible: "Share"
+- assertNotVisible: "Test Ad"
+- tapOn: "Home"
+- assertVisible: "Today's dice, Done today · [0-9]+ · 1-day streak"
+- tapOn: "Today's dice.*"
+- assertVisible: "YOUR SCORE TODAY"
+- assertVisible: "Your first finish counts. Come back tomorrow for new dice."
+- assertVisible: "1-day streak"
+- assertVisible: "Best 1"
+- assertVisible: "Your best daily: [0-9]+"
+- assertVisible: "Share result"
+# Shipping build: no replay behind an ad, just the note.
+- assertVisible: "New dice tomorrow."
+- assertNotVisible: "Replay today's dice"
+- assertNotVisible: "Play today's dice"
+# Stats count the daily game.
+- back
+- tapOn: "Stats"
+- assertVisible: "Daily games 1"
+- assertVisible: "Current streak"
+- assertVisible: "1-day streak"

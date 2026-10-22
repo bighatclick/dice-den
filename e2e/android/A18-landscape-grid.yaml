@@ -1,0 +1,33 @@
+# A18 Landscape (the runner rotates the device first): the table and pad sit side by side and
+# every player's column is on screen, with only the current player's column tappable.
+appId: com.dicedengame.app
+name: A18 landscape score grid
+tags: [visual, landscape]
+---
+- runFlow: subflows/fresh-start.yaml
+- takeScreenshot: a18-home-landscape
+- tapOn: "Pass and play.*"
+- tapOn: "Player 1 name"
+- inputText: "Mom"
+- tapOn: "Player 2 name"
+- inputText: "Dad"
+- hideKeyboard
+- tapOn: "Add player"
+- tapOn: "Start game"
+# The grid: other players' cells are read with their names; no card tabs.
+- assertVisible: "Dad: Ones, empty"
+- assertVisible: "Player 3: Ones, empty"
+- assertNotVisible: "Show Dad's card"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Ones, score [0-9]+ here"
+- assertNotVisible: "Dad: Ones, score [0-9]+ here"
+- takeScreenshot: a18-table-landscape-grid
+- tapOn: { id: "grid-ones" }
+- assertVisible: "Pass the phone to"
+- tapOn: "Start Dad's turn"
+- assertVisible: "Mom: Ones, scored [0-9]+"
+- assertVisible: "Dad, 0 points, playing now"
+- back
+- tapOn: "(?i)^leave$"
+- tapOn: "Settings"
+- takeScreenshot: a18-settings-landscape
