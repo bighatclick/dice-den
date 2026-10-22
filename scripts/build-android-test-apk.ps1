@@ -27,13 +27,21 @@ if (-not (Test-Path $stamp) -or (Get-Content $stamp) -ne $lockHash) {
 
 $env:EXPO_PUBLIC_FAKE_STORE = '1'
 $env:NODE_ENV = 'production'
-Push-Location $BuildDir
-npx expo prebuild -p android --no-install
-Pop-Location
 
-# Prebuild can recreate android/, which drops the SDK location.
-$sdk = "$env:LOCALAPPDATA\Android\Sdk" -replace '\\', '\\' -replace ':', '\:'
-Set-Content -Encoding ascii "$BuildDir\android\local.properties" "sdk.dir=$sdk"
+# Regenerate android/ only when its inputs changed: regenerating forces a full native
+# rebuild (over an hour), while a JS-only change rebuilds in minutes.
+$inputs = @('app.json', 'app.config.js', 'package-lock.json') + (Get-ChildItem "$BuildDir\plugins" -File | ForEach-Object { "plugins\$($_.Name)" })
+$nativeHash = ($inputs | ForEach-Object { (Get-FileHash "$BuildDir\$_").Hash }) -join ''
+$nativeStamp = "$BuildDir\android\.prebuild-hash"
+if (-not (Test-Path $nativeStamp) -or (Get-Content $nativeStamp) -ne $nativeHash) {
+  Push-Location $BuildDir
+  npx expo prebuild -p android --no-install
+  Pop-Location
+  # Prebuild can recreate android/, which drops the SDK location.
+  $sdk = "$env:LOCALAPPDATA\Android\Sdk" -replace '\\', '\\' -replace ':', '\:'
+  Set-Content -Encoding ascii "$BuildDir\android\local.properties" "sdk.dir=$sdk"
+  Set-Content $nativeStamp $nativeHash
+}
 
 Push-Location "$BuildDir\android"
 .\gradlew.bat assembleRelease "-PreactNativeArchitectures=$Abis"
