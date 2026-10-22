@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AccessibilityInfo, Alert, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { AccessibilityInfo, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { nextAiStep } from '../src/ai';
 import { MAX_ROLLS } from '../src/engine/dice';
@@ -22,6 +22,7 @@ import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 import { useAndroidBack } from '../src/ui/useAndroidBack';
 import { LightStatusBar } from '../src/ui/LightStatusBar';
+import { confirm } from '../src/ui/ConfirmDialog';
 
 /** Pause before each visible computer step, in ms. */
 const AI_SPEED = { slow: 1.6, normal: 1, fast: 0.4 } as const;
@@ -78,7 +79,7 @@ export default function GameScreen() {
   const [readyKey, setReadyKey] = useState<string | null>(null);
 
   function confirmLeave() {
-    Alert.alert(t('game.leaveTitle'), t('game.leaveBody'), [
+    confirm(t('game.leaveTitle'), t('game.leaveBody'), [
       { text: t('game.stay'), style: 'cancel' },
       { text: t('game.leaveConfirm'), onPress: () => (router.canGoBack() ? router.back() : router.replace('/')) },
     ]);

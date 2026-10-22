@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { prepareRewarded, rewardedAvailableToday, watchRewarded } from '../src/ads';
 import { MONETIZATION_ENABLED } from '../src/config/features';
 import { toDateKey } from '../src/engine/rng';
@@ -19,6 +19,7 @@ import { shareCard } from '../src/ui/share';
 import { ShareCard, type ShareCardRef } from '../src/ui/ShareCard';
 import { fonts, radius, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
+import { confirm } from '../src/ui/ConfirmDialog';
 
 /**
  * S7 Daily dice: one seeded game a day, the same dice for everyone. The first
@@ -63,7 +64,7 @@ export default function DailyScreen() {
       router.push('/game');
     };
     if (game?.status !== 'playing') return begin();
-    Alert.alert(t('daily.replaceTitle'), t('daily.replaceBody'), [
+    confirm(t('daily.replaceTitle'), t('daily.replaceBody'), [
       { text: t('newGame.cancel'), style: 'cancel' },
       { text: t('daily.play'), style: 'destructive', onPress: begin },
     ]);

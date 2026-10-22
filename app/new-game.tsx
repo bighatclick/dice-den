@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import type { AiLevel } from '../src/engine/game';
 import type { PresetId } from '../src/engine/rules/presets';
 import { getAppData } from '../src/state/appData';
@@ -14,6 +14,7 @@ import { Screen } from '../src/ui/Screen';
 import { Segmented } from '../src/ui/Segmented';
 import { fonts, radius, space, touchTarget, type } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
+import { confirm } from '../src/ui/ConfirmDialog';
 
 const MAX_SEATS = 6;
 const LEVELS: AiLevel[] = ['easy', 'normal', 'expert'];
@@ -48,7 +49,7 @@ export default function NewGameScreen() {
 
   function confirmStart() {
     if (useGameStore.getState().game?.status !== 'playing') return startGame();
-    Alert.alert(t('newGame.replaceTitle'), t('newGame.replaceBody'), [
+    confirm(t('newGame.replaceTitle'), t('newGame.replaceBody'), [
       { text: t('newGame.cancel'), style: 'cancel' },
       { text: t('newGame.replaceConfirm'), style: 'destructive', onPress: startGame },
     ]);

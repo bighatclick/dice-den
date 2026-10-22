@@ -17,6 +17,7 @@ import { useShopStore } from '../src/state/shopStore';
 import { grantEarnedUnlocks } from '../src/state/unlocks';
 import { useGameStore } from '../src/state/gameStore';
 import { useSettings, useSettingsStore } from '../src/state/settingsStore';
+import { ConfirmHost } from '../src/ui/ConfirmDialog';
 import { denFonts } from '../src/ui/fonts';
 import { ThemeProvider, useTheme } from '../src/ui/theme';
 
@@ -83,6 +84,7 @@ function ThemedStack() {
         <Stack.Screen name="final" options={{ gestureEnabled: false }} />
         <Stack.Screen name="new-game" options={{ presentation: 'modal' }} />
       </Stack>
+      <ConfirmHost />
     </>
   );
 }
