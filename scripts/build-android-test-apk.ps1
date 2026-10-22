@@ -33,10 +33,11 @@ if (-not (Test-Path $stamp) -or (Get-Content $stamp) -ne $lockHash) {
   Set-Content $stamp $lockHash
 }
 
-if ($env:EXPO_PUBLIC_MONETIZATION -eq '1') { $env:EXPO_PUBLIC_FAKE_STORE = '1' } else { Remove-Item Env:EXPO_PUBLIC_FAKE_STORE -ErrorAction SilentlyContinue }
 $env:NODE_ENV = 'production'
 if ($Monetization) { $env:EXPO_PUBLIC_MONETIZATION = '1' } else { Remove-Item Env:EXPO_PUBLIC_MONETIZATION -ErrorAction SilentlyContinue }
 if ($DebugEea) { $env:EXPO_PUBLIC_UMP_DEBUG_EEA = '1' } else { Remove-Item Env:EXPO_PUBLIC_UMP_DEBUG_EEA -ErrorAction SilentlyContinue }
+# The fake store exists only in a monetized build, so a normal build has no way to grant purchases.
+if ($env:EXPO_PUBLIC_MONETIZATION -eq '1') { $env:EXPO_PUBLIC_FAKE_STORE = '1' } else { Remove-Item Env:EXPO_PUBLIC_FAKE_STORE -ErrorAction SilentlyContinue }
 $apkName = if ($Monetization) { 'dice-den-test-monetized.apk' } else { 'dice-den-test.apk' }
 
 # Regenerate android/ only when its inputs changed: regenerating forces a full native

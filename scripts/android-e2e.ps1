@@ -88,7 +88,13 @@ if ($aapt2 -and (Test-Path $aapt2)) {
   $debuggable = ($manifest | Select-String 'android:debuggable.*=true').Count -gt 0
   Check 'S4 Not debuggable' (-not $debuggable) ($(if ($debuggable) { 'android:debuggable=true' } else { 'debuggable not set' }))
   $testAdId = ($manifest | Select-String '3940256099942544').Count -gt 0
-  Check 'S5 No Google test AdMob app id in the manifest (security audit)' (-not $testAdId) ($(if ($testAdId) { 'ca-app-pub-3940256099942544 found' } else { 'none' }))
+  if ($monetized) {
+    Check 'S5 No Google test AdMob app id in the manifest (a monetized release needs the real id)' (-not $testAdId) ($(if ($testAdId) { 'ca-app-pub-3940256099942544 found' } else { 'none' }))
+  } else {
+    # The ad SDK is still compiled in and needs some app id or it can crash at startup; with ads
+    # switched off nothing uses it. Reported, never failed, until a real id exists or the SDK goes.
+    Check 'S5 AdMob app id in the manifest (informational while ads are off: Google test id is expected)' $true ($(if ($testAdId) { 'Google test id present; replace before ads are switched on' } else { 'no test id' }))
+  }
   $versionName = ($badging | Select-String "versionName='([^']+)'").Matches.Groups[1].Value
   $versionCode = ($badging | Select-String "versionCode='(\d+)'").Matches.Groups[1].Value
   Log "APK version $versionName ($versionCode)"
