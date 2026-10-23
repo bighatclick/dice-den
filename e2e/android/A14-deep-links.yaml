@@ -12,4 +12,5 @@ tags: [release, android]
 - assertVisible: "Roll to start your turn"
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - assertVisible: "Resume game, Turn 1 of 13"

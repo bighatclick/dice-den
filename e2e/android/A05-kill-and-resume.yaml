@@ -39,15 +39,16 @@ tags: [release, core, android]
 - killApp
 - launchApp
 - tapOn: "Resume game.*"
-# The computer carries on from where it was and the turn comes back to the person.
-- assertVisible: 'Computer \(Normal\)''s turn'
+# The computer carries on from where it was (or has already finished) and the turn comes back to the person.
 - extendedWaitUntil:
     visible: "Turn 2 · Ready to roll"
     timeout: 20000
 - assertVisible: "Chance, scored [0-9]+"
+- assertVisible: 'Computer \(Normal\), [1-9][0-9]* points'
 # Settings survived too.
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
 - assertVisible: { text: "Dark", selected: true }
 - assertVisible: { text: "Large dice", checked: true }

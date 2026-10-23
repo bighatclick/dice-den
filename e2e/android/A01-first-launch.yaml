@@ -46,7 +46,8 @@ tags: [release, core]
 - back
 - assertNotVisible: "Shop"
 - tapOn: "How to play"
-- assertVisible: "Are the dice fair?"
+- scrollUntilVisible: { element: { text: "Are the dice fair?" } }
+- scrollUntilVisible: { element: { text: "Do I need the internet?" } }
 - assertNotVisible: "When do ads show?"
 - assertNotVisible: "I got a new phone.*"
 - back

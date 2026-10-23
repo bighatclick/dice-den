@@ -6,13 +6,19 @@ tags: [visual, landscape]
 ---
 - runFlow: subflows/fresh-start.yaml
 - takeScreenshot: a18-home-landscape
+- scrollUntilVisible: { element: { text: "Pass and play.*" } }
 - tapOn: "Pass and play.*"
+# In landscape the keyboard takes the whole screen, so hide it after each name.
 - tapOn: "Player 1 name"
 - inputText: "Mom"
+- hideKeyboard
+- scrollUntilVisible: { element: { text: "Player 2 name" } }
 - tapOn: "Player 2 name"
 - inputText: "Dad"
 - hideKeyboard
+- scrollUntilVisible: { element: { text: "Add player" } }
 - tapOn: "Add player"
+- scrollUntilVisible: { element: { text: "Start game" } }
 - tapOn: "Start game"
 # The grid: other players' cells are read with their names; no card tabs.
 - assertVisible: "Dad: Ones, empty"
@@ -24,10 +30,14 @@ tags: [visual, landscape]
 - takeScreenshot: a18-table-landscape-grid
 - tapOn: { id: "grid-ones" }
 - assertVisible: "Pass the phone to"
+- takeScreenshot: a18-handoff-landscape
+- scrollUntilVisible: { element: { text: "Start Dad's turn" } }
 - tapOn: "Start Dad's turn"
 - assertVisible: "Mom: Ones, scored [0-9]+"
 - assertVisible: "Dad, 0 points, playing now"
 - back
 - tapOn: "(?i)^leave$"
+# Home comes back scrolled; the Settings icon is in the header above.
+- scrollUntilVisible: { element: { text: "Settings" }, direction: UP }
 - tapOn: "Settings"
 - takeScreenshot: a18-settings-landscape

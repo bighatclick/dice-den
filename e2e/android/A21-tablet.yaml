@@ -4,10 +4,7 @@ appId: com.dicedengame.app
 name: A21 tablet layout
 tags: [tablet]
 ---
-- launchApp:
-    clearState: true
-- takeScreenshot: a21-tutorial-tablet
-- tapOn: "Skip"
+- runFlow: subflows/fresh-start.yaml
 - takeScreenshot: a21-home-tablet
 - tapOn: "Pass and play.*"
 - tapOn: "Add player"

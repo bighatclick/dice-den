@@ -7,21 +7,27 @@ tags: [release, core]
 - runFlow: subflows/fresh-start.yaml
 - tapOn: "Settings"
 - assertVisible: "Settings"
-- assertVisible: 'Version 1\.0\.0'
-- assertVisible: "Follows your media volume"
+- scrollUntilVisible: { element: { text: 'Version 1\.0\.0' } }
+- scrollUntilVisible: { element: { text: "Follows your media volume" }, direction: UP }
 - assertNotVisible: "Muted by the silent switch"
+- scrollUntilVisible: { element: { text: "Score hints" }, direction: UP }
 - tapOn: "Score hints"
 - assertVisible: { text: "Score hints", checked: false }
-- tapOn: "Left-hand layout"
-- tapOn: "Large dice"
-- tapOn: "High-contrast pips"
-- tapOn: "Reduce motion"
+- tapOn: "Slow"
+- assertVisible: { text: "Slow", selected: true }
+- scrollUntilVisible: { element: { text: "Sound effects" } }
 - tapOn: "Sound effects"
 - tapOn: "Haptics"
+- scrollUntilVisible: { element: { text: "Dark" } }
 - tapOn: "Dark"
-- tapOn: "Slow"
 - assertVisible: { text: "Dark", selected: true }
-- assertVisible: { text: "Slow", selected: true }
+- scrollUntilVisible: { element: { text: "Large dice" } }
+- tapOn: "Large dice"
+- tapOn: "High-contrast pips"
+- scrollUntilVisible: { element: { text: "Left-hand layout" } }
+- tapOn: "Left-hand layout"
+- scrollUntilVisible: { element: { text: "Reduce motion" } }
+- tapOn: "Reduce motion"
 - takeScreenshot: a11-settings-dark
 - back
 - takeScreenshot: a11-home-dark
@@ -41,34 +47,43 @@ tags: [release, core]
 # Light theme and system theme again; everything persists across a restart.
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Light" } }
 - tapOn: "Light"
 - takeScreenshot: a11-settings-light
 - tapOn: "System"
 - killApp
 - launchApp
 - tapOn: "Settings"
-- assertVisible: { text: "System", selected: true }
 - assertVisible: { text: "Score hints", checked: false }
-- assertVisible: { text: "Left-hand layout", checked: true }
-- assertVisible: { text: "Large dice", checked: true }
-- assertVisible: { text: "High-contrast pips", checked: true }
-- assertVisible: { text: "Reduce motion", checked: true }
+- assertVisible: { text: "Slow", selected: true }
+- scrollUntilVisible: { element: { text: "Sound effects" } }
 - assertVisible: { text: "Sound effects", checked: false }
 - assertVisible: { text: "Haptics", checked: false }
-- assertVisible: { text: "Slow", selected: true }
+- scrollUntilVisible: { element: { text: "System" } }
+- assertVisible: { text: "System", selected: true }
+- scrollUntilVisible: { element: { text: "Large dice" } }
+- assertVisible: { text: "Large dice", checked: true }
+- assertVisible: { text: "High-contrast pips", checked: true }
+- scrollUntilVisible: { element: { text: "Left-hand layout" } }
+- assertVisible: { text: "Left-hand layout", checked: true }
+- scrollUntilVisible: { element: { text: "Reduce motion" } }
+- assertVisible: { text: "Reduce motion", checked: true }
 # Links and the fairness page.
+- scrollUntilVisible: { element: { text: "How the dice work" } }
 - tapOn: "How the dice work"
 - assertVisible: "Every die has an equal 1 in 6 chance.*"
 - assertVisible: "The computer players roll the same dice.*"
 - tapOn: "See your dice in Stats"
 - assertVisible: "Fair dice"
-- assertVisible: "Your dice"
-- assertVisible: "Computer dice"
-- back
-- back
+- scrollUntilVisible: { element: { text: "Your dice" } }
+- scrollUntilVisible: { element: { text: "Computer dice" } }
+- runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Show the tutorial again" } }
 - tapOn: "Show the tutorial again"
 - assertVisible: "Welcome to Dice Den"
 - tapOn: "Skip"
-- assertVisible: "Roll the dice"
+# Back on Home; the game left earlier is still offered.
+- assertVisible: "Resume game, Turn 2 of 13"

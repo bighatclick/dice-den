@@ -14,23 +14,31 @@ tags: [release, core]
 - hideKeyboard
 # Seats cannot go below 2 (no Remove yet) or above 6 (Add disappears).
 - assertNotVisible: "Remove .*"
-- tapOn: "Add player"
-- tapOn: "Add player"
-- tapOn: "Add player"
-- tapOn: "Add player"
-- assertVisible: "Player 6 name"
+- repeat:
+    times: 4
+    commands:
+      - scrollUntilVisible: { element: { text: "Add player" } }
+      - tapOn: "Add player"
+- scrollUntilVisible: { element: { text: "Player 6 name" } }
+- scrollUntilVisible: { element: { text: "Rules" } }
 - assertNotVisible: "Add player"
+- scrollUntilVisible: { element: { text: "Remove Player 6" } }
 - tapOn: "Remove Player 6"
+- scrollUntilVisible: { element: { text: "Add player" } }
 - assertVisible: "Add player"
 # Seat 3 becomes an Expert computer.
+- scrollUntilVisible: { element: { text: "Player 3 name" } }
+# Seat 3's Person/Computer picker sits between the two name fields (the tree is flat).
 - tapOn:
     text: "Computer"
-    index: 2
+    below: { text: "Player 3 name" }
+    above: { text: "Player 4 name" }
 - assertVisible: 'Computer \(Normal\)'
 - tapOn:
     text: "Expert"
     index: 0
 - assertVisible: 'Computer \(Expert\)'
+- scrollUntilVisible: { element: { text: "Start game" } }
 - tapOn: "Start game"
 - assertVisible: "Mom, 0 points, playing now"
 - assertVisible: 'Computer \(Expert\), 0 points'
@@ -41,7 +49,9 @@ tags: [release, core]
 - assertVisible: "Dad"
 - assertVisible: "Mom's dice hidden · Turn 1 of 13"
 - assertVisible: 'Scores so far: Mom [0-9]+, Dad 0, Computer \(Expert\) 0, Player 4 0, Player 5 0'
-- assertNotVisible: "Roll, 3 rolls left"
+# The table stays in Android's view tree under the modal handoff, so "not visible" can't be
+# asserted; the screenshot shows the Roll button is covered and the dice are hidden.
+- takeScreenshot: a07-handoff-covers-table
 # Mom can still take her score back from the handoff.
 - tapOn: "Undo Mom's last score"
 - assertVisible: "Mom, 0 points, playing now"

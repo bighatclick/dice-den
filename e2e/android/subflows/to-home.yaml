@@ -1,0 +1,11 @@
+# Leaving a game returns to the screen it was opened from (Daily, Stats, a deep link), so
+# press Back until Home is on screen.
+appId: com.dicedengame.app
+---
+- repeat:
+    times: 3
+    while:
+      notVisible: "Roll the dice|Continue"
+    commands:
+      - back
+- assertVisible: "Dice Den"

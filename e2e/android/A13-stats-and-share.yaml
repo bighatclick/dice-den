@@ -25,7 +25,7 @@ tags: [release, core]
 - assertVisible: "[1-6]: [0-9.]+%, [0-9]+ times"
 - scrollUntilVisible: { element: { text: "Computer dice" } }
 - assertVisible: "0 rolls"
-- scrollUntilVisible: { element: { text: "Rules" } }
+- scrollUntilVisible: { element: { text: "Games 1" }, direction: UP }
 - tapOn: "Scandinavian"
 - assertVisible: "Games 0"
 - tapOn: "Classic"

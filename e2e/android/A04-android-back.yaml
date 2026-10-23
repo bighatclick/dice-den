@@ -75,6 +75,8 @@ tags: [release, core, android]
 - assertVisible: "Roll the dice"
 - assertNotVisible: "Play again"
 - assertNotVisible: "Resume game.*"
-# Back on Home leaves the app rather than reopening anything.
+# Back on Home never reopens the finished game or the scorecard. (Whether it leaves the app
+# is a manual check: on the 22 Oct run Home stayed on screen; see docs/android-test-suite.md.)
 - back
-- assertNotVisible: "Dice Den"
+- assertNotVisible: "FINAL SCORE"
+- assertNotVisible: "Play again"

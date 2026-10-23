@@ -13,7 +13,9 @@ tags: [release, android]
 - tapOn: { id: "box-ones" }
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Dice and tables" } }
 - tapOn: "Dice and tables"
 - assertVisible: "Ivory, In use"
 - tapOn: { id: "cosmetic-dice-walnut" }
@@ -22,6 +24,5 @@ tags: [release, android]
 - assertNotVisible: "Try for 24 h"
 - assertNotVisible: "Buy for .*"
 - setAirplaneMode: disabled
-- back
-- back
+- runFlow: subflows/to-home.yaml
 - assertVisible: "Resume game, Turn 2 of 13"

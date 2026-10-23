@@ -65,7 +65,13 @@ Log "Device $serial, API $(& $adb -s $serial shell getprop ro.build.version.sdk)
 if (-not (Test-Path $Apk)) { throw "APK not found: $Apk (build it with scripts\build-android-test-apk.ps1)" }
 if (-not $NoInstall) {
   Log "Installing $Apk"
-  & $adb -s $serial install -r -d $Apk | Out-Null
+  $inst = (& $adb -s $serial install -r -d $Apk 2>&1 | Out-String)
+  if ($inst -match 'INSTALL_FAILED_UPDATE_INCOMPATIBLE') {
+    Log 'Installed build is signed with another key: uninstalling it and installing again'
+    & $adb -s $serial uninstall $pkg | Out-Null
+    $inst = (& $adb -s $serial install -r -d $Apk 2>&1 | Out-String)
+  }
+  if ($inst -notmatch 'Success') { Log "adb install failed: $($inst.Trim())"; exit 1 }
 }
 
 # 3. Static checks: the release-prep items from the security audit plus specs.md §13.
@@ -108,7 +114,9 @@ if ($apksigner -and (Test-Path $apksigner)) {
 
 & $adb -s $serial shell am force-stop $pkg | Out-Null
 $start = & $adb -s $serial shell am start -W -n "$pkg/.MainActivity" 2>&1
-$total = [int](($start | Select-String 'TotalTime:\s+(\d+)').Matches.Groups[1].Value)
+$timeMatch = ($start | Select-String 'TotalTime:\s+(\d+)').Matches
+if (-not $timeMatch) { Log 'App did not start (was the APK installed? a signature mismatch needs adb uninstall first)'; exit 1 }
+$total = [int]$timeMatch[0].Groups[1].Value
 # The emulator on this i3 is 3-4x slower than a phone; 8 s here is the proxy for specs.md's 2 s on an iPhone 11.
 Check 'S7 Cold start to first frame under 8 s on the emulator (proxy for 2 s on a phone, specs.md)' ($total -gt 0 -and $total -lt 8000) "TotalTime ${total} ms"
 $mb = [math]::Round((Get-Item $Apk).Length / 1MB, 1)

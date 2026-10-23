@@ -11,6 +11,7 @@ tags: [release, core, android]
       notifications: unset
 - tapOn: "Skip"
 - tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Daily reminder" } }
 - assertVisible: { text: "Daily reminder", checked: false }
 - tapOn: "Daily reminder"
 - extendedWaitUntil:
@@ -18,7 +19,8 @@ tags: [release, core, android]
     timeout: 5000
 - tapOn: "(?i)^allow$"
 - assertVisible: { text: "Daily reminder", checked: true }
-- assertVisible: "Reminder time"
+- scrollUntilVisible: { element: { text: "Reminder time" } }
+- scrollUntilVisible: { element: { text: "8:00.*" } }
 - tapOn: "8:00.*"
 - assertVisible: { text: "8:00.*", selected: true }
 - tapOn: "Daily reminder"
@@ -31,11 +33,12 @@ tags: [release, core, android]
       notifications: deny
 - tapOn: "Skip"
 - tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Daily reminder" } }
 - tapOn: "Daily reminder"
 - runFlow:
     when:
       visible: "(?i)don.t allow"
     commands:
       - tapOn: "(?i)don.t allow"
-- assertVisible: "Notifications are off for Dice Den.*"
+- scrollUntilVisible: { element: { text: "Notifications are off for Dice Den.*" } }
 - assertVisible: { text: "Daily reminder", checked: false }

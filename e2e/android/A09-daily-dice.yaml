@@ -14,13 +14,14 @@ tags: [release, core]
 - assertVisible: "Today's dice · Turn 1 · Ready to roll"
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "box-ones" }
-# Leave and come back: the daily game resumes from the Daily screen and from Home.
+# Leave returns to the Daily screen, which now offers Resume; Home offers it too.
 - back
 - tapOn: "(?i)^leave$"
-- assertVisible: "Resume game, Turn 2 of 13"
-- tapOn: "Today's dice.*"
 - assertVisible: "Resume today's dice"
 - assertNotVisible: "Play today's dice"
+- back
+- assertVisible: "Resume game, Turn 2 of 13"
+- tapOn: "Today's dice.*"
 - tapOn: "Resume today's dice"
 - assertVisible: "Today's dice · Turn 2 · Ready to roll"
 - tapOn: { id: "roll-button" }
@@ -72,7 +73,7 @@ tags: [release, core]
 - assertNotVisible: "Replay today's dice"
 - assertNotVisible: "Play today's dice"
 # Stats count the daily game.
-- back
+- runFlow: subflows/to-home.yaml
 - tapOn: "Stats"
 - assertVisible: "Daily games 1"
 - assertVisible: "Current streak"

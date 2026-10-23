@@ -15,19 +15,27 @@ tags: [visual, fontscale]
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "die-0" }
 - assertVisible: "HELD"
-- scrollUntilVisible: { element: { id: "box-chance" } }
+# At 2.0 the pad is one long column; swipe over the pad itself until Chance is on screen.
+- repeat:
+    times: 8
+    while: { notVisible: { id: "box-chance" } }
+    commands:
+      - swipe: { start: "50%, 90%", end: "50%, 35%", duration: 400 }
 - tapOn: { id: "box-chance" }
-- tapOn: 'Skip Computer \(Expert\)''s turn'
-- assertVisible: "Turn 2 · Ready to roll"
+# Let the computer finish on its own: tapping Skip races the button turning into Roll.
+- extendedWaitUntil: { visible: "Turn 2 · Ready to roll", timeout: 40000 }
 - back
 - tapOn: "(?i)^leave$"
-- assertVisible: "Resume game, Turn 2 of 13"
+- scrollUntilVisible: { element: { text: "Resume game, Turn 2 of 13" } }
 - takeScreenshot: a19-home-resume-200
+- scrollUntilVisible: { element: { text: "Settings" }, direction: UP }
 - tapOn: "Settings"
 - takeScreenshot: a19-settings-200
 - back
+- scrollUntilVisible: { element: { text: "Stats" } }
 - tapOn: "Stats"
 - takeScreenshot: a19-stats-200
 - back
+- scrollUntilVisible: { element: { text: "Today's dice.*" } }
 - tapOn: "Today's dice.*"
 - takeScreenshot: a19-daily-200

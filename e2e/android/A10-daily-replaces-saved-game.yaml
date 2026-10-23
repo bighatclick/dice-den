@@ -10,6 +10,7 @@ tags: [release, core]
 - tapOn: { id: "box-ones" }
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - tapOn: "Today's dice.*"
 - tapOn: "Play today's dice"
 - assertVisible: "Play today's dice?"
@@ -24,4 +25,5 @@ tags: [release, core]
 - assertVisible: "Today's dice · Turn 1 · Ready to roll"
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - assertVisible: "Resume game, Turn 1 of 13"

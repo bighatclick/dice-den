@@ -13,18 +13,21 @@ tags: [visual, darkmode]
 - takeScreenshot: a20-table-dark
 - back
 - tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
 - assertVisible: { text: "System", selected: true }
 - takeScreenshot: a20-settings-dark
+- scrollUntilVisible: { element: { text: "Dice and tables" } }
 - tapOn: "Dice and tables"
 - takeScreenshot: a20-picker-dark
 - back
 - back
+- runFlow: subflows/to-home.yaml
 - tapOn: "Stats"
 - takeScreenshot: a20-stats-dark
-- back
+- runFlow: subflows/to-home.yaml
 - tapOn: "Today's dice.*"
 - takeScreenshot: a20-daily-dark
-- back
+- runFlow: subflows/to-home.yaml
 - tapOn: "How to play"
 - takeScreenshot: a20-help-dark
