@@ -76,7 +76,7 @@ tags: [release, core, android]
 - assertNotVisible: "Play again"
 - assertNotVisible: "Resume game.*"
 # Back on Home never reopens the finished game or the scorecard. (Whether it leaves the app
-# is a manual check: on the 22 Oct run Home stayed on screen; see docs/android-test-suite.md.)
+# is a manual check, done on 23 Oct: it closes the app; Maestro cannot observe that.)
 - back
 - assertNotVisible: "FINAL SCORE"
 - assertNotVisible: "Play again"
