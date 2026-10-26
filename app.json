@@ -93,6 +93,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "78914948-bc54-470b-98a7-e2fc5ea6688f"
+      }
+    },
+    "owner": "bighatclick"
   }
 }

@@ -1,0 +1,81 @@
+# Cheap checks run on every push (Linux, 1x minutes). The iOS build runs on Expo's servers and the
+# simulator tests on a macOS runner (10x minutes on a private repo), so both are manual only.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      ios:
+        description: Build the iOS simulator app on EAS and run the Maestro flows
+        type: boolean
+        default: false
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --ci
+
+  ios-build:
+    if: github.event_name == 'workflow_dispatch' && inputs.ios
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+      - name: Build the simulator app on EAS
+        run: eas build --platform ios --profile simulator --non-interactive --wait --json > build.json
+      - name: Download the app
+        run: |
+          url=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json'))[0].artifacts.buildUrl)")
+          curl -sL "$url" -o app.tar.gz
+          mkdir app && tar -xzf app.tar.gz -C app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: app
+
+  ios-test:
+    needs: ios-build
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: app
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Boot a simulator and install the app
+        run: |
+          xcrun simctl boot "iPhone 15" || true
+          xcrun simctl bootstatus "iPhone 15" -b
+          xcrun simctl install booted "$(find app -name '*.app' -maxdepth 2 | head -1)"
+      - name: Run the Maestro flows
+        run: maestro test e2e/ --format junit --output maestro-report.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maestro-report
+          path: maestro-report.xml
