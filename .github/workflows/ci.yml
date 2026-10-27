@@ -15,6 +15,10 @@ on:
         description: Direct download link of a finished simulator build (.tar.gz). Used before build_id.
         type: string
         default: ''
+      diag_only:
+        description: Only launch the app and print its crash report, skip the flows
+        type: boolean
+        default: false
       build_id:
         description: EAS simulator build id to test. Leave empty to build a new one first.
         type: string
@@ -92,9 +96,25 @@ jobs:
           xcrun simctl boot "$udid" || true
           xcrun simctl bootstatus "$udid" -b
           xcrun simctl install booted "$(find simapp -maxdepth 2 -name '*.app' | head -1)"
+      - name: Launch the app once and show why it crashes
+        if: ${{ inputs.diag_only }}
+        continue-on-error: true
+        run: |
+          xcrun simctl spawn booted log stream --level debug --style compact             --predicate 'process == "DiceDen" OR eventMessage CONTAINS "dicedengame" OR eventMessage CONTAINS "Terminating app"' > sim.log 2>&1 &
+          sleep 3
+          xcrun simctl launch --console booted com.dicedengame.app > launch.log 2>&1 || true
+          sleep 10
+          echo "=== launch output"; cat launch.log
+          echo "=== crash reports"
+          ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null
+          for f in ~/Library/Logs/DiagnosticReports/*.ips ~/Library/Logs/DiagnosticReports/*.crash; do
+            [ -f "$f" ] && { echo "--- $f"; head -c 9000 "$f"; }
+          done
+          echo "=== simulator log"; tail -n 120 sim.log
       # The monetized flows (shop, remove-ads, interstitial) need a build with ads and the fake
       # store switched on; this build has them off, so they are not run.
       - name: Run the iOS flows
+        if: ${{ !inputs.diag_only }}
         run: |
           maestro test --format junit --output maestro-report.xml \
             e2e/onboarding.yaml e2e/full-game.yaml e2e/holds-rolls-undo.yaml e2e/resume.yaml \
