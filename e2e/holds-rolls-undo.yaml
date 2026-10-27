@@ -11,7 +11,7 @@ tags: [ios, core]
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "die-0" }
 - tapOn: { id: "die-1" }
-- assertVisible: "HELD"
+- assertVisible: "Die [0-9], showing [0-9], held"
 - assertVisible: "Die 1, showing [1-6], held"
 - assertVisible: "Die 2, showing [1-6], held"
 # Releasing a held die.

@@ -6,12 +6,12 @@ appId: com.dicedengame.app
 - tapOn: "Start game"
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "die-0" }
-- assertVisible: "HELD"
+- assertVisible: "Die [0-9], showing [0-9], held"
 - assertVisible: "Turn 1 · Roll 1 of 3"
 - stopApp
 - launchApp
 - tapOn: "Resume game.*"
-- assertVisible: "HELD"
+- assertVisible: "Die [0-9], showing [0-9], held"
 - assertVisible: "Turn 1 · Roll 1 of 3"
 - tapOn: { id: "roll-button" }
 - assertVisible: "Turn 1 · Roll 2 of 3"

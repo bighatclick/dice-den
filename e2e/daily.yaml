@@ -10,4 +10,4 @@ appId: com.dicedengame.app
 - tapOn: "Home"
 - tapOn: "Today's dice.*"
 - assertVisible: "YOUR SCORE TODAY"
-- assertVisible: "1-day streak"
+- assertVisible: "1-day streak.*"

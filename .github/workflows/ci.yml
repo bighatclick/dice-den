@@ -124,7 +124,7 @@ jobs:
           if [ -z "$flows" ]; then
             flows='e2e/onboarding.yaml e2e/full-game.yaml e2e/holds-rolls-undo.yaml e2e/resume.yaml e2e/vs-computer.yaml e2e/pass-and-play.yaml e2e/scandinavian-forced-order.yaml e2e/daily.yaml'
           fi
-          maestro test --format junit --output maestro-report.xml --debug-output maestro-debug $flows
+          maestro test --format junit --output maestro-report.xml $flows
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -134,4 +134,4 @@ jobs:
         if: always()
         with:
           name: maestro-debug
-          path: maestro-debug
+          path: ~/.maestro/tests

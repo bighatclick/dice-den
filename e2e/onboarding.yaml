@@ -9,7 +9,7 @@ appId: com.dicedengame.app
 - tapOn: { id: "die-2" }
 - tapOn: { id: "die-4" }
 - tapOn: { id: "roll-button" }
-- tapOn: "Fives"
+- tapOn: "Fives.*"
 - tapOn: "Next"
 - tapOn: "Classic.*"
 - tapOn: "Start playing"
