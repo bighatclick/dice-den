@@ -78,8 +78,8 @@ jobs:
             npx --yes eas-cli@latest build:view "$BUILD_ID" --json > build.json
             url=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json')).artifacts.buildUrl)")
           fi
-          mkdir app && curl -sL "$url" | tar -xz -C app
-          find app -maxdepth 2 -name '*.app'
+          mkdir simapp && curl -sL "$url" | tar -xz -C simapp
+          find simapp -maxdepth 2 -name '*.app'
       - name: Install Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -91,7 +91,7 @@ jobs:
           echo "Using simulator $udid"
           xcrun simctl boot "$udid" || true
           xcrun simctl bootstatus "$udid" -b
-          xcrun simctl install booted "$(find app -maxdepth 2 -name '*.app' | head -1)"
+          xcrun simctl install booted "$(find simapp -maxdepth 2 -name '*.app' | head -1)"
       # The monetized flows (shop, remove-ads, interstitial) need a build with ads and the fake
       # store switched on; this build has them off, so they are not run.
       - name: Run the iOS flows
