@@ -19,6 +19,10 @@ on:
         description: Only launch the app and print its crash report, skip the flows
         type: boolean
         default: false
+      flows:
+        description: Flow files to run (space separated). Empty runs all eight.
+        type: string
+        default: ''
       build_id:
         description: EAS simulator build id to test. Leave empty to build a new one first.
         type: string
@@ -116,11 +120,18 @@ jobs:
       - name: Run the iOS flows
         if: ${{ !inputs.diag_only }}
         run: |
-          maestro test --format junit --output maestro-report.xml \
-            e2e/onboarding.yaml e2e/full-game.yaml e2e/holds-rolls-undo.yaml e2e/resume.yaml \
-            e2e/vs-computer.yaml e2e/pass-and-play.yaml e2e/scandinavian-forced-order.yaml e2e/daily.yaml
+          flows='${{ inputs.flows }}'
+          if [ -z "$flows" ]; then
+            flows='e2e/onboarding.yaml e2e/full-game.yaml e2e/holds-rolls-undo.yaml e2e/resume.yaml e2e/vs-computer.yaml e2e/pass-and-play.yaml e2e/scandinavian-forced-order.yaml e2e/daily.yaml'
+          fi
+          maestro test --format junit --output maestro-report.xml --debug-output maestro-debug $flows
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: maestro-report
           path: maestro-report.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maestro-debug
+          path: maestro-debug
