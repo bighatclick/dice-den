@@ -1,6 +1,6 @@
 # Holds survive rerolls, the third roll ends the turn, undo works once until the next roll.
 appId: com.dicedengame.app
-name: iOS: holds, three rolls and undo
+name: iOS holds, three rolls and undo
 tags: [ios, core]
 ---
 - runFlow: subflows/fresh-start.yaml

@@ -1,7 +1,7 @@
 # Scandinavian rules with forced order: 15 boxes, pairs, the +50 bonus, only one box
 # tappable per turn, and the rules remembered for next time.
 appId: com.dicedengame.app
-name: iOS: Scandinavian, forced order
+name: iOS Scandinavian, forced order
 tags: [ios, core]
 ---
 - runFlow: subflows/fresh-start.yaml
