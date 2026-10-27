@@ -180,10 +180,11 @@ export default function NewGameScreen() {
           ]}
         />
         <View style={[styles.toggle, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-          <View style={styles.flex}>
+          {/* The label toggles the switch too; the switch alone carries the accessibility role. */}
+          <Pressable accessible={false} style={styles.flex} onPress={() => setForcedOrder((v) => !v)}>
             <Text style={[styles.toggleLabel, { color: colors.ink }]}>{t('newGame.forcedOrder')}</Text>
             <Text style={[styles.toggleSub, { color: colors.ink2 }]}>{t('newGame.forcedOrderSubtitle')}</Text>
-          </View>
+          </Pressable>
           <Switch
             accessibilityLabel={t('newGame.forcedOrder')}
             value={forcedOrder}
