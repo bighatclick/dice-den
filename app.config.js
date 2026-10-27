@@ -48,6 +48,8 @@ function withMonetizationSwitch(config) {
   return { ...config, plugins, android: { ...config.android, blockedPermissions } };
 }
 
+const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN ?? '';
+
 module.exports = ({ config }) =>
   withSentry(withMonetizationSwitch(config), {
     url: 'https://sentry.io/',
@@ -55,10 +57,11 @@ module.exports = ({ config }) =>
     project: process.env.SENTRY_PROJECT,
     disableAutoUpload: !process.env.SENTRY_AUTH_TOKEN,
     // Starts the native SDK before JavaScript, so crashes during app start are reported too.
-    useNativeInit: true,
+    // Only with a DSN: native start-up with an empty one crashes the iOS app on launch.
+    useNativeInit: Boolean(SENTRY_DSN),
     options: {
       // An empty DSN keeps the SDK switched off.
-      dsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? '',
+      dsn: SENTRY_DSN,
       sendDefaultPii: false,
       tracesSampleRate: 0,
     },
