@@ -11,6 +11,10 @@ on:
         description: Run the iOS Maestro flows on a macOS simulator
         type: boolean
         default: false
+      app_url:
+        description: Direct download link of a finished simulator build (.tar.gz). Used before build_id.
+        type: string
+        default: ''
       build_id:
         description: EAS simulator build id to test. Leave empty to build a new one first.
         type: string
@@ -31,7 +35,7 @@ jobs:
       - run: npm test -- --ci
 
   ios-build:
-    if: github.event_name == 'workflow_dispatch' && inputs.ios && inputs.build_id == ''
+    if: github.event_name == 'workflow_dispatch' && inputs.ios && inputs.build_id == '' && inputs.app_url == ''
     needs: checks
     runs-on: ubuntu-latest
     outputs:
@@ -55,7 +59,7 @@ jobs:
 
   ios-test:
     # Runs when a build id was given, or after the build job made one.
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && inputs.ios && (inputs.build_id != '' || needs.ios-build.result == 'success') }}
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && inputs.ios && (inputs.app_url != '' || inputs.build_id != '' || needs.ios-build.result == 'success') }}
     needs: ios-build
     runs-on: macos-latest
     timeout-minutes: 45
@@ -69,8 +73,11 @@ jobs:
           node-version: 20
       - name: Download the simulator app from EAS
         run: |
-          npx --yes eas-cli@latest build:view "$BUILD_ID" --json > build.json
-          url=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json')).artifacts.buildUrl)")
+          url='${{ inputs.app_url }}'
+          if [ -z "$url" ]; then
+            npx --yes eas-cli@latest build:view "$BUILD_ID" --json > build.json
+            url=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json')).artifacts.buildUrl)")
+          fi
           mkdir app && curl -sL "$url" | tar -xz -C app
           find app -maxdepth 2 -name '*.app'
       - name: Install Maestro
