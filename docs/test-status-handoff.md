@@ -27,3 +27,10 @@ APK rebuilt from this branch (Sentry config changed), release group results:
 3. One clean full iOS run (8 flows) for the record.
 4. Optional: more iOS cases (settings, stats, dark mode, iPad), store screenshots from the simulator build,
    TestFlight smoke test of the production build, Apple Developer account ($99).
+
+## Update (last check)
+A06 and A07 rerun with the runner's normal animation settings (animator and transition scale 1, window scale 0) still FAIL:
+A06 at `Computer (Easy) is playing` is visible, A07 at a `Pass the phone to` is not visible check. Both are about the
+computer's turn, and both passed on the 22 Oct APK, so treat this as a possible real regression until proven a race:
+compare the computer-turn timing (`app/game.tsx` AI_DELAY, Reduce Motion detection) between the 22 Oct APK behaviour
+and this build, then look at the failure screenshots in `C:\Users\Dell\.maestro\tests\`. Not fixed, not green.
