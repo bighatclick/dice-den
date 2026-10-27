@@ -1,0 +1,64 @@
+# Scandinavian rules with forced order: 15 boxes, pairs, the +50 bonus, only one box
+# tappable per turn, and the rules remembered for next time.
+appId: com.dicedengame.app
+name: iOS: Scandinavian, forced order
+tags: [ios, core]
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Play"
+- tapOn: "Scandinavian.*"
+- tapOn: "Forced order"
+- tapOn: "Start game"
+- assertVisible: "Upper bonus 50: 0 of 63"
+- tapOn: { id: "roll-button" }
+# Forced order: Ones is the only option; Chance and Twos are not offered.
+- assertVisible: "Ones, score [0-9]+ here"
+- assertNotVisible: "Twos, score [0-9]+ here"
+- assertNotVisible: "Chance, score [0-9]+ here"
+- scrollUntilVisible: { element: { id: "box-onePair" } }
+- assertVisible: "One pair, empty"
+- assertVisible: "Two pairs, empty"
+- scrollUntilVisible: { element: { id: "box-ones" } }
+- tapOn: { id: "box-ones" }
+- assertVisible: "Turn 2 · Ready to roll"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-twos" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-threes" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fours" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-fives" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-sixes" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-onePair" } }
+- tapOn: { id: "box-onePair" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-twoPairs" } }
+- tapOn: { id: "box-twoPairs" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-threeKind" } }
+- tapOn: { id: "box-threeKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fourKind" } }
+- tapOn: { id: "box-fourKind" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-smallStraight" } }
+- tapOn: { id: "box-smallStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-largeStraight" } }
+- tapOn: { id: "box-largeStraight" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-fullHouse" } }
+- tapOn: { id: "box-fullHouse" }
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- assertVisible: "Turn 15 · Ready to roll"
+- tapOn: { id: "roll-button" }
+- scrollUntilVisible: { element: { id: "box-yatzy" } }
+- tapOn: { id: "box-yatzy" }
+- assertVisible: "FINAL SCORE"
+- tapOn: "Play again"
+

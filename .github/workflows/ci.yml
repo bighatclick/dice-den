@@ -8,9 +8,13 @@ on:
   workflow_dispatch:
     inputs:
       ios:
-        description: Build the iOS simulator app on EAS and run the Maestro flows
+        description: Run the iOS Maestro flows on a macOS simulator
         type: boolean
         default: false
+      build_id:
+        description: EAS simulator build id to test. Leave empty to build a new one first.
+        type: string
+        default: ''
 
 jobs:
   checks:
@@ -27,9 +31,11 @@ jobs:
       - run: npm test -- --ci
 
   ios-build:
-    if: github.event_name == 'workflow_dispatch' && inputs.ios
+    if: github.event_name == 'workflow_dispatch' && inputs.ios && inputs.build_id == ''
     needs: checks
     runs-on: ubuntu-latest
+    outputs:
+      build_id: ${{ steps.build.outputs.id }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,27 +48,31 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
       - run: npm ci
       - name: Build the simulator app on EAS
-        run: eas build --platform ios --profile simulator --non-interactive --wait --json > build.json
-      - name: Download the app
+        id: build
         run: |
-          url=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json'))[0].artifacts.buildUrl)")
-          curl -sL "$url" -o app.tar.gz
-          mkdir app && tar -xzf app.tar.gz -C app
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ios-simulator-app
-          path: app
+          eas build --platform ios --profile simulator --non-interactive --wait --json > build.json
+          echo "id=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json'))[0].id)")" >> "$GITHUB_OUTPUT"
 
   ios-test:
+    # Runs when a build id was given, or after the build job made one.
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && inputs.ios && (inputs.build_id != '' || needs.ios-build.result == 'success') }}
     needs: ios-build
     runs-on: macos-latest
     timeout-minutes: 45
+    env:
+      BUILD_ID: ${{ inputs.build_id != '' && inputs.build_id || needs.ios-build.outputs.build_id }}
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/setup-node@v4
         with:
-          name: ios-simulator-app
-          path: app
+          node-version: 20
+      - name: Download the simulator app from EAS
+        run: |
+          npx --yes eas-cli@latest build:view "$BUILD_ID" --json > build.json
+          url=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build.json')).artifacts.buildUrl)")
+          mkdir app && curl -sL "$url" | tar -xz -C app
+          find app -maxdepth 2 -name '*.app'
       - name: Install Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -71,9 +81,14 @@ jobs:
         run: |
           xcrun simctl boot "iPhone 15" || true
           xcrun simctl bootstatus "iPhone 15" -b
-          xcrun simctl install booted "$(find app -name '*.app' -maxdepth 2 | head -1)"
-      - name: Run the Maestro flows
-        run: maestro test e2e/ --format junit --output maestro-report.xml
+          xcrun simctl install booted "$(find app -maxdepth 2 -name '*.app' | head -1)"
+      # The monetized flows (shop, remove-ads, interstitial) need a build with ads and the fake
+      # store switched on; this build has them off, so they are not run.
+      - name: Run the iOS flows
+        run: |
+          maestro test --format junit --output maestro-report.xml \
+            e2e/onboarding.yaml e2e/full-game.yaml e2e/holds-rolls-undo.yaml e2e/resume.yaml \
+            e2e/vs-computer.yaml e2e/pass-and-play.yaml e2e/scandinavian-forced-order.yaml e2e/daily.yaml
       - uses: actions/upload-artifact@v4
         if: always()
         with:
