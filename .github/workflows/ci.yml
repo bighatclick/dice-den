@@ -86,8 +86,11 @@ jobs:
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
       - name: Boot a simulator and install the app
         run: |
-          xcrun simctl boot "iPhone 15" || true
-          xcrun simctl bootstatus "iPhone 15" -b
+          xcrun simctl list devices available | grep iPhone
+          udid=$(xcrun simctl list devices available | grep -m1 'iPhone' | grep -oE '[0-9A-F]{8}-[0-9A-F-]{27}')
+          echo "Using simulator $udid"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
           xcrun simctl install booted "$(find app -maxdepth 2 -name '*.app' | head -1)"
       # The monetized flows (shop, remove-ads, interstitial) need a build with ads and the fake
       # store switched on; this build has them off, so they are not run.
