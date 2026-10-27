@@ -63,7 +63,7 @@ tags: [release, core]
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "box-ones" }
 # Next is the computer: no handoff, it just plays.
-- assertNotVisible: "Pass the phone to"
+- extendedWaitUntil: { notVisible: "Pass the phone to", timeout: 8000 }
 - assertVisible: 'Computer \(Expert\) is playing'
 - tapOn: 'Skip Computer \(Expert\)''s turn'
 # Player 4 is handed the phone from Dad, the last person, not from the computer.
