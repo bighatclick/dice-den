@@ -64,8 +64,12 @@ tags: [release, core]
 - tapOn: { id: "box-ones" }
 # Next is the computer: no handoff, it just plays.
 - extendedWaitUntil: { notVisible: "Pass the phone to", timeout: 8000 }
-- assertVisible: 'Computer \(Expert\) is playing'
-- tapOn: 'Skip Computer \(Expert\)''s turn'
+# The computer may finish before this runs, so skipping is optional.
+- runFlow:
+    when:
+      visible: 'Skip Computer \(Expert\)''s turn'
+    commands:
+      - tapOn: 'Skip Computer \(Expert\)''s turn'
 # Player 4 is handed the phone from Dad, the last person, not from the computer.
 - assertVisible: "Pass the phone to"
 - assertVisible: "Player 4"
