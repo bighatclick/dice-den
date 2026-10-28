@@ -120,6 +120,12 @@ jobs:
           xcrun simctl install booted "$(find simapp -maxdepth 2 -name '*.app' | head -1)"
           xcrun simctl ui booted appearance '${{ inputs.appearance }}'
           xcrun simctl ui booted content_size '${{ inputs.content_size }}'
+          # Warm-up: start the app once and close it, so the first flow does not race the cold simulator.
+          xcrun simctl launch booted com.dicedengame.app || true
+          sleep 10
+          xcrun simctl terminate booted com.dicedengame.app || true
+          xcrun simctl launch booted com.apple.springboard >/dev/null 2>&1 || true
+          sleep 3
       - name: Launch the app once and show why it crashes
         if: ${{ inputs.diag_only }}
         continue-on-error: true
