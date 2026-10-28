@@ -7,20 +7,30 @@ name: I09 settings take effect
 - assertVisible: "Settings"
 - takeScreenshot: i09-settings-top
 - scrollUntilVisible: { element: { text: "Score hints.*" } }
-- tapOn: "Score hints.*"
+- tapOn:
+    text: "Score hints.*"
+    index: 1
 - scrollUntilVisible: { element: { text: "Slow" } }
 - tapOn: "Slow"
 - scrollUntilVisible: { element: { text: "Dark" } }
 - tapOn: "Dark"
 - takeScreenshot: i09-settings-dark
 - scrollUntilVisible: { element: { text: "Large dice.*" } }
-- tapOn: "Large dice.*"
+- tapOn:
+    text: "Large dice.*"
+    index: 1
 - scrollUntilVisible: { element: { text: "High-contrast pips.*" } }
-- tapOn: "High-contrast pips.*"
+- tapOn:
+    text: "High-contrast pips.*"
+    index: 1
 - scrollUntilVisible: { element: { text: "Left-hand layout.*" } }
-- tapOn: "Left-hand layout.*"
+- tapOn:
+    text: "Left-hand layout.*"
+    index: 1
 - scrollUntilVisible: { element: { text: "Reduce motion.*" } }
-- tapOn: "Reduce motion.*"
+- tapOn:
+    text: "Reduce motion.*"
+    index: 1
 - tapOn: "Back"
 - takeScreenshot: i09-home-dark
 # Hints off: boxes show no points; large dice and left-hand layout on the table.

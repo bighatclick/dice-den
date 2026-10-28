@@ -4,10 +4,25 @@ name: I11 deep links
 ---
 - runFlow: subflows/fresh-start.yaml
 - openLink: "diceden://daily"
+- runFlow:
+    when:
+      visible: "Open in.*"
+    commands:
+      - tapOn: "Open"
 - assertVisible: "Same roll for everyone"
 - openLink: "diceden://stats"
+- runFlow:
+    when:
+      visible: "Open in.*"
+    commands:
+      - tapOn: "Open"
 - assertVisible: "Fair dice"
 - openLink: "diceden://game"
+- runFlow:
+    when:
+      visible: "Open in.*"
+    commands:
+      - tapOn: "Open"
 - assertVisible: "Roll to start your turn"
 - runFlow: subflows/leave-to-home.yaml
 - assertVisible: "Resume game, Turn 1 of 13"
