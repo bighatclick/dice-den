@@ -1,0 +1,59 @@
+# App Store screenshots, one per caption in store/en/screenshot-captions.txt. Run on the
+# 6.9" iPhone and the 13" iPad simulators with -e PREFIX=iphone69 or ipad13.
+appId: com.dicedengame.app
+name: Store screenshots
+env:
+  PREFIX: shot
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/solo-game-to-home.yaml
+- takeScreenshot: ${PREFIX}-00-home
+# 1 Classic score pad: a game in progress with several boxes filled and hints showing.
+- tapOn: "Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-ones" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-twos" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-threes" }
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-1" }
+- tapOn: { id: "die-3" }
+- takeScreenshot: ${PREFIX}-01-classic-score-pad
+- runFlow: subflows/leave-to-home.yaml
+# 2 Pass and play: the handoff screen between two named players.
+- tapOn: "(?i)^start new game$|Play"
+- tapOn: "Pass and play.*"
+- tapOn: "Player 1 name"
+- inputText: "Mom"
+- tapOn: "Player 2 name"
+- inputText: "Dad"
+- hideKeyboard
+- tapOn: "Start game"
+- tapOn: "(?i)start new game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "box-chance" }
+- takeScreenshot: ${PREFIX}-02-pass-and-play
+- runFlow: subflows/leave-to-home.yaml
+# 3 Fair dice you can check: stats with the dice chart.
+- tapOn: "Stats"
+- scrollUntilVisible: { element: { text: "Your dice" } }
+- takeScreenshot: ${PREFIX}-03-stats-fair-dice
+- runFlow: subflows/screen-to-home.yaml
+# 4 Today's dice.
+- tapOn: "Today's dice.*"
+- takeScreenshot: ${PREFIX}-04-todays-dice
+- runFlow: subflows/screen-to-home.yaml
+# 5 Big dice and dark mode.
+- tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Dark" } }
+- tapOn: "Dark"
+- scrollUntilVisible: { element: { text: "Large dice.*" } }
+- tapOn: "Large dice.*"
+- runFlow: subflows/screen-to-home.yaml
+- tapOn: "(?i)start new game|Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- takeScreenshot: ${PREFIX}-05-big-dice-dark

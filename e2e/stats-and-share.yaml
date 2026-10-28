@@ -1,0 +1,46 @@
+# I10 Stats fill in from the game log, the rules filter works, the dice chart counts every face,
+# and Share opens from the final scorecard.
+appId: com.dicedengame.app
+name: I10 stats and share
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Stats"
+- assertVisible: "Finish a game to see your stats here."
+- assertVisible: "Games 0"
+- assertVisible: "High score None yet"
+- takeScreenshot: i10-stats-empty
+- tapOn: "Back"
+- runFlow: subflows/solo-game-to-home.yaml
+- tapOn: "Stats"
+- assertNotVisible: "Finish a game to see your stats here."
+- assertVisible: "Games 1"
+- assertVisible: "High score [0-9]+"
+- assertVisible: "Average [0-9]+"
+- assertVisible: "Upper bonus [0-9]+%"
+- assertVisible: "Daily games 0"
+- takeScreenshot: i10-stats-one-game
+- scrollUntilVisible: { element: { text: "Your dice" } }
+- assertVisible: "65 rolls"
+- scrollUntilVisible: { element: { text: "Computer dice" } }
+- assertVisible: "0 rolls"
+- takeScreenshot: i10-stats-dice
+- scrollUntilVisible: { element: { text: "Games 1" }, direction: UP }
+- tapOn: "Scandinavian"
+- assertVisible: "Games 0"
+- tapOn: "Classic"
+- assertVisible: "Games 1"
+- tapOn: "Back"
+# Share from the final scorecard opens the iOS share sheet; dismiss it and the scorecard remains.
+- tapOn: "Play"
+- tapOn: "Start game"
+- runFlow: subflows/play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- takeScreenshot: i10-final-score
+- tapOn: "Share"
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: i10-share-sheet
+- tapOn:
+    point: "50%,10%"
+- assertVisible: "FINAL SCORE"
+- tapOn: "Home"

@@ -1,0 +1,7 @@
+# From Stats, Settings, Today's dice, Help: the header Back button returns to Home.
+appId: com.dicedengame.app
+---
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible: "Dice Den"
+    timeout: 10000

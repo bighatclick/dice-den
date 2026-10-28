@@ -1,0 +1,13 @@
+# I11 The diceden:// scheme opens screens directly; a table link starts a solo game.
+appId: com.dicedengame.app
+name: I11 deep links
+---
+- runFlow: subflows/fresh-start.yaml
+- openLink: "diceden://daily"
+- assertVisible: "Same roll for everyone"
+- openLink: "diceden://stats"
+- assertVisible: "Fair dice"
+- openLink: "diceden://game"
+- assertVisible: "Roll to start your turn"
+- runFlow: subflows/leave-to-home.yaml
+- assertVisible: "Resume game, Turn 1 of 13"

@@ -1,0 +1,58 @@
+# I09 Settings: switches and pickers take effect, are saved across a restart, and the table honours them.
+appId: com.dicedengame.app
+name: I09 settings take effect
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Settings"
+- assertVisible: "Settings"
+- takeScreenshot: i09-settings-top
+- scrollUntilVisible: { element: { text: "Score hints.*" } }
+- tapOn: "Score hints.*"
+- scrollUntilVisible: { element: { text: "Slow" } }
+- tapOn: "Slow"
+- scrollUntilVisible: { element: { text: "Dark" } }
+- tapOn: "Dark"
+- takeScreenshot: i09-settings-dark
+- scrollUntilVisible: { element: { text: "Large dice.*" } }
+- tapOn: "Large dice.*"
+- scrollUntilVisible: { element: { text: "High-contrast pips.*" } }
+- tapOn: "High-contrast pips.*"
+- scrollUntilVisible: { element: { text: "Left-hand layout.*" } }
+- tapOn: "Left-hand layout.*"
+- scrollUntilVisible: { element: { text: "Reduce motion.*" } }
+- tapOn: "Reduce motion.*"
+- tapOn: "Back"
+- takeScreenshot: i09-home-dark
+# Hints off: boxes show no points; large dice and left-hand layout on the table.
+- tapOn: "Play"
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- assertVisible: "Chance, score here"
+- assertNotVisible: "Chance, score [0-9]+ here"
+- takeScreenshot: i09-table-large-dice-left-hand
+- tapOn: { id: "die-0" }
+- assertVisible: "Die [0-9], showing [0-9], held"
+- runFlow: subflows/leave-to-home.yaml
+# Everything persists across a kill and relaunch.
+- stopApp
+- launchApp
+- tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Dark" } }
+- takeScreenshot: i09-settings-after-restart
+- tapOn: "Light"
+- tapOn: "System"
+- scrollUntilVisible: { element: { text: "How the dice work" } }
+- tapOn: "How the dice work"
+- assertVisible: "Every die has an equal 1 in 6 chance.*"
+- assertVisible: "The computer players roll the same dice.*"
+- takeScreenshot: i09-fairness
+- tapOn: "See your dice in Stats"
+- assertVisible: "Fair dice"
+- takeScreenshot: i09-stats-from-fairness
+- runFlow: subflows/screen-to-home.yaml
+- tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Show the tutorial again" } }
+- tapOn: "Show the tutorial again"
+- assertVisible: "Welcome to Dice Den"
+- tapOn: "Skip"
+- assertVisible: "Resume game, Turn 2 of 13"

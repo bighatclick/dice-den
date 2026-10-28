@@ -1,0 +1,28 @@
+# I16 Landscape: the score grid shows beside the dice, handoff covers the table.
+appId: com.dicedengame.app
+name: I16 landscape
+---
+- runFlow: subflows/fresh-start.yaml
+- setOrientation: LANDSCAPE_LEFT
+- takeScreenshot: i16-home-landscape
+- scrollUntilVisible: { element: { text: "Pass and play.*" } }
+- tapOn: "Pass and play.*"
+- tapOn: "Player 1 name"
+- inputText: "Mom"
+- hideKeyboard
+- scrollUntilVisible: { element: { text: "Player 2 name" } }
+- tapOn: "Player 2 name"
+- inputText: "Dad"
+- hideKeyboard
+- scrollUntilVisible: { element: { text: "Start game" } }
+- tapOn: "Start game"
+- tapOn: { id: "roll-button" }
+- takeScreenshot: i16-table-landscape
+- tapOn: { id: "box-ones" }
+- assertVisible: "Pass the phone to"
+- takeScreenshot: i16-handoff-landscape
+- scrollUntilVisible: { element: { text: "Start Dad's turn" } }
+- tapOn: "Start Dad's turn"
+- assertVisible: "Dad, 0 points, playing now"
+- setOrientation: PORTRAIT
+- assertVisible: "Dad, 0 points, playing now"

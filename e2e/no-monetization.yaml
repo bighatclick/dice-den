@@ -1,0 +1,24 @@
+# I13 The release build shows nothing to buy or watch (App Review: no ads, no purchases, no tracking prompt).
+appId: com.dicedengame.app
+name: I13 nothing to buy or watch
+---
+- runFlow: subflows/fresh-start.yaml
+- repeat:
+    times: 3
+    commands:
+      - runFlow: subflows/solo-game-to-home.yaml
+- assertNotVisible: "Shop"
+- assertNotVisible: "Advertisement"
+- assertNotVisible: "Test Ad"
+- assertNotVisible: ".*[Tt]racking.*"
+- tapOn: "Settings"
+- scrollUntilVisible: { element: { text: "Dice and tables" } }
+- assertNotVisible: "Purchases"
+- assertNotVisible: "Restore Purchases"
+- tapOn: "Dice and tables"
+- assertNotVisible: "One-time purchase"
+- assertNotVisible: "Buy for .*"
+- assertNotVisible: "Try for 24 h"
+- assertVisible: "Ivory.*"
+- assertVisible: "Green felt.*"
+- takeScreenshot: i13-dice-and-tables

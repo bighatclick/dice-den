@@ -1,0 +1,17 @@
+# I14 The rules screen, the help text and the fairness page open and read correctly.
+appId: com.dicedengame.app
+name: I14 help and rules
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "How to play"
+- takeScreenshot: i14-help
+- runFlow: subflows/screen-to-home.yaml
+- tapOn: "Play"
+- assertVisible: "New game"
+- takeScreenshot: i14-new-game
+- tapOn: "Scandinavian.*"
+- tapOn: "Start game"
+- assertVisible: "Roll to start your turn"
+- tapOn: { id: "roll-button" }
+- takeScreenshot: i14-scandi-table
+- runFlow: subflows/leave-to-home.yaml

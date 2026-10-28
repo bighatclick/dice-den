@@ -1,0 +1,12 @@
+# From Home with no game in progress: play one solo Classic game and return Home.
+appId: com.dicedengame.app
+---
+- tapOn: "Play"
+- tapOn: "Start game"
+- assertVisible: "Roll to start your turn"
+- runFlow: play-13-turns.yaml
+- assertVisible: "FINAL SCORE"
+- tapOn: "Home"
+- extendedWaitUntil:
+    visible: "Roll the dice"
+    timeout: 10000

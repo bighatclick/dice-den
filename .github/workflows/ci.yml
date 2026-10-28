@@ -23,6 +23,22 @@ on:
         description: Flow files to run (space separated). Empty runs all eight.
         type: string
         default: ''
+      device:
+        description: Simulator name to boot, for example "iPhone 16 Pro Max" or "iPad Pro 13-inch". Empty is the first iPhone.
+        type: string
+        default: ''
+      appearance:
+        description: Simulator appearance, light or dark
+        type: string
+        default: light
+      content_size:
+        description: Simulator text size, for example large or accessibility-extra-large
+        type: string
+        default: large
+      maestro_env:
+        description: Extra Maestro env, for example "-e PREFIX=dark"
+        type: string
+        default: ''
       build_id:
         description: EAS simulator build id to test. Leave empty to build a new one first.
         type: string
@@ -94,12 +110,16 @@ jobs:
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
       - name: Boot a simulator and install the app
         run: |
-          xcrun simctl list devices available | grep iPhone
-          udid=$(xcrun simctl list devices available | grep -m1 'iPhone' | grep -oE '[0-9A-F]{8}-[0-9A-F-]{27}')
+          xcrun simctl list devices available | grep -E 'iPhone|iPad'
+          name='${{ inputs.device }}'
+          [ -z "$name" ] && name='iPhone'
+          udid=$(xcrun simctl list devices available | grep -m1 "$name" | grep -oE '[0-9A-F]{8}-[0-9A-F-]{27}')
           echo "Using simulator $udid"
           xcrun simctl boot "$udid" || true
           xcrun simctl bootstatus "$udid" -b
           xcrun simctl install booted "$(find simapp -maxdepth 2 -name '*.app' | head -1)"
+          xcrun simctl ui booted appearance '${{ inputs.appearance }}'
+          xcrun simctl ui booted content_size '${{ inputs.content_size }}'
       - name: Launch the app once and show why it crashes
         if: ${{ inputs.diag_only }}
         continue-on-error: true
@@ -124,12 +144,17 @@ jobs:
           if [ -z "$flows" ]; then
             flows='e2e/onboarding.yaml e2e/full-game.yaml e2e/holds-rolls-undo.yaml e2e/resume.yaml e2e/vs-computer.yaml e2e/pass-and-play.yaml e2e/scandinavian-forced-order.yaml e2e/daily.yaml'
           fi
-          maestro test --format junit --output maestro-report.xml $flows
+          maestro test --format junit --output maestro-report.xml --test-output-dir maestro-out ${{ inputs.maestro_env }} $flows
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: maestro-report
           path: maestro-report.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maestro-out
+          path: maestro-out
       - uses: actions/upload-artifact@v4
         if: always()
         with:

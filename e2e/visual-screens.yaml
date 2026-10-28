@@ -1,0 +1,35 @@
+# I15 Every main screen renders in the current look. Run with -e PREFIX=<name> after the
+# simulator is set to dark mode, large text or an iPad; the screenshots are the evidence.
+appId: com.dicedengame.app
+name: I15 screens render
+env:
+  PREFIX: look
+---
+- runFlow: subflows/fresh-start.yaml
+- takeScreenshot: ${PREFIX}-home
+- tapOn: "Play"
+- takeScreenshot: ${PREFIX}-new-game
+- tapOn: "vs Computer"
+- tapOn: "Expert"
+- tapOn: "Start game"
+- takeScreenshot: ${PREFIX}-table-start
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "die-0" }
+- assertVisible: "Die [0-9], showing [0-9], held"
+- takeScreenshot: ${PREFIX}-table-rolled
+- scrollUntilVisible: { element: { id: "box-chance" } }
+- tapOn: { id: "box-chance" }
+- extendedWaitUntil: { visible: "Turn 2 · .*", timeout: 40000 }
+- runFlow: subflows/leave-to-home.yaml
+- takeScreenshot: ${PREFIX}-home-resume
+- tapOn: "Settings"
+- takeScreenshot: ${PREFIX}-settings
+- runFlow: subflows/screen-to-home.yaml
+- tapOn: "Stats"
+- takeScreenshot: ${PREFIX}-stats
+- runFlow: subflows/screen-to-home.yaml
+- tapOn: "Today's dice.*"
+- takeScreenshot: ${PREFIX}-daily
+- runFlow: subflows/screen-to-home.yaml
+- tapOn: "How to play"
+- takeScreenshot: ${PREFIX}-help

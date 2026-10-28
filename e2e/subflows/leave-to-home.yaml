@@ -1,0 +1,8 @@
+# From a table in progress: Leave game, confirm, and land on Home with the game kept for Resume.
+appId: com.dicedengame.app
+---
+- tapOn: "Leave game"
+- tapOn: "(?i)^leave$"
+- extendedWaitUntil:
+    visible: "Dice Den"
+    timeout: 10000
