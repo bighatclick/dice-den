@@ -34,3 +34,12 @@ A06 at `Computer (Easy) is playing` is visible, A07 at a `Pass the phone to` is 
 computer's turn, and both passed on the 22 Oct APK, so treat this as a possible real regression until proven a race:
 compare the computer-turn timing (`app/game.tsx` AI_DELAY, Reduce Motion detection) between the 22 Oct APK behaviour
 and this build, then look at the failure screenshots in `C:\Users\Dell\.maestro\tests\`. Not fixed, not green.
+
+## Final result (28 Oct 2026): all 37 cases green
+- A06, A07, S7 failures were timing races on a loaded PC (a Python job from another project slowed the emulator), not app bugs.
+  A06's flow now accepts any "Turn 2" state after skipping the computer (commit e5c2672); the app code did not change.
+- Retested individually: A06, A07, S7 (4.7-5.1 s), A18-A20, A21 (tablet emulator, confirmed 2560x1600).
+- Full Android regression on the same APK (`-Suite all`, report `reports/android/20261028-164402-all`): S1-S8, A01-A20 all passed. A21 passed in the tablet group the same day.
+- iOS: 8 of 8 on the EAS simulator build; no rerun needed because app code did not change. GitHub minutes used: about 1,250 of 2,000.
+- Runner gotchas: a leftover emulator makes the runner reuse it (the tablet group then runs on the phone); an APK installed by hand needs `adb uninstall com.dicedengame.app` before the runner's install.
+- Open, not test failures: replace the AdMob test id before ads go live; confirm the release signing key is the real Play upload key; monetized flows B01-B06 are parked.
