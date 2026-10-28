@@ -35,6 +35,8 @@ env:
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "box-chance" }
 - takeScreenshot: ${PREFIX}-02-pass-and-play
+# The handoff screen has no Leave button, so start Dad's turn first.
+- tapOn: "Start Dad's turn"
 - runFlow: subflows/leave-to-home.yaml
 # 3 Fair dice you can check: stats with the dice chart.
 - tapOn: "Stats"
