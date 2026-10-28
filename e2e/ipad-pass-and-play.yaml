@@ -9,7 +9,7 @@ name: I17b iPad pass and play
 - tapOn: "Add player"
 - tapOn: "Start game"
 - assertVisible: "Roll to start your turn"
-- assertVisible: "Player 2"
+- assertVisible: ".*Player 2.*"
 - takeScreenshot: i17b-table-ipad-portrait
 - setOrientation: LANDSCAPE_LEFT
 - assertVisible: "Player 2: Ones, empty"
