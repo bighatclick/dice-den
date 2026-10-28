@@ -1,4 +1,4 @@
-# A20 System dark mode (the runner turns night mode on) with Theme = System: every screen
+# A20 System dark mode (the runner turns night mode on) with Theme set to System (Dark is the default): every screen
 # renders in the dark palette. Screenshots are the evidence; the asserts prove nothing broke.
 appId: com.dicedengame.app
 name: A20 system dark mode
@@ -15,6 +15,8 @@ tags: [visual, darkmode]
 - tapOn: "(?i)^leave$"
 - runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
+- assertVisible: { text: "Dark", selected: true }
+- tapOn: "System"
 - assertVisible: { text: "System", selected: true }
 - takeScreenshot: a20-settings-dark
 - scrollUntilVisible: { element: { text: "Dice and tables" } }

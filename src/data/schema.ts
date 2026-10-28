@@ -100,7 +100,7 @@ export interface RootData {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  themeMode: 'system',
+  themeMode: 'dark',
   preset: 'classic',
   forcedOrder: false,
   hints: true,

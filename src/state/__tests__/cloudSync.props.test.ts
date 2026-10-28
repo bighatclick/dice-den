@@ -24,7 +24,7 @@ describe('merge properties (specs.md §8)', () => {
       stats: { sessions: 8, gamesCompleted: 3, firstLaunchAt: '2026-10-01T00:00:00Z' },
       unlocks: { dice: ['ivory', 'jade'], tables: ['felt', 'slate'] },
       daily: { ...d.daily, streak: 3, bestStreak: 3, lastCompleted: '2026-10-16', results: { '2026-10-16': 220 } },
-      settings: { ...d.settings, themeMode: 'dark' },
+      settings: { ...d.settings, themeMode: 'light' },
       syncMeta: { settingsUpdatedAt: '2026-10-16T11:00:00Z' },
     })),
   );
@@ -71,7 +71,7 @@ describe('merge properties (specs.md §8)', () => {
 
   it('a remote with settings but no timestamp never overrides local settings', () => {
     const merged = mergeCloud(local, { ...remote, settingsUpdatedAt: null });
-    expect(merged.settings.themeMode).toBe('system');
+    expect(merged.settings.themeMode).toBe('dark');
     expect(merged.settings.sound).toBe(false);
     expect(merged.syncMeta.settingsUpdatedAt).toBe(local.syncMeta.settingsUpdatedAt);
   });
@@ -79,13 +79,13 @@ describe('merge properties (specs.md §8)', () => {
   it('equal timestamps keep the local settings', () => {
     const merged = mergeCloud(local, { ...remote, settingsUpdatedAt: local.syncMeta.settingsUpdatedAt });
     expect(merged.settings.sound).toBe(false);
-    expect(merged.settings.themeMode).toBe('system');
+    expect(merged.settings.themeMode).toBe('dark');
   });
 
   it('a newer remote settings blob missing some keys keeps the local values for those keys', () => {
-    const partial = { ...remote, settings: { themeMode: 'dark' } as CloudPayload['settings'] };
+    const partial = { ...remote, settings: { themeMode: 'light' } as CloudPayload['settings'] };
     const merged = mergeCloud(local, partial);
-    expect(merged.settings).toMatchObject({ themeMode: 'dark', sound: false, hints: true, preset: 'classic' });
+    expect(merged.settings).toMatchObject({ themeMode: 'light', sound: false, hints: true, preset: 'classic' });
   });
 });
 

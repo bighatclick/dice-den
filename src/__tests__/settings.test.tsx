@@ -38,6 +38,17 @@ beforeEach(() => {
 });
 
 describe('Settings (S10)', () => {
+  it('defaults to dark mode on a fresh install', () => {
+    expect(settings().themeMode).toBe('dark');
+  });
+
+  it('tapping a switch row label flips its switch', async () => {
+    await renderRouter(routes, { initialUrl: '/settings' });
+    const before = settings().sound;
+    await fireEvent.press(screen.getByText('Sound effects'));
+    expect(settings().sound).toBe(!before);
+  });
+
   it('saves every toggle at once and stamps it for sync', async () => {
     await renderRouter(routes, { initialUrl: '/settings' });
     const toggles = [

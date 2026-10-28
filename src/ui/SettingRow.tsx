@@ -30,10 +30,10 @@ export function ToggleRow({
   const { colors } = useTheme();
   return (
     <View style={[styles.row, { borderBottomColor: colors.line }]}>
-      <View style={styles.text}>
+      <Pressable style={styles.text} onPress={() => onChange(!value)} accessible={false}>
         <Text style={[styles.label, { color: colors.ink }]}>{label}</Text>
         {subtitle ? <Text style={[styles.subtitle, { color: colors.ink2 }]}>{subtitle}</Text> : null}
-      </View>
+      </Pressable>
       <Switch
         accessibilityLabel={label}
         accessibilityHint={subtitle}

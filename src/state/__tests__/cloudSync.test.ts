@@ -41,11 +41,11 @@ describe('mergeCloud (specs.md §8)', () => {
 
   it('keeps whichever settings changed last', () => {
     const local = data((d) => ({ ...d, settings: { ...d.settings, sound: false }, syncMeta: { settingsUpdatedAt: '2026-10-16T10:00:00Z' } }));
-    const newer = toPayload(data((d) => ({ ...d, settings: { ...d.settings, themeMode: 'dark' }, syncMeta: { settingsUpdatedAt: '2026-10-16T11:00:00Z' } })));
+    const newer = toPayload(data((d) => ({ ...d, settings: { ...d.settings, themeMode: 'light' }, syncMeta: { settingsUpdatedAt: '2026-10-16T11:00:00Z' } })));
     const older = { ...newer, settingsUpdatedAt: '2026-10-16T09:00:00Z' };
-    expect(mergeCloud(local, newer).settings).toMatchObject({ themeMode: 'dark', sound: true });
+    expect(mergeCloud(local, newer).settings).toMatchObject({ themeMode: 'light', sound: true });
     expect(mergeCloud(local, newer).syncMeta.settingsUpdatedAt).toBe('2026-10-16T11:00:00Z');
-    expect(mergeCloud(local, older).settings).toMatchObject({ themeMode: 'system', sound: false });
+    expect(mergeCloud(local, older).settings).toMatchObject({ themeMode: 'dark', sound: false });
     expect(mergeCloud(local, { ...newer, settingsUpdatedAt: null }).settings.sound).toBe(false);
   });
 
@@ -116,11 +116,11 @@ describe('sync runner', () => {
 
   it('pulls, merges, saves and refreshes settings', () => {
     const kv = fakeKv();
-    const remote = toPayload(data((d) => ({ ...d, settings: { ...d.settings, themeMode: 'dark' }, syncMeta: { settingsUpdatedAt: '2099-01-01T00:00:00Z' } })));
+    const remote = toPayload(data((d) => ({ ...d, settings: { ...d.settings, themeMode: 'light' }, syncMeta: { settingsUpdatedAt: '2099-01-01T00:00:00Z' } })));
     kv.store.set(CLOUD_KEY, JSON.stringify(remote));
     syncWithCloud(kv);
-    expect(getAppData().settings.themeMode).toBe('dark');
-    expect(useSettingsStore.getState().settings.themeMode).toBe('dark');
+    expect(getAppData().settings.themeMode).toBe('light');
+    expect(useSettingsStore.getState().settings.themeMode).toBe('light');
   });
 
   it('does nothing without iCloud or without the module', () => {
