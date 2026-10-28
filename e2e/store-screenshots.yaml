@@ -23,7 +23,7 @@ env:
 - takeScreenshot: ${PREFIX}-01-classic-score-pad
 - runFlow: subflows/leave-to-home.yaml
 # 2 Pass and play: the handoff screen between two named players.
-- tapOn: "(?i)^start new game$|Play"
+# Home now shows Resume game, so the pass and play tile starts the next game.
 - tapOn: "Pass and play.*"
 - tapOn: "Player 1 name"
 - inputText: "Mom"
@@ -52,8 +52,9 @@ env:
 - scrollUntilVisible: { element: { text: "Large dice.*" } }
 - tapOn: "Large dice.*"
 - runFlow: subflows/screen-to-home.yaml
-- tapOn: "(?i)start new game|Play"
+- tapOn: "Pass and play.*"
 - tapOn: "Start game"
+- tapOn: "(?i)start new game"
 - tapOn: { id: "roll-button" }
 - tapOn: { id: "die-0" }
 - takeScreenshot: ${PREFIX}-05-big-dice-dark
