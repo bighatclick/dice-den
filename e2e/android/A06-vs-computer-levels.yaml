@@ -40,7 +40,10 @@ tags: [release, core]
 - scrollUntilVisible: { element: { id: "box-chance" } }
 - tapOn: { id: "box-chance" }
 - tapOn: 'Skip Computer \(Normal\)''s turn'
-- assertVisible: "Turn 2 · Ready to roll"
+# On a slow run the computer can finish first and the tap lands on Roll: any Turn 2 state is the player's turn.
+- extendedWaitUntil:
+    visible: "Turn 2 · .*"
+    timeout: 20000
 - assertVisible: 'Computer \(Normal\), [0-9]+ points'
 # Looking at the computer's card: filled box visible, nothing tappable, then back to yours.
 - tapOn: 'Show Computer \(Normal\)''s card'
