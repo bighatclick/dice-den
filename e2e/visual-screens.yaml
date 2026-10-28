@@ -38,6 +38,6 @@ env:
 - tapOn: "Today's dice.*"
 - takeScreenshot: ${PREFIX}-daily
 - runFlow: subflows/screen-to-home.yaml
-- scrollUntilVisible: { element: { text: "How to play" } }
+- scrollUntilVisible: { element: { text: "How to play" }, direction: UP }
 - tapOn: "How to play"
 - takeScreenshot: ${PREFIX}-help
