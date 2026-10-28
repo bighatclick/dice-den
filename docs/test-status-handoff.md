@@ -43,3 +43,12 @@ and this build, then look at the failure screenshots in `C:\Users\Dell\.maestro\
 - iOS: 8 of 8 on the EAS simulator build; no rerun needed because app code did not change. GitHub minutes used: about 1,250 of 2,000.
 - Runner gotchas: a leftover emulator makes the runner reuse it (the tablet group then runs on the phone); an APK installed by hand needs `adb uninstall com.dicedengame.app` before the runner's install.
 - Open, not test failures: replace the AdMob test id before ads go live; confirm the release signing key is the real Play upload key; monetized flows B01-B06 are parked.
+
+## 29 Oct update: fixes, retests and App Store screenshots
+- Fixed: dark mode is the default theme for new installs (`DEFAULT_SETTINGS.themeMode = 'dark'`); tapping the label of a Settings switch row flips the switch (`src/ui/SettingRow.tsx`). Unit tests: 1094 of 1094 pass.
+- Android retest on a build made from the fix commit: A01-A17 pass (A07 flow made robust: the computer's turn may already be over), A18-A20 pass. A21 (tablet) was not rerun.
+- iOS retest on a new EAS simulator build: the original 8 flows and I09-I14 pass. I15-I17 (look checks) were not rerun on this build.
+- Gotcha: `scripts/build-android-test-apk.ps1` builds local `main`, not your branch. Use `-Ref <commit>`.
+- Gotcha: the jest config ignores `/.claude/`, so `npm test` finds nothing inside a worktree. Use a temporary config without that ignore.
+- App Store screenshots: `store/en/ios/screenshots/iphone-6.9` (1320x2868) and `ipad-13` (2064x2752), five each, from `e2e/store-screenshots.yaml`.
+- Still open (yours): Apple Developer account, price, export compliance answer, contact email for `docs/` pages and publishing them, TestFlight smoke test.
