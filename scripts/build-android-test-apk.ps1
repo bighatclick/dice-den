@@ -3,11 +3,13 @@
 # Ads and purchases stay off unless EXPO_PUBLIC_MONETIZATION=1 is set; only then does it
 # use the fake store, so a normal build has no way to grant purchases.
 # Windows has a 260-character path limit that the native build breaks from E:\PP\dice-den,
-# so the build runs in a git worktree at a short path. It builds the latest commit on main,
+# so the build runs in a git worktree at a short path. It builds -Ref (default: local main),
 # so commit first. Run from the project folder:
 #   powershell -File scripts\build-android-test-apk.ps1
 param(
   [string]$BuildDir = 'E:\dd',
+  # Branch or commit to build. Default is the local main branch.
+  [string]$Ref = 'main',
   [string]$Abis = 'arm64-v8a,x86_64',
   # Turns ads and purchases on (src/config/features.ts) for the e2e fakestore suite.
   # The output is then dist\dice-den-test-monetized.apk, so it is never mistaken for the shipping build.
@@ -19,9 +21,9 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 
 if (-not (Test-Path $BuildDir)) {
-  git -C $repo worktree add --detach $BuildDir main
+  git -C $repo worktree add --detach $BuildDir $Ref
 } else {
-  git -C $BuildDir checkout --detach main
+  git -C $BuildDir checkout --detach $Ref
 }
 Write-Host "Building $(git -C $BuildDir log --oneline -1)"
 
