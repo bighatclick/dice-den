@@ -17,7 +17,11 @@ env:
 - tapOn: { id: "die-0" }
 - assertVisible: "Die [0-9], showing [0-9], held"
 - takeScreenshot: ${PREFIX}-table-rolled
-- scrollUntilVisible: { element: { id: "box-chance" } }
+- repeat:
+    times: 8
+    while: { notVisible: { id: "box-chance" } }
+    commands:
+      - swipe: { start: "50%, 90%", end: "50%, 35%", duration: 400 }
 - tapOn: { id: "box-chance" }
 - extendedWaitUntil: { visible: "Turn 2 · .*", timeout: 40000 }
 - runFlow: subflows/leave-to-home.yaml
