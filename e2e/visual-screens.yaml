@@ -26,6 +26,7 @@ env:
 - extendedWaitUntil: { visible: "Turn 2 · .*", timeout: 40000 }
 - runFlow: subflows/leave-to-home.yaml
 - takeScreenshot: ${PREFIX}-home-resume
+- scrollUntilVisible: { element: { text: "Settings" }, direction: UP }
 - tapOn: "Settings"
 - takeScreenshot: ${PREFIX}-settings
 - runFlow: subflows/screen-to-home.yaml
