@@ -65,4 +65,4 @@ name: I09 settings take effect
 - tapOn: "Show the tutorial again"
 - assertVisible: "Welcome to Dice Den"
 - tapOn: "Skip"
-- assertVisible: "Resume game, Turn 2 of 13"
+- assertVisible: "Resume game, Turn 1 of 13"

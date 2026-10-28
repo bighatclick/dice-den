@@ -3,14 +3,12 @@ appId: com.dicedengame.app
 name: I16 landscape
 ---
 - runFlow: subflows/fresh-start.yaml
-- setOrientation: LANDSCAPE_LEFT
-- takeScreenshot: i16-home-landscape
-- scrollUntilVisible: { element: { text: "Pass and play.*" } }
 - tapOn: "Pass and play.*"
 - scrollUntilVisible: { element: { text: "Start game" } }
 - tapOn: "Start game"
-- tapOn: { id: "roll-button" }
+- setOrientation: LANDSCAPE_LEFT
 - takeScreenshot: i16-table-landscape
+- tapOn: { id: "roll-button" }
 - tapOn: { id: "grid-ones" }
 - assertVisible: "Pass the phone to"
 - takeScreenshot: i16-handoff-landscape
