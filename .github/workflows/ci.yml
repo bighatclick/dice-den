@@ -139,6 +139,8 @@ jobs:
       # store switched on; this build has them off, so they are not run.
       - name: Run the iOS flows
         if: ${{ !inputs.diag_only }}
+        env:
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: '240000'
         run: |
           flows='${{ inputs.flows }}'
           if [ -z "$flows" ]; then
