@@ -7,6 +7,7 @@ env:
 ---
 - runFlow: subflows/fresh-start.yaml
 - takeScreenshot: ${PREFIX}-home
+- scrollUntilVisible: { element: { text: "Play" } }
 - tapOn: "Play"
 - takeScreenshot: ${PREFIX}-new-game
 - tapOn: "vs Computer"
@@ -25,11 +26,14 @@ env:
 - tapOn: "Settings"
 - takeScreenshot: ${PREFIX}-settings
 - runFlow: subflows/screen-to-home.yaml
+- scrollUntilVisible: { element: { text: "Stats" } }
 - tapOn: "Stats"
 - takeScreenshot: ${PREFIX}-stats
 - runFlow: subflows/screen-to-home.yaml
+- scrollUntilVisible: { element: { text: "Today's dice.*" } }
 - tapOn: "Today's dice.*"
 - takeScreenshot: ${PREFIX}-daily
 - runFlow: subflows/screen-to-home.yaml
+- scrollUntilVisible: { element: { text: "How to play" } }
 - tapOn: "How to play"
 - takeScreenshot: ${PREFIX}-help

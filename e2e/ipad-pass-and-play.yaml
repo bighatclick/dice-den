@@ -1,0 +1,18 @@
+# I17b Pass and play on iPad with the default names: every player's card shows, the handoff hides the dice.
+appId: com.dicedengame.app
+name: I17b iPad pass and play
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: "Pass and play.*"
+- scrollUntilVisible: { element: { text: "Add player" } }
+- tapOn: "Add player"
+- tapOn: "Start game"
+- assertVisible: "Player 2: Ones, empty"
+- assertVisible: "Player 3: Ones, empty"
+- takeScreenshot: i17b-table-ipad
+- tapOn: { id: "roll-button" }
+- tapOn: { id: "grid-chance" }
+- assertVisible: "Pass the phone to"
+- takeScreenshot: i17b-handoff-ipad
+- tapOn: "Start Player 2's turn"
+- assertVisible: "Player 1: Chance, scored [0-9]+"

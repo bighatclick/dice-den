@@ -59,7 +59,7 @@ name: I09 settings take effect
 - tapOn: "See your dice in Stats"
 - assertVisible: "Fair dice"
 - takeScreenshot: i09-stats-from-fairness
-- runFlow: subflows/screen-to-home.yaml
+- runFlow: subflows/to-home.yaml
 - tapOn: "Settings"
 - scrollUntilVisible: { element: { text: "Show the tutorial again" } }
 - tapOn: "Show the tutorial again"

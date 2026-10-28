@@ -7,22 +7,15 @@ name: I16 landscape
 - takeScreenshot: i16-home-landscape
 - scrollUntilVisible: { element: { text: "Pass and play.*" } }
 - tapOn: "Pass and play.*"
-- tapOn: "Player 1 name"
-- inputText: "Mom"
-- hideKeyboard
-- scrollUntilVisible: { element: { text: "Player 2 name" } }
-- tapOn: "Player 2 name"
-- inputText: "Dad"
-- hideKeyboard
 - scrollUntilVisible: { element: { text: "Start game" } }
 - tapOn: "Start game"
 - tapOn: { id: "roll-button" }
 - takeScreenshot: i16-table-landscape
-- tapOn: { id: "box-ones" }
+- tapOn: { id: "grid-ones" }
 - assertVisible: "Pass the phone to"
 - takeScreenshot: i16-handoff-landscape
-- scrollUntilVisible: { element: { text: "Start Dad's turn" } }
-- tapOn: "Start Dad's turn"
-- assertVisible: "Dad, 0 points, playing now"
+- scrollUntilVisible: { element: { text: "Start Player 2's turn" } }
+- tapOn: "Start Player 2's turn"
+- assertVisible: "Player 2, 0 points, playing now"
 - setOrientation: PORTRAIT
-- assertVisible: "Dad, 0 points, playing now"
+- assertVisible: "Player 2, 0 points, playing now"

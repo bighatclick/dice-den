@@ -24,5 +24,7 @@ name: I11 deep links
     commands:
       - tapOn: "Open"
 - assertVisible: "Roll to start your turn"
-- runFlow: subflows/leave-to-home.yaml
+- tapOn: "Leave game"
+- tapOn: "(?i)^leave$"
+- runFlow: subflows/to-home.yaml
 - assertVisible: "Resume game, Turn 1 of 13"

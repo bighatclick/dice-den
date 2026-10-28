@@ -1,0 +1,10 @@
+# Press Back until Home is on screen (leaving a game returns to the screen it was opened from).
+appId: com.dicedengame.app
+---
+- repeat:
+    times: 4
+    while:
+      notVisible: "Roll the dice"
+    commands:
+      - tapOn: "Back"
+- assertVisible: "Dice Den"

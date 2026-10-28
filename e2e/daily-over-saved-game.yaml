@@ -19,7 +19,9 @@ name: I12 today's dice over a saved game
 - assertVisible: "Resume game, Turn 2 of 13"
 - tapOn: "Today's dice.*"
 - tapOn: "Play today's dice"
-- tapOn: "(?i)play today.s dice"
+- tapOn:
+    text: "Play today's dice"
+    index: 1
 - assertVisible: "Today's dice · Turn 1 · Ready to roll"
 - runFlow: subflows/leave-to-home.yaml
 - assertVisible: "Resume game, Turn 1 of 13"
