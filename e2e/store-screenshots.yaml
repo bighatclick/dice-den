@@ -29,7 +29,7 @@ env:
 - inputText: "Mom"
 - tapOn: "Player 2 name"
 - inputText: "Dad"
-- hideKeyboard
+- pressKey: Enter
 - tapOn: "Start game"
 - tapOn: "(?i)start new game"
 - tapOn: { id: "roll-button" }
