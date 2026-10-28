@@ -1,15 +1,13 @@
-Dice Den is an offline Yatzy dice game. There is no login and no account.
+Dice Den is an offline Yatzy dice game. There is no login, no account and no network feature.
 
-Ads
-- Interstitial ads appear only after the player leaves the final scorecard (Home or Play again). They never appear during a game, on app open, on the pass-the-phone screen or in Today's dice.
-- None in the first session or before 3 completed games; then at most 1 per 2 completed games and 1 per 4 minutes. All ads are muted.
-- Rewarded ads are optional and opt-in: "Try for 24 h" on a dice skin or table in the Shop, and "Replay today's dice" after today's game is finished. At most 3 a day. They never give extra rolls or help with the score.
-- Consent: Google's UMP form in the EEA and UK before any ad request. The App Tracking Transparency prompt appears after the 3rd session, on the Home screen, never during a game, after a short explanation with a single Continue button.
+- Nothing to sign in to, nothing to buy and nothing to watch. This version has no advertising, no in-app purchases and no tracking, so there is no App Tracking Transparency prompt.
+- The dice use the device's secure random number generator for every player, including the computer players. The Stats screen shows every face rolled so the fairness can be checked.
+- Games, scores and settings stay on the device. Settings and progress sync only through the player's own iCloud key-value storage, if iCloud is available.
+- Notifications are optional: Settings, then Daily reminder asks for permission only when the player turns it on.
 
-In-app purchases (all non-consumable, one-time)
-- Remove Ads: removes the interstitials. Rewarded ads stay available because they are opt-in.
-- Classic Dice Pack, Table Pack, Complete Collection: cosmetic dice skins and tables only. They do not change the dice, which use one fair random generator for every player.
-- Supporter Bundle: Remove Ads plus every current and future skin and table.
-- Restore Purchases is in the Shop and in Settings. Prices come from the App Store.
-
-To see an interstitial quickly: finish 3 games, close and reopen the app, finish another game and tap Home.
+To see everything quickly
+1. Open the app and tap Skip on the tutorial (or Show me how).
+2. Play, then Start game. Tap Roll, tap dice to hold them, tap a score box to fill it. Thirteen turns finish a Classic game.
+3. Today's dice on Home: the same rolls for everyone on a given day.
+4. Pass and play (up to 6 people) and vs Computer (Easy, Normal, Expert) are on the New game screen.
+5. Stats and Settings are on Home.
