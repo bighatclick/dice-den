@@ -47,7 +47,7 @@ and this build, then look at the failure screenshots in `C:\Users\Dell\.maestro\
 ## 29 Oct update: fixes, retests and App Store screenshots
 - Fixed: dark mode is the default theme for new installs (`DEFAULT_SETTINGS.themeMode = 'dark'`); tapping the label of a Settings switch row flips the switch (`src/ui/SettingRow.tsx`). Unit tests: 1094 of 1094 pass.
 - Android retest on a build made from the fix commit: A01-A17 pass (A07 flow made robust: the computer's turn may already be over), A18-A20 pass. A21 (tablet) was not rerun.
-- iOS retest on a new EAS simulator build: the original 8 flows and I09-I14 pass. I15-I17 (look checks) were not rerun on this build.
+- iOS retest on a new EAS simulator build: the original 8 flows and I09-I14 pass. I15-I17 were rerun on the same build on 29 Oct and pass (dark mode with extra-large text on iPhone, dark mode on iPad, landscape, iPad pass and play). Android A21 (tablet) also passed on the fixed APK. Nothing is pending from the fixes; the on-device check of tapping a switch label is left to TestFlight.
 - Gotcha: `scripts/build-android-test-apk.ps1` builds local `main`, not your branch. Use `-Ref <commit>`.
 - Gotcha: the jest config ignores `/.claude/`, so `npm test` finds nothing inside a worktree. Use a temporary config without that ignore.
 - App Store screenshots: `store/en/ios/screenshots/iphone-6.9` (1320x2868) and `ipad-13` (2064x2752), five each, from `e2e/store-screenshots.yaml`.
