@@ -23,8 +23,10 @@ building.
 Windows' 260-character path limit (`LongPathsEnabled` is 0 on this PC) broke the
 first C++ build with `ninja: error: mkdir(...): No such file or directory`. The
 config plugin `plugins/withShortCxxPath.js` now builds the app's C++ code in
-`E:\dd-cxx` instead, so no Windows setting needs to change. If a build ever fails
-with that error again, delete `android/app/.cxx` and `E:\dd-cxx` and rebuild.
+`E:\PP\dice-den\c` instead (the build script sets `DICE_DEN_CXX_DIR`), so no Windows
+setting needs to change. If a build ever fails with that error again, delete
+`android/app/.cxx` and `E:\PP\dice-den\c` and rebuild. The build checkout is
+`E:\PP\dice-den\dd`. Keep everything inside `E:\PP\dice-den`; nothing goes in the root of `E:\`.
 
 "Google APIs" images include Google Play services, so test ads work. They have no
 Play Store app, so real Play Billing purchases can't run on them; the fake store

@@ -7,7 +7,7 @@
 # so commit first. Run from the project folder:
 #   powershell -File scripts\build-android-test-apk.ps1
 param(
-  [string]$BuildDir = 'E:\dd',
+  [string]$BuildDir = 'E:\PP\dice-den\dd',
   # Branch or commit to build. Default is the local main branch.
   [string]$Ref = 'main',
   [string]$Abis = 'arm64-v8a,x86_64',
@@ -35,6 +35,8 @@ if (-not (Test-Path $stamp) -or (Get-Content $stamp) -ne $lockHash) {
   Set-Content $stamp $lockHash
 }
 
+# Short C++ build folder (Windows 260-character limit), kept inside E:\PP\dice-den, never at the drive root.
+$env:DICE_DEN_CXX_DIR = 'E:\PP\dice-den\c'
 $env:NODE_ENV = 'production'
 if ($Monetization) { $env:EXPO_PUBLIC_MONETIZATION = '1' } else { Remove-Item Env:EXPO_PUBLIC_MONETIZATION -ErrorAction SilentlyContinue }
 if ($DebugEea) { $env:EXPO_PUBLIC_UMP_DEBUG_EEA = '1' } else { Remove-Item Env:EXPO_PUBLIC_UMP_DEBUG_EEA -ErrorAction SilentlyContinue }

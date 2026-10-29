@@ -51,3 +51,8 @@ sentry.options.json
 
 # Android e2e runner output (scripts/android-e2e.ps1)
 reports/
+
+# Local build checkout, C++ build folder and test run output (kept in E:\PP\dice-den, never committed)
+/dd/
+/c/
+/test-artifacts/
