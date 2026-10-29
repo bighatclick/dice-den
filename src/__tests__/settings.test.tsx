@@ -116,7 +116,7 @@ describe('Settings (S10)', () => {
     const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
     const router = await renderRouter(routes, { initialUrl: '/settings' });
     await fireEvent.press(screen.getByRole('link', { name: 'Privacy policy' }));
-    expect(open).toHaveBeenCalledWith('https://dicedengame.com/privacy');
+    expect(open).toHaveBeenCalledWith('https://dicedengame.vercel.app/privacy');
     await fireEvent.press(screen.getByRole('link', { name: 'How the dice work' }));
     expect(router.getPathname()).toBe('/fairness');
     expect(screen.getByText(/same dice, from the same generator/)).toBeTruthy();

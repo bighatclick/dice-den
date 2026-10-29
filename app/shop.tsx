@@ -20,8 +20,8 @@ import { ScreenHeader } from '../src/ui/ScreenHeader';
 import { fonts, radius, space, touchTarget } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 
-const PRIVACY_URL = 'https://dicedengame.com/privacy';
-const TERMS_URL = 'https://dicedengame.com/terms';
+const PRIVACY_URL = 'https://dicedengame.vercel.app/privacy';
+const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
 
 /**
  * S9 Shop: Remove Ads, packs, the Supporter Bundle, the dice and table picker,

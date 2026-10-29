@@ -17,8 +17,8 @@ import { LinkRow, SettingsGroup, StackRow, ToggleRow } from '../src/ui/SettingRo
 import { fonts, space } from '../src/ui/tokens';
 import { useTheme } from '../src/ui/theme';
 
-const PRIVACY_URL = 'https://dicedengame.com/privacy';
-const TERMS_URL = 'https://dicedengame.com/terms';
+const PRIVACY_URL = 'https://dicedengame.vercel.app/privacy';
+const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
 const REMINDER_HOURS = ['8', '12', '19', '21'] as const;
 
 function hourLabel(hour: number): string {

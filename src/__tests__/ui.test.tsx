@@ -212,7 +212,7 @@ describe('ShareCard (S8, F11)', () => {
     expect(text).not.toContain('Computer');
     expect(screen.getByText('180')).toBeTruthy();
     expect(screen.getByText('October 17')).toBeTruthy();
-    expect(screen.getByText('dicedengame.com')).toBeTruthy();
+    expect(screen.getByText('dicedengame.vercel.app')).toBeTruthy();
     expect(screen.getByText('FINAL SCORE')).toBeTruthy();
   });
 

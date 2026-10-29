@@ -210,7 +210,7 @@
   "share": {
     "finalScore": "Final score",
     "daily": "Today's dice",
-    "footer": "dicedengame.com",
+    "footer": "dicedengame.vercel.app",
     "error": "Couldn't open sharing. Try again in a moment."
   },
   "stats": {
