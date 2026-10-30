@@ -63,6 +63,7 @@
           "enableBackgroundPlayback": false
         }
       ],
+      "./plugins/withoutPushEntitlement",
       [
         "expo-notifications",
         {
