@@ -56,3 +56,9 @@ reports/
 /dd/
 /c/
 /test-artifacts/
+
+# Credentials kept in the project folder; never commit
+/key_id.txt
+/Issuer_id.txt
+/Vercel token.txt
+/AuthKey_*.p8
